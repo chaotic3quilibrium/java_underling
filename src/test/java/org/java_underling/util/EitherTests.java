@@ -1,11 +1,13 @@
 package org.java_underling.util;
 
+import org.java_underling.lang.WrappedCheckedException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -49,6 +51,26 @@ public class EitherTests {
         noSuchElementExceptionLeft.getMessage());
   }
 
+  @Test
+  public void testFactoryOptionals() {
+    var expectedErrorMessage = "leftOptional.isEmpty() must not be equal to rightOptional.isEmpty()";
+    var nullIllegalArgumentExceptionEmpties =
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> Either.from(Optional.empty(), Optional.empty()));
+    assertEquals(
+        expectedErrorMessage,
+        nullIllegalArgumentExceptionEmpties.getMessage());
+    var nullIllegalArgumentExceptionNonEmpties =
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> Either.from(Optional.of(1), Optional.of(2)));
+    assertEquals(
+        expectedErrorMessage,
+        nullIllegalArgumentExceptionNonEmpties.getMessage());
+  }
+
+
   //The testFactory* tests also test via the validate* methods:
   //  - isLeft()
   //  - isRight()
@@ -84,6 +106,8 @@ public class EitherTests {
     Either<Integer, String> eitherFromRightA = Either.from(() -> 32, Optional.of("ThirtyOne"));
     //noinspection EqualsWithItself
     assertEquals(eitherFromRightA, eitherFromRightA);
+    //noinspection SimplifiableAssertion
+    assertFalse(eitherFromRightA.equals(new Object())); //cannot use assertNotEquals() as it never makes the call to Either.equals()
     Either<Integer, String> eitherFromRightB = Either.from(() -> 32, Optional.of("ThirtyOne"));
     assertEquals(eitherFromRightA, eitherFromRightB);
     Either<Integer, String> eitherFromRightC = Either.from(() -> 33, Optional.of("Thirty"));
@@ -180,6 +204,8 @@ public class EitherTests {
     assertEquals(
         eitherLeftTransformed,
         eitherLeftTransformed.mapRight(string -> "should never get here"));
+    Either<Integer, String> eitherRight = Either.right("fortyOne");
+    assertSame(eitherRight, eitherRight.flatMapLeft(l -> Either.left(l - 1)));
   }
 
   @Test
@@ -209,6 +235,8 @@ public class EitherTests {
         eitherRightTransformed,
         eitherRightTransformed.mapLeft(integer ->
             Integer.MAX_VALUE)); //should never get to the lambda
+    Either<Integer, String> eitherLeft = Either.left(40);
+    assertSame(eitherLeft, eitherLeft.flatMapRight(r -> Either.right("40 + 1")));
   }
 
   @Test
@@ -299,6 +327,76 @@ public class EitherTests {
             },
             ArithmeticException.class));
     assertEquals(message, throwable.getMessage());
+  }
+
+  @Test
+  public void testTryCatchCheckedException() {
+    @SuppressWarnings({"NumericOverflow", "divzero"})
+    var eitherLeft = Either.tryCatchChecked(() -> 60 / 0);
+    assertTrue(eitherLeft.isLeft());
+    assertEquals(ArithmeticException.class, eitherLeft.getLeft().getClass());
+    assertEquals("/ by zero", eitherLeft.getLeft().getMessage());
+    var eitherRight = Either.tryCatchChecked(() -> 60 / 2);
+    assertTrue(eitherRight.isRight());
+    assertEquals(30, eitherRight.getRight());
+    var eitherLeftB = Either.tryCatchChecked(() -> {
+      //noinspection resource
+      InputStreamReader.nullReader().reset(); //intentionally throwing a checked exception
+      return 10;
+    });
+    assertTrue(eitherLeftB.isLeft());
+    assertEquals(IOException.class, eitherLeftB.getLeft().getClass());
+    assertEquals("reset() not supported", eitherLeftB.getLeft().getMessage());
+    var throwable = assertThrows(
+        IllegalStateException.class,
+        () ->
+            Either.tryCatchChecked(() -> {
+                  //noinspection ConstantValue
+                  if (true) {
+                    throw new IllegalStateException("generate RuntimeException in an IOException expected context");
+                  }
+                  //noinspection resource
+                  InputStreamReader.nullReader().reset(); //intentionally throwing a checked exception
+                  return 10;
+                },
+                IOException.class));
+    assertEquals("generate RuntimeException in an IOException expected context", throwable.getMessage());
+  }
+
+  private static Stream<Arguments> provideTestTryCatchCheckedThrowable() {
+    return Stream.of(
+        Arguments.of(Throwable.class),
+        Arguments.of(Exception.class),
+        Arguments.of(RuntimeException.class),
+        Arguments.of(IOException.class));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideTestTryCatchCheckedThrowable")
+  public void testTryCatchCheckedThrowable(
+      Class<Throwable> exceptionTypeProvided
+  ) {
+    if (Objects.equals(exceptionTypeProvided.getCanonicalName(), "java.lang.RuntimeException")) {
+      var throwable = assertThrows(
+          WrappedCheckedException.class,
+          () -> Either.tryCatchChecked(() -> {
+                //noinspection resource
+                InputStreamReader.nullReader().reset(); //intentionally throwing a checked exception
+                return 10;
+              },
+              exceptionTypeProvided));
+      assertEquals("tryCatchChecked failure - reset() not supported", throwable.getMessage());
+    } else {
+      var eitherLeft = Either.tryCatchChecked(() -> {
+            //noinspection resource
+            InputStreamReader.nullReader().reset(); //intentionally throwing a checked exception
+            return 10;
+          },
+          exceptionTypeProvided);
+      assertTrue(eitherLeft.isLeft());
+      assertEquals(IOException.class, eitherLeft.getLeft().getClass());
+      assertEquals("reset() not supported", eitherLeft.getLeft().getMessage());
+    }
   }
 
   @Test
