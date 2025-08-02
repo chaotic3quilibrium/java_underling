@@ -15,9 +15,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * Represents a value of one of two possible types (a <a href="https://en.wikipedia.org/wiki/Disjoint_union">disjoint
- * union</a>). An instance of {@link Either} is (constructor enforced via preconditions) to be well-defined and for
- * whichever side is defined, the left or right, the value is guaranteed to be not-{@code null}.
+ * Represents an immutable value of one of two possible types (a <a
+ * href="https://en.wikipedia.org/wiki/Disjoint_union">disjoint union</a>). An instance of {@link Either} is
+ * (constructor enforced via preconditions) to be well-defined and for whichever side is defined, the left or right, the
+ * value is guaranteed to be not-{@code null}.
  * <p>
  * -
  * <p>
@@ -45,6 +46,36 @@ import java.util.function.Supplier;
 public final class Either<L, R> {
 
   /**
+   * Reify to an {@link Either}. Throws an {@link IllegalArgumentException} if both return the same value for
+   * {@link Optional#isEmpty}, otherwise if {@code rightOptional} is defined, place the {@link Optional} value into the
+   * right side of the {@link Either}, otherwise place the {@link Optional} value from {@code leftOptional} into the
+   * left side of the {@link Either}.
+   *
+   * @param leftOptional  the contained value is placed into the left side of the {@link Either}
+   * @param rightOptional the contained value is placed into the right side of the {@link Either}
+   * @param <L>           type of the value in the instance of the {@link Optional}
+   * @param <R>           type of the value in the instance of the {@link Optional}
+   * @return a well-defined instance of {@link Either}
+   * @throws IllegalArgumentException if neither, or both, return the same value for {@link Optional#isEmpty}
+   */
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+  @NotNull
+  public static <L, R> Either<L, R> from(
+      @NotNull Optional<L> leftOptional,
+      @NotNull Optional<R> rightOptional
+  ) {
+    if (leftOptional.isEmpty() == rightOptional.isEmpty()) {
+      throw new IllegalArgumentException("leftOptional.isEmpty() must not be equal to rightOptional.isEmpty()");
+    }
+
+    return new Either<>(
+        rightOptional.isPresent(),
+        rightOptional.isPresent()
+            ? rightOptional
+            : leftOptional);
+  }
+
+  /**
    * The right side of a disjoint union, as opposed to the left side.
    *
    * @param value instance of type R to be contained
@@ -55,7 +86,7 @@ public final class Either<L, R> {
    */
   @NotNull
   public static <L, R> Either<L, R> right(@NotNull R value) {
-    return new Either<>(Optional.empty(), Optional.of(value));
+    return Either.from(Optional.empty(), Optional.of(value));
   }
 
   /**
@@ -69,7 +100,7 @@ public final class Either<L, R> {
    */
   @NotNull
   public static <L, R> Either<L, R> left(@NotNull L value) {
-    return new Either<>(Optional.of(value), Optional.empty());
+    return Either.from(Optional.of(value), Optional.empty());
   }
 
   /**
@@ -93,7 +124,8 @@ public final class Either<L, R> {
   ) {
     return rightOptional
         .map(Either::<L, R>right)
-        .orElseGet(() -> Either.left(Objects.requireNonNull(leftSupplier.get())));
+        .orElseGet(() ->
+            Either.left(Objects.requireNonNull(leftSupplier.get())));
   }
 
   /**
@@ -208,17 +240,11 @@ public final class Either<L, R> {
   }
 
   private final boolean isRight;
-  private final Object defined;
+  private final Object untypedOptionalValue;
 
-  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-  private Either(@NotNull Optional<L> left, @NotNull Optional<R> right) {
-    if (left.isEmpty() == right.isEmpty()) {
-      throw new IllegalArgumentException("left.isEmpty() must not be equal to right.isEmpty()");
-    }
-    this.isRight = right.isPresent();
-    this.defined = isRight
-        ? right
-        : left;
+  private Either(boolean isRight, Object untypedOptionalValue) {
+    this.isRight = isRight;
+    this.untypedOptionalValue = untypedOptionalValue;
   }
 
   /**
@@ -232,7 +258,7 @@ public final class Either<L, R> {
     return (this == object) ||
         ((object instanceof Either<?, ?> that)
             && Objects.equals(this.isRight, that.isRight)
-            && Objects.equals(this.defined, that.defined));
+            && Objects.equals(this.untypedOptionalValue, that.untypedOptionalValue));
   }
 
   /**
@@ -242,7 +268,7 @@ public final class Either<L, R> {
    */
   @Override
   public int hashCode() {
-    return Objects.hash(this.isRight, this.defined);
+    return Objects.hash(this.isRight, this.untypedOptionalValue);
   }
 
   /**
@@ -310,7 +336,7 @@ public final class Either<L, R> {
   @NotNull
   public Optional<R> toOptionalRight() {
     return this.isRight()
-        ? ((Optional<R>) this.defined)
+        ? ((Optional<R>) this.untypedOptionalValue)
         : Optional.empty();
   }
 
@@ -324,7 +350,7 @@ public final class Either<L, R> {
   @NotNull
   public Optional<L> toOptionalLeft() {
     return !this.isRight()
-        ? ((Optional<L>) this.defined)
+        ? ((Optional<L>) this.untypedOptionalValue)
         : Optional.empty();
   }
 
@@ -364,7 +390,7 @@ public final class Either<L, R> {
    * @param leftFunction   given function which is only applied if {@link Either#isRight} is {@code true} and
    *                       {@code retainingRight} returns {@code false}
    * @return {@link Either#left} when {@link Either#isLeft} is {@code true}, or returns {@link Either#right} when
-   * {@link Either#isRight} is {@code true} and {@code retainingRight} returns {@code true}
+   *     {@link Either#isRight} is {@code true} and {@code retainingRight} returns {@code true}
    */
   @NotNull
   public Either<L, R> filterOrElse(
@@ -384,10 +410,15 @@ public final class Either<L, R> {
    */
   @NotNull
   public <T> Either<T, R> mapLeft(@NotNull Function<? super L, ? extends T> leftFunction) {
-    return new Either<>(
-        this.toOptionalLeft().map(l ->
-            Objects.requireNonNull(leftFunction.apply(l))),
-        this.toOptionalRight());
+    //noinspection unchecked
+    return isLeft()
+        //@formatter:off
+        ? Either.from(
+            this.toOptionalLeft().map(l ->
+                Objects.requireNonNull(leftFunction.apply(l))),
+            Optional.empty())
+        : (Either<T, R>) this;
+        //@formatter:off
   }
 
   /**
@@ -400,10 +431,15 @@ public final class Either<L, R> {
    */
   @NotNull
   public <T> Either<L, T> mapRight(@NotNull Function<? super R, ? extends T> rightFunction) {
-    return new Either<>(
-        this.toOptionalLeft(),
-        this.toOptionalRight().map(r ->
-            Objects.requireNonNull(rightFunction.apply(r))));
+    //noinspection unchecked
+    return isRight()
+        //@formatter:off
+        ? Either.from(
+            this.toOptionalLeft(),
+            this.toOptionalRight().map(r ->
+                Objects.requireNonNull(rightFunction.apply(r))))
+        : (Either<L, T>) this;
+        //@formatter:off
   }
 
   /**
@@ -418,13 +454,12 @@ public final class Either<L, R> {
   public <T> Either<T, R> flatMapLeft(
       @NotNull Function<? super L, ? extends Either<? extends T, R>> leftFunction
   ) {
+    //noinspection unchecked
     return this.toOptionalLeft()
         .<Either<T, R>>map(l ->
             Either.left(Objects.requireNonNull(leftFunction.apply(l)).getLeft()))
         .orElseGet(() ->
-            new Either<>(
-                Optional.empty(),
-                this.toOptionalRight()));
+            (Either<T, R>) this);
   }
 
   /**
@@ -439,13 +474,12 @@ public final class Either<L, R> {
   public <T> Either<L, T> flatMapRight(
       @NotNull Function<? super R, ? extends Either<L, ? extends T>> rightFunction
   ) {
+    //noinspection unchecked
     return this.toOptionalRight()
         .<Either<L, T>>map(r ->
             Either.right(Objects.requireNonNull(rightFunction.apply(r)).getRight()))
         .orElseGet(() ->
-            new Either<>(
-                this.toOptionalLeft(),
-                Optional.empty()));
+            (Either<L, T>) this);
   }
 
   /**
@@ -506,7 +540,7 @@ public final class Either<L, R> {
    */
   @NotNull
   public Either<R, L> swap() {
-    return new Either<>(this.toOptionalRight(), this.toOptionalLeft());
+    return new Either<>(!this.isRight, this.untypedOptionalValue);
   }
 
   /**
