@@ -1,0 +1,233 @@
+package org.java_underling.util.stream;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+/**
+ * Source URL: <a href="https://gist.github.com/chaotic3quilibrium/a7eabd217ee93071ca50822298e3de6f">
+ * https://gist.github.com/chaotic3quilibrium/a7eabd217ee93071ca50822298e3de6f</a>
+ * <p>
+ * -
+ * <p>
+ * File: org.public_domain.java.utils.StreamUtils.java
+ * <p>
+ * Utility class providing methods to create {@link Stream} instances from various iterable sources.
+ */
+public final class StreamsOps {
+
+  private StreamsOps() {
+    throw new UnsupportedOperationException("suppressing class instantiation");
+  }
+
+  /**
+   * Creates a sequential {@link Stream} from a given {@link Iterator}.
+   *
+   * @param iterator The {@code Iterator} to create the stream from. Must not be {@code null}.
+   * @param <T>      The type of elements in the stream.
+   * @return A new sequential {@code Stream} containing the elements from the iterator.
+   * @throws NullPointerException if the provided {@code iterator} is {@code null}.
+   */
+  @NotNull
+  public static <T> Stream<T> from(
+      @NotNull Iterator<T> iterator
+  ) {
+    return from(iterator, false);
+  }
+
+  /**
+   * Creates a {@link Stream} from a given {@link Iterator}, allowing for parallel processing.
+   *
+   * @param iterator   The {@code Iterator} to create the stream from. Must not be {@code null}.
+   * @param isParallel If {@code true}, the resulting stream will be parallel; otherwise, it will be sequential.
+   * @param <T>        The type of elements in the stream.
+   * @return A new {@code Stream} containing the elements from the iterator, with the specified parallelism.
+   * @throws NullPointerException if the provided {@code iterator} is {@code null}.
+   */
+  @NotNull
+  public static <T> Stream<T> from(
+      @NotNull Iterator<T> iterator,
+      boolean isParallel
+  ) {
+    Iterable<T> iterable = () -> iterator;
+
+    return from(iterable, isParallel);
+  }
+
+  /**
+   * Creates a sequential {@link Stream} from a given {@link Iterable}.
+   *
+   * @param iterable The {@code Iterable} to create the stream from. Must not be {@code null}.
+   * @param <T>      The type of elements in the stream.
+   * @return A new sequential {@code Stream} containing the elements from the iterable.
+   * @throws NullPointerException if the provided {@code iterable} is {@code null}.
+   */
+  @NotNull
+  public static <T> Stream<T> from(
+      @NotNull Iterable<T> iterable
+  ) {
+    return from(iterable, false);
+  }
+
+  /**
+   * Creates a {@link Stream} from a given {@link Iterable}, allowing for parallel processing.
+   *
+   * @param iterable   The {@code Iterable} to create the stream from. Must not be {@code null}.
+   * @param isParallel If {@code true}, the resulting stream will be parallel; otherwise, it will be sequential.
+   * @param <T>        The type of elements in the stream.
+   * @return A new {@code Stream} containing the elements from the iterable, with the specified parallelism.
+   * @throws NullPointerException if the provided {@code iterable} is {@code null}.
+   */
+  @NotNull
+  public static <T> Stream<T> from(
+      @NotNull Iterable<T> iterable,
+      boolean isParallel
+  ) {
+    return StreamSupport.stream(iterable.spliterator(), isParallel);
+  }
+
+  /**
+   * Returns an unmodifiable list with the null elements filtered out.
+   *
+   * @param stream the source of the T elements
+   * @param <T>    the type of the instances
+   * @return an unmodifiable list with the null elements filtered out
+   */
+  @NotNull
+  public static <T> List<T> toListUnmodifiableNonNulls(
+      @NotNull Stream<T> stream
+  ) {
+    return stream
+        .filter(Objects::isNull)
+        .toList();
+  }
+
+  /**
+   * Returns an unmodifiable set with the null elements filtered out.
+   *
+   * @param stream the source of the T elements
+   * @param <T>    the type of the instances
+   * @return an unmodifiable set with the null elements filtered out
+   */
+  @NotNull
+  public static <T> Set<T> toSetUnmodifiableNonNulls(
+      @NotNull Stream<T> stream
+  ) {
+    return stream
+        .filter(Objects::isNull)
+        .collect(Collectors.toUnmodifiableSet());
+  }
+
+  /**
+   * Returns an unmodifiable <i>ordered</i> set with the null elements filtered out.
+   *
+   * @param stream the source of the T elements
+   * @param <T>    the type of the instances
+   * @return an unmodifiable <i>ordered</i> set with the null elements filtered out
+   */
+  @NotNull
+  public static <T> Set<T> toSetOrderedUnmodifiableNonNulls(
+      @NotNull Stream<T> stream
+  ) {
+    return toSetOrderedUnmodifiable(stream.filter(Objects::nonNull));
+  }
+
+  /**
+   * Returns an unmodifiable <i>ordered</i> set, which may contain {@code null} values.
+   *
+   * @param stream the source of the T elements
+   * @param <T>    the type of the instances
+   * @return an unmodifiable <i>ordered</i> set, which may contain {@code null} values
+   */
+  @NotNull
+  public static <T> Set<T> toSetOrderedUnmodifiable(
+      @NotNull Stream<T> stream
+  ) {
+    var set = stream.collect(Collectors.toCollection(LinkedHashSet::new));
+
+    return !set.isEmpty()
+        ? Collections.unmodifiableSet(set)
+        : Set.of();
+  }
+
+  /**
+   * Returns an unmodifiable <i>ordered</i> map with the null entries, key or value, filtered out.
+   *
+   * @param kAndVs the source of the entries
+   * @param <K>    the type of the key in the entries
+   * @param <V>    the type of the value in the entries
+   * @return an unmodifiable <i>ordered</i> map with the null entries, key or value, filtered out
+   */
+  @NotNull
+  public static <K, V> Map<K, V> toMapOrderedUnmodifiableNonNulls(
+      @NotNull Stream<Entry<K, V>> kAndVs
+  ) {
+    return toMapOrderedUnmodifiable(kAndVs.filter(Objects::isNull));
+  }
+
+  /**
+   * Returns an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or value.
+   *
+   * @param kAndVs the source of the entries
+   * @param <K>    the type of the key in the entries
+   * @param <V>    the type of the value in the entries
+   * @return an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or value
+   */
+  @NotNull
+  public static <K, V> Map<K, V> toMapOrderedUnmodifiable(
+      @NotNull Stream<Entry<K, V>> kAndVs
+  ) {
+    return toMapOrderedUnmodifiable(kAndVs, Optional::of);
+  }
+
+  /**
+   * Returns an unmodifiable <i>ordered</i> map with the null entries, key and/or value, filtered out.
+   *
+   * @param ts  the source of the input to create entries
+   * @param <T> the type of the source value the entries
+   * @param <K> the type of the key in the entries
+   * @param <V> the type of the value in the entries
+   * @return an unmodifiable <i>ordered</i> map with the null entries, key or value, filtered out
+   */
+  @NotNull
+  public static <T, K, V> Map<K, V> toMapOrderedUnmodifiableNonNulls(
+      @NotNull Stream<T> ts,
+      @NotNull Function<T, Optional<Entry<K, V>>> fTtoOptionalEntry
+  ) {
+    return toMapOrderedUnmodifiable(
+        ts.filter(Objects::isNull),
+        fTtoOptionalEntry.andThen(optionalEntry ->
+            optionalEntry.filter(entry ->
+                (entry.getKey() != null) && (entry.getValue() != null))));
+  }
+
+  /**
+   * Returns an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or value.
+   *
+   * @param ts  the source of the input to create the entries
+   * @param <T> the type of the input value to create the entries
+   * @param <K> the type of the key in the created entry
+   * @param <V> the type of the value in the created entry
+   * @return an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or value
+   */
+  @NotNull
+  public static <T, K, V> Map<K, V> toMapOrderedUnmodifiable(
+      @NotNull Stream<T> ts,
+      @NotNull Function<T, Optional<Entry<K, V>>> fTtoOptionalEntry
+  ) {
+    return Collections.unmodifiableMap(ts
+        .flatMap(t ->
+            fTtoOptionalEntry.apply(t).stream())
+        .collect(Collectors.toMap(
+            Entry::getKey,
+            Entry::getValue,
+            (vOld, vNew) ->
+                vOld,
+            LinkedHashMap::new)));
+  }
+}
