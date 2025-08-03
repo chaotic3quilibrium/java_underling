@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 import static java.util.Map.entry;
 
-//TODO: add javadocs
+//TODO: fill out javadoc, including all methods
 public final class EnumsOps<E extends Enum<E>> {
 
   public static final String DEFAULT_SEPARATOR = ", ";

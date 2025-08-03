@@ -1,0 +1,350 @@
+package org.java_underling.util;
+
+import org.java_underling.util.stream.StreamsOps;
+import org.junit.jupiter.api.Test;
+
+import java.util.*;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class EnumsOpsTests {
+
+  private enum TrafficLight {
+    SGREEN,
+    SYELLOW,
+    SRED
+  }
+
+  private final EnumsOps<TrafficLight> ENUMS_OPS_TRAFFIC_LIGHT = EnumsOps.from(TrafficLight.class);
+
+  private enum TrafficLightBased {
+    GREEN,
+    YELLOW,
+    RED;
+
+    private static final EnumsOps<TrafficLightBased> ENUM_OPS = EnumsOps.from(
+        TrafficLightBased.class);
+
+    public static EnumsOps<TrafficLightBased> ops() {
+      return ENUM_OPS;
+    }
+
+    public static List<TrafficLightBased> toList() {
+      return ENUM_OPS.toList();
+    }
+
+    public static Stream<TrafficLightBased> stream() {
+      return ENUM_OPS.stream();
+    }
+
+    public static Optional<TrafficLightBased> valueOfIgnoreCase(String search) {
+      return ENUM_OPS.valueOfIgnoreCase(search);
+    }
+
+    public static String join() {
+      return ENUM_OPS.join();
+    }
+
+    public static String join(Collection<TrafficLightBased> es) {
+      return ENUM_OPS.join(es);
+    }
+  }
+
+  private enum TrafficLightToStringLowerCaseConflictX1 {
+    GREEN,
+    YELLOW,
+    RED,
+    Red
+  }
+
+  private enum TrafficLightToStringLowerCaseConflictX2 {
+    GREEN,
+    YELLOW,
+    RED,
+    Red,
+    YelloW
+  }
+
+  @Test
+  public void testConstructor() {
+    assertEquals(
+        "SGREEN, SYELLOW, SRED",
+        ENUMS_OPS_TRAFFIC_LIGHT.join());
+    var illegalStateExceptionX1 =
+        assertThrows(
+            IllegalStateException.class,
+            () -> EnumsOps.from(TrafficLightToStringLowerCaseConflictX1.class));
+    assertEquals(
+        "invalid state for enum [TrafficLightToStringLowerCaseConflictX1] where name().toLowerCase() is not unique across all the enums values - erred values: RED, Red",
+        illegalStateExceptionX1.getMessage());
+    var illegalStateExceptionX2 =
+        assertThrows(
+            IllegalStateException.class,
+            () -> EnumsOps.from(TrafficLightToStringLowerCaseConflictX2.class));
+    assertEquals(
+        "invalid state for enum [TrafficLightToStringLowerCaseConflictX2] where name().toLowerCase() is not unique across all the enums values - erred values: YELLOW, RED, Red, YelloW",
+        illegalStateExceptionX2.getMessage());
+  }
+
+  @Test
+  public void testCache() {
+    assertSame(ENUMS_OPS_TRAFFIC_LIGHT, EnumsOps.from(TrafficLight.class));
+    assertSame(ENUMS_OPS_TRAFFIC_LIGHT, EnumsOps.from(ENUMS_OPS_TRAFFIC_LIGHT.getEnumClass()));
+    //noinspection AssertBetweenInconvertibleTypes
+    assertNotSame(ENUMS_OPS_TRAFFIC_LIGHT, EnumsOps.from(TrafficLightBased.class));
+    assertEquals(
+        List.of(
+            TrafficLight.SGREEN,
+            TrafficLight.SYELLOW,
+            TrafficLight.SRED),
+        ENUMS_OPS_TRAFFIC_LIGHT.toList());
+    var tlbOps = TrafficLightBased.ops();
+    assertSame(tlbOps, EnumsOps.from(TrafficLightBased.class));
+    //noinspection AssertBetweenInconvertibleTypes
+    assertNotSame(ENUMS_OPS_TRAFFIC_LIGHT, tlbOps);
+    assertEquals(
+        List.of(
+            TrafficLightBased.GREEN,
+            TrafficLightBased.YELLOW,
+            TrafficLightBased.RED),
+        tlbOps.toList());
+  }
+
+  @Test
+  public void testToListThroughOps() {
+    assertEquals(
+        List.of(
+            TrafficLightBased.GREEN,
+            TrafficLightBased.YELLOW,
+            TrafficLightBased.RED),
+        TrafficLightBased.ops().toList());
+  }
+
+  @Test
+  public void testToListDirectly() {
+    assertEquals(
+        List.of(
+            TrafficLightBased.GREEN,
+            TrafficLightBased.YELLOW,
+            TrafficLightBased.RED),
+        TrafficLightBased.toList());
+  }
+
+  @Test
+  public void testStreamThroughOps() {
+    assertEquals(
+        List.of(
+            TrafficLightBased.GREEN,
+            TrafficLightBased.YELLOW,
+            TrafficLightBased.RED),
+        TrafficLightBased.ops().stream().toList());
+  }
+
+  @Test
+  public void testStreamDirectly() {
+    assertEquals(
+        List.of(
+            TrafficLightBased.GREEN,
+            TrafficLightBased.YELLOW,
+            TrafficLightBased.RED),
+        TrafficLightBased.stream().toList());
+  }
+
+  @Test
+  public void testToOrderedSetThroughOps() {
+    assertEquals(
+        List.of(
+            TrafficLightBased.GREEN,
+            TrafficLightBased.YELLOW,
+            TrafficLightBased.RED),
+        TrafficLightBased.ops().toOrderedSet().stream().toList());
+  }
+
+  @Test
+  public void testToOrderedMapThroughOps() {
+    var orderedMapExpected =
+        StreamsOps.toMapOrderedUnmodifiableNonNulls(
+            Arrays.stream(TrafficLightBased.values())
+                .map(trafficLightBased ->
+                    Map.entry(
+                        trafficLightBased.toString(),
+                        trafficLightBased)));
+    assertEquals(
+        orderedMapExpected.keySet().stream().toList(),
+        TrafficLightBased.ops().toOrderedMapByName().keySet().stream().toList());
+    assertEquals(
+        orderedMapExpected,
+        TrafficLightBased.ops().toOrderedMapByName());
+  }
+
+  @Test
+  public void testToOrderedMapKeysToLowerCaseThroughOps() {
+    var orderedMapExpected =
+        StreamsOps.toMapOrderedUnmodifiableNonNulls(
+            Arrays.stream(TrafficLightBased.values())
+                .map(
+                    trafficLightBased ->
+                        Map.entry(
+                            trafficLightBased.toString().toLowerCase(),
+                            trafficLightBased)));
+    assertEquals(
+        orderedMapExpected.keySet().stream().toList(),
+        TrafficLightBased.ops().toOrderedMapByNameToLowerCase().keySet().stream().toList());
+    assertEquals(
+        orderedMapExpected,
+        TrafficLightBased.ops().toOrderedMapByNameToLowerCase());
+  }
+
+  @Test
+  public void forEachPlus() {
+    var counter = new int[]{0};
+    TrafficLightBased.ops()
+        .forEach(trafficLightBased -> {
+          ++counter[0];
+        });
+    assertEquals(3, counter[0]);
+    TrafficLightBased.ops()
+        .forEachOrdered(trafficLightBased -> {
+          ++counter[0];
+        });
+    assertEquals(6, counter[0]);
+  }
+
+  //As it is fairly difficult, decided to forgo testing of forEach and forEachOrdered, as both are forward to java.util.Stream's methods
+
+  @Test
+  public void testValueOfIgnoreCaseThroughOps() {
+    assertEquals(TrafficLightBased.YELLOW,
+        TrafficLightBased.ops().valueOfIgnoreCaseDefaultToFirstListed("yElLoW"));
+    assertEquals(TrafficLightBased.GREEN,
+        TrafficLightBased.ops().valueOfIgnoreCaseDefaultToFirstListed("yElLoWx"));
+    assertEquals(TrafficLightBased.YELLOW,
+        TrafficLightBased.ops().valueOfIgnoreCase("yElLoW", TrafficLightBased.RED));
+    assertEquals(TrafficLightBased.RED,
+        TrafficLightBased.ops()
+            .valueOfIgnoreCase("yElLoWx", TrafficLightBased.RED));
+    assertEquals(Optional.of(TrafficLightBased.YELLOW),
+        TrafficLightBased.ops().valueOfIgnoreCase("yElLoW"));
+    assertEquals(Optional.empty(),
+        TrafficLightBased.ops().valueOfIgnoreCase("yElLoWx"));
+    var voo1 = TrafficLightBased.ops().valueOf("yElLoW");
+    assertTrue(voo1.isPresent());
+    assertEquals(TrafficLightBased.YELLOW, voo1.get());
+  }
+
+  @Test
+  public void testValueOfIgnoreCaseDirectly() {
+    assertEquals(Optional.of(TrafficLightBased.YELLOW),
+        TrafficLightBased.valueOfIgnoreCase("yElLoW"));
+    assertEquals(Optional.empty(),
+        TrafficLightBased.valueOfIgnoreCase("yElLoWx"));
+  }
+
+  @Test
+  public void testInstanceValueOfIgnoreCase() {
+    assertEquals(Optional.of(TrafficLight.SYELLOW),
+        ENUMS_OPS_TRAFFIC_LIGHT.valueOfIgnoreCase("SyElLoW"));
+    assertEquals(Optional.empty(),
+        ENUMS_OPS_TRAFFIC_LIGHT.valueOfIgnoreCase("SyElLoWx"));
+  }
+
+  @Test
+  public void testJoinThroughOps() {
+    assertEquals(
+        "GREEN, YELLOW, RED",
+        TrafficLightBased
+            .ops()
+            .join());
+    assertEquals(
+        "GREEN,YELLOW,RED",
+        TrafficLightBased.ops().join(","));
+    assertEquals(
+        "GREEN(0), YELLOW(1), RED(2)",
+        TrafficLightBased
+            .ops()
+            .join(
+                TrafficLightBased -> "%s(%d)".formatted(
+                    TrafficLightBased.toString(),
+                    TrafficLightBased.ordinal())));
+    assertEquals(
+        "GREEN(0),YELLOW(1),RED(2)",
+        TrafficLightBased
+            .ops()
+            .join(
+                TrafficLightBased -> "%s(%d)".formatted(
+                    TrafficLightBased.toString(),
+                    TrafficLightBased.ordinal()),
+                ","));
+    assertEquals(
+        "GREEN, RED",
+        TrafficLightBased
+            .ops()
+            .join(
+                TrafficLightBased
+                    .ops()
+                    .stream()
+                    .filter(TrafficLightBased ->
+                        TrafficLightBased.toString().contains("R"))
+                    .toList()));
+    assertEquals(
+        "GREEN(0), RED(2)",
+        TrafficLightBased
+            .ops()
+            .join(
+                TrafficLightBased
+                    .ops()
+                    .stream()
+                    .filter(TrafficLightBased ->
+                        TrafficLightBased.toString().contains("R"))
+                    .toList(),
+                TrafficLightBased -> "%s(%d)".formatted(
+                    TrafficLightBased.toString(),
+                    TrafficLightBased.ordinal())));
+    assertEquals(
+        "GREEN,RED",
+        TrafficLightBased
+            .ops()
+            .join(
+                TrafficLightBased
+                    .ops()
+                    .stream()
+                    .filter(TrafficLightBased ->
+                        TrafficLightBased.toString().contains("R"))
+                    .toList(),
+                ","));
+    assertEquals(
+        "GREEN(0),RED(2)",
+        TrafficLightBased
+            .ops()
+            .join(
+                TrafficLightBased
+                    .ops()
+                    .stream()
+                    .filter(TrafficLightBased ->
+                        TrafficLightBased.toString().contains("R"))
+                    .toList(),
+                TrafficLightBased -> "%s(%d)".formatted(
+                    TrafficLightBased.toString(),
+                    TrafficLightBased.ordinal()),
+                ","));
+  }
+
+  @Test
+  public void testJoinDirectly() {
+    assertEquals(
+        "GREEN, YELLOW, RED",
+        TrafficLightBased
+            .join());
+    assertEquals(
+        "GREEN, RED",
+        TrafficLightBased
+            .join(
+                TrafficLightBased
+                    .ops()
+                    .stream()
+                    .filter(TrafficLightBased ->
+                        TrafficLightBased.toString().contains("R"))
+                    .toList()));
+  }
+}

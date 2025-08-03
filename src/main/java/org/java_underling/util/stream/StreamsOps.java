@@ -103,7 +103,8 @@ public final class StreamsOps {
       @NotNull Stream<T> stream
   ) {
     return stream
-        .filter(Objects::isNull)
+        .filter(t ->
+            !Objects.isNull(t))
         .toList();
   }
 
@@ -119,7 +120,8 @@ public final class StreamsOps {
       @NotNull Stream<T> stream
   ) {
     return stream
-        .filter(Objects::isNull)
+        .filter(t ->
+            !Objects.isNull(t))
         .collect(Collectors.toUnmodifiableSet());
   }
 
@@ -134,7 +136,8 @@ public final class StreamsOps {
   public static <T> Set<T> toSetOrderedUnmodifiableNonNulls(
       @NotNull Stream<T> stream
   ) {
-    return toSetOrderedUnmodifiable(stream.filter(Objects::nonNull));
+    return toSetOrderedUnmodifiable(stream.filter(t ->
+        !Objects.isNull(t)));
   }
 
   /**
@@ -167,16 +170,19 @@ public final class StreamsOps {
   public static <K, V> Map<K, V> toMapOrderedUnmodifiableNonNulls(
       @NotNull Stream<Entry<K, V>> kAndVs
   ) {
-    return toMapOrderedUnmodifiable(kAndVs.filter(Objects::isNull));
+    return toMapOrderedUnmodifiable(kAndVs.filter(t ->
+        !Objects.isNull(t)));
   }
 
   /**
-   * Returns an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or value.
+   * Returns an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or
+   * value.
    *
    * @param kAndVs the source of the entries
    * @param <K>    the type of the key in the entries
    * @param <V>    the type of the value in the entries
-   * @return an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or value
+   * @return an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or
+   *     value
    */
   @NotNull
   public static <K, V> Map<K, V> toMapOrderedUnmodifiable(
@@ -200,20 +206,23 @@ public final class StreamsOps {
       @NotNull Function<T, Optional<Entry<K, V>>> fTtoOptionalEntry
   ) {
     return toMapOrderedUnmodifiable(
-        ts.filter(Objects::isNull),
+        ts.filter(t ->
+            !Objects.isNull(t)),
         fTtoOptionalEntry.andThen(optionalEntry ->
             optionalEntry.filter(entry ->
                 (entry.getKey() != null) && (entry.getValue() != null))));
   }
 
   /**
-   * Returns an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or value.
+   * Returns an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or
+   * value.
    *
    * @param ts  the source of the input to create the entries
    * @param <T> the type of the input value to create the entries
    * @param <K> the type of the key in the created entry
    * @param <V> the type of the value in the created entry
-   * @return an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or value
+   * @return an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or
+   *     value
    */
   @NotNull
   public static <T, K, V> Map<K, V> toMapOrderedUnmodifiable(

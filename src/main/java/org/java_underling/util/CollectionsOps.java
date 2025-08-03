@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+//TODO: fill out javadoc
 public final class CollectionsOps {
 
   private CollectionsOps() {
@@ -64,7 +65,7 @@ public final class CollectionsOps {
    *
    * @param collection instance being tested for being unmodifiable
    * @return {@code true} if the {@link Collection} throws an {@link UnsupportedOperationException} when calling
-   * {@link Collection#addAll} with {@link Collections#emptyList}, false otherwise
+   *     {@link Collection#addAll} with {@link Collections#emptyList}, false otherwise
    */
   public static boolean isUnmodifiable(@NotNull Collection<?> collection) {
     try {
@@ -82,7 +83,7 @@ public final class CollectionsOps {
    *
    * @param map instance being tested for being unmodifiable
    * @return {@code true} if the {@link Map} throws an {@link UnsupportedOperationException} when calling
-   * {@link Map#putAll} with an empty {@link Map#of}, false otherwise
+   *     {@link Map#putAll} with an empty {@link Map#of}, false otherwise
    */
   public static boolean isUnmodifiable(@NotNull Map<?, ?> map) {
     try {
@@ -101,7 +102,7 @@ public final class CollectionsOps {
    * @param ts  the source of instances of T, some elements of which may be {@code null} and will be filtered out
    * @param <T> the type of the instances in collection
    * @return an unmodifiable defensively copied list consisting of {@code ts}, filtering out any contained {@code null}
-   * elements
+   *     elements
    */
   @NotNull
   public static <T> List<T> defensiveCopyToListUnmodifiableNonNulls(
@@ -121,7 +122,7 @@ public final class CollectionsOps {
    * @param ts  the source of instances of T, some elements of which may be {@code null} and will be filtered out
    * @param <T> the type of the instances in collection
    * @return an unmodifiable unordered defensively copied set consisting of {@code ts}, filtering out any contained
-   * {@code null} elements
+   *     {@code null} elements
    */
   @NotNull
   public static <T> Set<T> defensiveCopyToSetUnmodifiableNonNulls(
@@ -141,7 +142,7 @@ public final class CollectionsOps {
    * @param ts  the source of instances of T, some elements of which may be {@code null} and will be filtered out
    * @param <T> the type of the instances in collection
    * @return an unmodifiable <i>ordered</i> defensively copied set consisting of {@code ts}, filtering out any contained
-   * {@code null} elements
+   *     {@code null} elements
    */
   @NotNull
   public static <T> Set<T> defensiveCopyToSetOrderedUnmodifiableNonNulls(
@@ -163,7 +164,7 @@ public final class CollectionsOps {
    * @param <K>    the type of the key instances within each collection entry
    * @param <V>    the type of the value instances within each collection entry
    * @return an unmodifiable unordered defensively copied map consisting of {@code kAndVs}, filtering out any contained
-   * {@code null} entries, within the key or the value
+   *     {@code null} entries, within the key or the value
    */
   @NotNull
   public static <K, V> Map<K, V> defensiveCopyToMapUnmodifiableNonNulls(
@@ -189,7 +190,7 @@ public final class CollectionsOps {
    * @param <K>    the type of the key instances within each collection entry
    * @param <V>    the type of the value instances within each collection entry
    * @return an unmodifiable <i>ordered</i> defensively copied map consisting of {@code kAndVs}, filtering out any
-   * contained {@code null} entries, within the key or the value
+   *     contained {@code null} entries, within the key or the value
    */
   @NotNull
   public static <K, V> Map<K, V> defensiveCopyToMapOrderedUnmodifiableNonNulls(
