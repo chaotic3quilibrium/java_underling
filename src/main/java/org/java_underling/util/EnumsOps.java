@@ -70,7 +70,7 @@ public final class EnumsOps<E extends Enum<E>> {
 
   private EnumsOps(@NotNull Class<E> enumClass) {
     var enumsValues = Collections.unmodifiableList(Arrays.asList(enumClass.getEnumConstants()));
-    //validate name().toLowerCase() are distinct as all 3 valueOfIgnoreCase* methods depend
+    //validate name().toLowerCase() are distinct as all 3 valueOf* methods depend
     //  upon this assumption
     var enumValueCollisionsFromNameLowerCase =
         enumsValues
@@ -97,26 +97,55 @@ public final class EnumsOps<E extends Enum<E>> {
     this.enumsValues = enumsValues;
   }
 
+  /**
+   * Returns the {@link Class} of the enum being augmented.
+   *
+   * @return the {@link Class} of the enum being augmented.
+   */
   @NotNull
   public Class<E> getEnumClass() {
     return this.enumClass;
   }
 
+  /**
+   * Returns the {@link Enum}'s mutable array {@code values} as an unmodifiable {@link List}.
+   *
+   * @return the {@link Enum}'s mutable array {@code values} as an unmodifiable {@link List}
+   */
   @NotNull
   public List<E> toList() {
     return this.enumsValues;
   }
 
+  /**
+   * Returns the {@link Enum}'s mutable array {@code values} as a {@link Stream}.
+   *
+   * @return the {@link Enum}'s mutable array {@code values} as a {@link Stream}
+   */
   @NotNull
   public Stream<E> stream() {
     return this.enumsValues.stream();
   }
 
+  /**
+   * Returns the {@link Enum}'s mutable array {@code values} as an unmodifiable {@link Set} specifically wrapping with
+   * the highly performant {@link EnumSet}.
+   *
+   * @return the {@link Enum}'s mutable array {@code values} as an unmodifiable {@link Set} specifically wrapping with
+   *     the highly performant {@link EnumSet}
+   */
   @NotNull
   public Set<E> toOrderedSet() {
     return Collections.unmodifiableSet(EnumSet.allOf(this.enumClass));
   }
 
+  /**
+   * Returns the {@link Enum}'s mutable array {@code values} as an unmodifiable <i>ordered</i> {@link Map} where the key
+   * is the {@link Enum#name()}, and the enum constant itself is the value.
+   *
+   * @return the {@link Enum}'s mutable array {@code values} as an unmodifiable <i>ordered</i> {@link Map} where the key
+   *     is the {@link Enum#name()}, and the enum constant itself is the value
+   */
   @NotNull
   public Map<String, E> toOrderedMapByName() {
     return StreamsOps.toMapOrderedUnmodifiable(
@@ -125,42 +154,78 @@ public final class EnumsOps<E extends Enum<E>> {
             Optional.of(entry(e.name(), e)));
   }
 
+  /**
+   * Returns the {@link Enum}'s mutable array {@code values} as an unmodifiable <i>ordered</i> {@link Map} where the key
+   * is the <i>lower case</i> {@link Enum#name()}, and the enum constant itself is the value.
+   *
+   * @return the {@link Enum}'s mutable array {@code values} as an unmodifiable <i>ordered</i> {@link Map} where the key
+   *     is the <i>lower case</i> {@link Enum#name()}, and the enum constant itself is the value
+   */
   @NotNull
   public Map<String, E> toOrderedMapByNameToLowerCase() {
     return fetchCachedEnumInstanceByNameLowerCase(this.enumClass);
   }
 
+  /**
+   * Performs a non-interfering action for each element of this stream.
+   *
+   * @param consumer a non-interfering action to perform on the elements
+   */
   public void forEach(@NotNull Consumer<E> consumer) {
     stream().forEach(consumer);
   }
 
+  /**
+   * Performs a non-interfering action for each element of this stream, in the encounter order of the stream if the
+   * stream has a defined encounter order.
+   *
+   * @param consumer a non-interfering action to perform on the elements
+   */
   public void forEachOrdered(@NotNull Consumer<E> consumer) {
     stream().forEachOrdered(consumer);
   }
 
+  /**
+   * Returns the case-insensitive search by name for the enum value, otherwise the first enum value in
+   * {@link EnumsOps#toList}.
+   *
+   * @param search the name used to locate the enum value, case-insensitive
+   * @return the case-insensitive search by name for the enum value, otherwise the first enum value in
+   *     {@link EnumsOps#toList}
+   */
   @NotNull
-  public Optional<E> valueOf(@NotNull String search) {
-    return valueOfIgnoreCase(search);
-  }
-
-  @NotNull
-  public E valueOfIgnoreCaseDefaultToFirstListed(
+  public E valueOfOrDefaultToFirst(
       @NotNull String search
   ) {
-    return valueOfIgnoreCase(search, this.enumsValues.get(0));
+    return valueOf(search, this.enumsValues.get(0));
   }
 
+  /**
+   * Returns the case-insensitive search by name for the enum value, otherwise the {@code orElseDefault}.
+   *
+   * @param search        the name used to locate the enum value, case-insensitive
+   * @param orElseDefault the value to provide if the enum value cannot be found by its case-insensitive name
+   * @return the case-insensitive search by name for the enum value, otherwise the {@code orElseDefault}
+   */
   @NotNull
-  public E valueOfIgnoreCase(
+  public E valueOf(
       @NotNull String search,
       @NotNull E orElseDefault
   ) {
-    return valueOfIgnoreCase(search)
+    return valueOf(search)
         .orElse(orElseDefault);
   }
 
+  /**
+   * Returns an {@link Optional} wrapping the case-insensitive search by name for the enum, otherwise an empty
+   * {@link Optional}.
+   *
+   * @param search the name used to locate the enum value, case-insensitive
+   * @return an {@link Optional} wrapping the case-insensitive search by name for the enum, otherwise an empty
+   *     {@link Optional}
+   */
   @NotNull
-  public Optional<E> valueOfIgnoreCase(
+  public Optional<E> valueOf(
       @NotNull String search
   ) {
     return Optional.ofNullable(
@@ -168,21 +233,53 @@ public final class EnumsOps<E extends Enum<E>> {
             .get(Objects.requireNonNull(search).toLowerCase()));
   }
 
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum name} for all the enum values joined together
+   * with a copy of the {@link EnumsOps#DEFAULT_SEPARATOR}.
+   *
+   * @return a new {@code String} composed of copies of the {@code Enum name} for all the enum values joined together
+   *     with a copy of the {@link EnumsOps#DEFAULT_SEPARATOR}
+   */
   @NotNull
   public String join() {
     return join(DEFAULT_SEPARATOR);
   }
 
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum name} for all the enum values joined together
+   * with a copy of the specified {@code separator}.
+   *
+   * @param separator the string used to separate the enum values
+   * @return a new {@code String} composed of copies of the {@code Enum name} for all the enum values joined together
+   *     with a copy of the specified {@code separator}
+   */
   @NotNull
   public String join(@NotNull String separator) {
     return join(Enum::name, separator);
   }
 
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum} transformed by the {@code eToString} function,
+   * and joined together with a copy of the {@link EnumsOps#DEFAULT_SEPARATOR}.
+   *
+   * @param eToString the function to transform an enum value into a String
+   * @return a new {@code String} composed of copies of the {@code Enum} transformed by the {@code eToString} function,
+   *     and joined together with a copy of the {@link EnumsOps#DEFAULT_SEPARATOR}
+   */
   @NotNull
   public String join(@NotNull Function<E, String> eToString) {
     return join(eToString, DEFAULT_SEPARATOR);
   }
 
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum} transformed by the {@code eToString} function,
+   * and joined together with a copy of the specified {@code separator}.
+   *
+   * @param eToString the function to transform an enum value into a String
+   * @param separator the string used to separate the enum values
+   * @return a new {@code String} composed of copies of the {@code Enum} transformed by the {@code eToString} function,
+   *     and joined together with a copy of the specified {@code separator}
+   */
   @NotNull
   public String join(
       @NotNull Function<E, String> eToString,
@@ -191,11 +288,28 @@ public final class EnumsOps<E extends Enum<E>> {
     return join(toList(), eToString, separator);
   }
 
+  /**
+   * Returns a new {@code String} composed of copies of the {@link Enum#name()} of each of the provided {@link Enum}s
+   * joined together with a copy of the {@link EnumsOps#DEFAULT_SEPARATOR}.
+   *
+   * @param es the list of enum values to use
+   * @return a new {@code String} composed of copies of the {@link Enum#name()} of each of the provided {@link Enum}s
+   *     joined together with a copy of the {@link EnumsOps#DEFAULT_SEPARATOR}
+   */
   @NotNull
   public String join(@NotNull Collection<E> es) {
     return join(es, Enum::name);
   }
 
+  /**
+   * Returns a new {@code String} composed of copies of the provided {@code Enum}s transformed by the {@code eToString}
+   * function, and joined together with a copy of the {@link EnumsOps#DEFAULT_SEPARATOR}.
+   *
+   * @param es        the list of enum values to use
+   * @param eToString the function to transform an enum value into a String
+   * @return a new {@code String} composed of copies of the provided {@code Enum}s transformed by the {@code eToString}
+   *     function, and joined together with a copy of the {@link EnumsOps#DEFAULT_SEPARATOR}
+   */
   @NotNull
   public String join(
       @NotNull Collection<E> es,
@@ -204,6 +318,15 @@ public final class EnumsOps<E extends Enum<E>> {
     return join(es, eToString, DEFAULT_SEPARATOR);
   }
 
+  /**
+   * Returns a new {@code String} composed of copies of the {@link Enum#name()} of each of the provided {@link Enum}s
+   * joined together with a copy of the specified {@code separator}.
+   *
+   * @param es        the list of enum values to use
+   * @param separator the string used to separate the enum values
+   * @return a new {@code String} composed of copies of the {@link Enum#name()} of each of the provided {@link Enum}s
+   *     joined together with a copy of the specified {@code separator}
+   */
   @NotNull
   public String join(
       @NotNull Collection<E> es,
@@ -212,6 +335,17 @@ public final class EnumsOps<E extends Enum<E>> {
     return join(es, Enum::name, separator);
   }
 
+
+  /**
+   * Returns a new {@code String} composed of copies of the provided {@code Enum}s transformed by the {@code eToString}
+   * function, and joined together with a copy of the specified {@code separator}.
+   *
+   * @param es        the list of enum values to use
+   * @param eToString the function to transform an enum value into a String
+   * @param separator the string used to separate the enum values
+   * @return a new {@code String} composed of copies of the provided {@code Enum}s transformed by the {@code eToString}
+   *     function, and joined together with a copy of the specified {@code separator}
+   */
   @NotNull
   public String join(
       @NotNull Collection<E> es,

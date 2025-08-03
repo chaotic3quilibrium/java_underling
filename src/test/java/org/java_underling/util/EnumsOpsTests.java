@@ -39,7 +39,7 @@ public class EnumsOpsTests {
     }
 
     public static Optional<TrafficLightBased> valueOfIgnoreCase(String search) {
-      return ENUM_OPS.valueOfIgnoreCase(search);
+      return ENUM_OPS.valueOf(search);
     }
 
     public static String join() {
@@ -214,27 +214,27 @@ public class EnumsOpsTests {
   //As it is fairly difficult, decided to forgo testing of forEach and forEachOrdered, as both are forward to java.util.Stream's methods
 
   @Test
-  public void testValueOfIgnoreCaseThroughOps() {
+  public void testValueOfThroughOps() {
     assertEquals(TrafficLightBased.YELLOW,
-        TrafficLightBased.ops().valueOfIgnoreCaseDefaultToFirstListed("yElLoW"));
+        TrafficLightBased.ops().valueOfOrDefaultToFirst("yElLoW"));
     assertEquals(TrafficLightBased.GREEN,
-        TrafficLightBased.ops().valueOfIgnoreCaseDefaultToFirstListed("yElLoWx"));
+        TrafficLightBased.ops().valueOfOrDefaultToFirst("yElLoWx"));
     assertEquals(TrafficLightBased.YELLOW,
-        TrafficLightBased.ops().valueOfIgnoreCase("yElLoW", TrafficLightBased.RED));
+        TrafficLightBased.ops().valueOf("yElLoW", TrafficLightBased.RED));
     assertEquals(TrafficLightBased.RED,
         TrafficLightBased.ops()
-            .valueOfIgnoreCase("yElLoWx", TrafficLightBased.RED));
+            .valueOf("yElLoWx", TrafficLightBased.RED));
     assertEquals(Optional.of(TrafficLightBased.YELLOW),
-        TrafficLightBased.ops().valueOfIgnoreCase("yElLoW"));
+        TrafficLightBased.ops().valueOf("yElLoW"));
     assertEquals(Optional.empty(),
-        TrafficLightBased.ops().valueOfIgnoreCase("yElLoWx"));
+        TrafficLightBased.ops().valueOf("yElLoWx"));
     var voo1 = TrafficLightBased.ops().valueOf("yElLoW");
     assertTrue(voo1.isPresent());
     assertEquals(TrafficLightBased.YELLOW, voo1.get());
   }
 
   @Test
-  public void testValueOfIgnoreCaseDirectly() {
+  public void testValueOfDirectly() {
     assertEquals(Optional.of(TrafficLightBased.YELLOW),
         TrafficLightBased.valueOfIgnoreCase("yElLoW"));
     assertEquals(Optional.empty(),
@@ -242,11 +242,11 @@ public class EnumsOpsTests {
   }
 
   @Test
-  public void testInstanceValueOfIgnoreCase() {
+  public void testInstanceValueOf() {
     assertEquals(Optional.of(TrafficLight.SYELLOW),
-        ENUMS_OPS_TRAFFIC_LIGHT.valueOfIgnoreCase("SyElLoW"));
+        ENUMS_OPS_TRAFFIC_LIGHT.valueOf("SyElLoW"));
     assertEquals(Optional.empty(),
-        ENUMS_OPS_TRAFFIC_LIGHT.valueOfIgnoreCase("SyElLoWx"));
+        ENUMS_OPS_TRAFFIC_LIGHT.valueOf("SyElLoWx"));
   }
 
   @Test
