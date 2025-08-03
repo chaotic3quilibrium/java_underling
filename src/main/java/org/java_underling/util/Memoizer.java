@@ -19,8 +19,8 @@ import java.util.function.Supplier;
  * <p>
  * -
  * <p>
- * A {@link Memoizer} is a utility class that caches the resulting value of (expensively?) computing a function taking a
- * single argument.
+ * A {@link Memoizer} is a thread-safe utility class that caches the resulting value of (expensively?) computing a
+ * function taking a single argument.
  * <p>
  * By storing the result (the value) of a call to the defining function for a particular input value (the key), all
  * subsequent calls with the same input value (i.e. key) return the previously computed (cached) value as opposed to

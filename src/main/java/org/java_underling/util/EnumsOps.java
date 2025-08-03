@@ -11,7 +11,23 @@ import java.util.stream.Stream;
 
 import static java.util.Map.entry;
 
-//TODO: fill out javadoc, including all methods
+/**
+ * An {@link EnumsOps} is a thread-safe immutable non-{@code null} utility class that produces a system-wide singleton
+ * for augmenting the {@link Enum}'s mutable {@code values()} array by wrapping it in an unmodifiable {@link List}.
+ * <p>
+ * It also produces an internal cache for enabling a fast O(1) case-insensitive name search for a specific {@link Enum}
+ * value (as opposed to the slower O(n) common pattern scanning through the mutable {@code values()} array).
+ * <p>
+ * The {@link EnumsOps} class may be added as a property directly to a newly defined {@link Enum}. And/or, it can be
+ * used to wrap a pre-existing {@link Enum} which is unable to be directly enhanced/modified (for example, it is part of
+ * a vendor SDK).
+ * <p>
+ * Both methods provide all the same functionality, augmentation, and enhancement. And because it is a system-wide
+ * singleton, implementing both will result in the exact same instance being returned for both regardless of context.
+ * <p>
+ *
+ * @param <E> type of the {@link Enum}
+ */
 public final class EnumsOps<E extends Enum<E>> {
 
   public static final String DEFAULT_SEPARATOR = ", ";
@@ -334,7 +350,6 @@ public final class EnumsOps<E extends Enum<E>> {
   ) {
     return join(es, Enum::name, separator);
   }
-
 
   /**
    * Returns a new {@code String} composed of copies of the provided {@code Enum}s transformed by the {@code eToString}
