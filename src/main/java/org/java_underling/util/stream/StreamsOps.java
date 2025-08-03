@@ -10,14 +10,11 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * Source URL: <a href="https://gist.github.com/chaotic3quilibrium/a7eabd217ee93071ca50822298e3de6f">
- * https://gist.github.com/chaotic3quilibrium/a7eabd217ee93071ca50822298e3de6f</a>
+ * Utility class providing static methods to create {@link Stream} instances from various types of <i>iterable</i>
+ * sources.
  * <p>
- * -
- * <p>
- * File: org.public_domain.java.utils.StreamUtils.java
- * <p>
- * Utility class providing methods to create {@link Stream} instances from various iterable sources.
+ * And to facilitate easier creation of unmodifiable non-{@code null} {@link List}s, and unmodifiable <i>ordered</i>
+ * non-{@code null} {@link Set}s and {@link Map}s.
  */
 public final class StreamsOps {
 
