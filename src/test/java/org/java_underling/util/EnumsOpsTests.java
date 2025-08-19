@@ -264,17 +264,17 @@ public class EnumsOpsTests {
         TrafficLightBased
             .ops()
             .join(
-                TrafficLightBased -> "%s(%d)".formatted(
-                    TrafficLightBased.toString(),
-                    TrafficLightBased.ordinal())));
+                trafficLightBased -> "%s(%d)".formatted(
+                    trafficLightBased.toString(),
+                    trafficLightBased.ordinal())));
     assertEquals(
         "GREEN(0),YELLOW(1),RED(2)",
         TrafficLightBased
             .ops()
             .join(
-                TrafficLightBased -> "%s(%d)".formatted(
-                    TrafficLightBased.toString(),
-                    TrafficLightBased.ordinal()),
+                trafficLightBased -> "%s(%d)".formatted(
+                    trafficLightBased.toString(),
+                    trafficLightBased.ordinal()),
                 ","));
     assertEquals(
         "GREEN, RED",
@@ -284,8 +284,8 @@ public class EnumsOpsTests {
                 TrafficLightBased
                     .ops()
                     .stream()
-                    .filter(TrafficLightBased ->
-                        TrafficLightBased.toString().contains("R"))
+                    .filter(trafficLightBased ->
+                        trafficLightBased.toString().contains("R"))
                     .toList()));
     assertEquals(
         "GREEN(0), RED(2)",
@@ -295,12 +295,12 @@ public class EnumsOpsTests {
                 TrafficLightBased
                     .ops()
                     .stream()
-                    .filter(TrafficLightBased ->
-                        TrafficLightBased.toString().contains("R"))
+                    .filter(trafficLightBased ->
+                        trafficLightBased.toString().contains("R"))
                     .toList(),
-                TrafficLightBased -> "%s(%d)".formatted(
-                    TrafficLightBased.toString(),
-                    TrafficLightBased.ordinal())));
+                trafficLightBased -> "%s(%d)".formatted(
+                    trafficLightBased.toString(),
+                    trafficLightBased.ordinal())));
     assertEquals(
         "GREEN,RED",
         TrafficLightBased
@@ -309,8 +309,8 @@ public class EnumsOpsTests {
                 TrafficLightBased
                     .ops()
                     .stream()
-                    .filter(TrafficLightBased ->
-                        TrafficLightBased.toString().contains("R"))
+                    .filter(trafficLightBased ->
+                        trafficLightBased.toString().contains("R"))
                     .toList(),
                 ","));
     assertEquals(
@@ -321,12 +321,12 @@ public class EnumsOpsTests {
                 TrafficLightBased
                     .ops()
                     .stream()
-                    .filter(TrafficLightBased ->
-                        TrafficLightBased.toString().contains("R"))
+                    .filter(trafficLightBased ->
+                        trafficLightBased.toString().contains("R"))
                     .toList(),
-                TrafficLightBased -> "%s(%d)".formatted(
-                    TrafficLightBased.toString(),
-                    TrafficLightBased.ordinal()),
+                trafficLightBased -> "%s(%d)".formatted(
+                    trafficLightBased.toString(),
+                    trafficLightBased.ordinal()),
                 ","));
   }
 
@@ -343,8 +343,8 @@ public class EnumsOpsTests {
                 TrafficLightBased
                     .ops()
                     .stream()
-                    .filter(TrafficLightBased ->
-                        TrafficLightBased.toString().contains("R"))
+                    .filter(trafficLightBased ->
+                        trafficLightBased.toString().contains("R"))
                     .toList()));
   }
 }

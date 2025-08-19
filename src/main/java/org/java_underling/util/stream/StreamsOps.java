@@ -4,10 +4,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static java.util.Map.entry;
 
 /**
  * Utility class providing static methods to create {@link Stream} instances from various types of <i>iterable</i>
@@ -87,6 +90,32 @@ public final class StreamsOps {
   ) {
     return StreamSupport.stream(iterable.spliterator(), isParallel);
   }
+
+  @NotNull
+  public static <L, R> Stream<Entry<L, R>> zip(
+      @NotNull Stream<L> streamLs,
+      @NotNull Stream<R> streamRs
+  ) {
+    Iterator<R> iteratorRs = streamRs.iterator();
+
+    return streamLs
+        .filter(l ->
+            iteratorRs.hasNext())
+        .map(l ->
+            entry(l, iteratorRs.next()));
+  }
+
+  @NotNull
+  public static <T> Stream<Entry<T, Integer>> zipWithIndex(
+      @NotNull Stream<T> streamTs
+  ) {
+    var atomicInteger = new AtomicInteger(0);
+
+    return streamTs
+        .map(t ->
+            entry(t, atomicInteger.getAndIncrement()));
+  }
+
 
   /**
    * Returns an unmodifiable list with the null elements filtered out.
@@ -168,7 +197,7 @@ public final class StreamsOps {
       @NotNull Stream<Entry<K, V>> kAndVs
   ) {
     return toMapOrderedUnmodifiable(kAndVs.filter(t ->
-        !Objects.isNull(t)));
+        !Objects.isNull(t) && (!Objects.isNull(t.getKey()) && !Objects.isNull(t.getValue()))));
   }
 
   /**
