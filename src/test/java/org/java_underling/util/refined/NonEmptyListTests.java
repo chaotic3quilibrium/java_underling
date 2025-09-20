@@ -1,21 +1,33 @@
 package org.java_underling.util.refined;
 
-import org.java_underling.lang.MissingImplementationException;
+import org.java_underling.lang.ParametersValidationException;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NonEmptyListTests {
   @Test
   public void testDefaultConstructor() {
-    throw new MissingImplementationException();
+    assertEquals(List.of(1), new NonEmptyList<>(List.of(1)).list());
+    assertThrows(
+        ParametersValidationException.class,
+        () ->
+            new NonEmptyList<>(List.of()));
   }
 
   @Test
   public void testValidate() {
-    throw new MissingImplementationException();
+    assertTrue(NonEmptyList.validate(List.of(1)).isEmpty());
+    assertTrue(NonEmptyList.validate(List.of()).isPresent());
   }
 
   @Test
   public void testFrom() {
-    throw new MissingImplementationException();
+    var errorOrValue = NonEmptyList.from(List.of(1));
+    assertTrue(errorOrValue.isRight());
+    assertEquals(List.of(1), errorOrValue.getRight().list());
+    assertTrue(NonEmptyList.from(List.of()).isLeft());
   }
 }

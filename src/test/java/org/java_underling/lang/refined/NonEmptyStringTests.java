@@ -1,26 +1,44 @@
 package org.java_underling.lang.refined;
 
-import org.java_underling.lang.MissingImplementationException;
+import org.java_underling.lang.ParametersValidationException;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NonEmptyStringTests {
   @Test
   public void testDefaultConstructor() {
-    throw new MissingImplementationException();
+    assertEquals("x", new NonEmptyString("x").string());
+    assertThrows(
+        ParametersValidationException.class,
+        () ->
+            new NonEmptyString(""));
   }
 
   @Test
   public void testValidate() {
-    throw new MissingImplementationException();
+    assertTrue(NonEmptyString.validate("x").isEmpty());
+    assertTrue(NonEmptyString.validate("").isPresent());
   }
 
   @Test
   public void testFrom() {
-    throw new MissingImplementationException();
+    var errorOrValue = NonEmptyString.from("x");
+    assertTrue(errorOrValue.isRight());
+    assertEquals("x", errorOrValue.getRight().string());
+    assertTrue(NonEmptyString.from("").isLeft());
   }
 
   @Test
   public void testCompareTo() {
-    throw new MissingImplementationException();
+    var NonEmptyStringA1 = new NonEmptyString("a");
+    var NonEmptyStringA2 = new NonEmptyString("a");
+    var NonEmptyStringB = new NonEmptyString("b");
+    //noinspection EqualsWithItself
+    assertEquals(0, NonEmptyStringA1.compareTo(NonEmptyStringA1));
+    assertEquals(0, NonEmptyStringA1.compareTo(NonEmptyStringA2));
+    assertEquals(0, NonEmptyStringA2.compareTo(NonEmptyStringA1));
+    assertEquals(-1, NonEmptyStringA2.compareTo(NonEmptyStringB));
+    assertEquals(1, NonEmptyStringB.compareTo(NonEmptyStringA1));
   }
 }
