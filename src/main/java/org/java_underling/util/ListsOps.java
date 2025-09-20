@@ -43,7 +43,7 @@ public class ListsOps {
    * @return an unmodifiable list with the {@code value} appended
    */
   @NotNull
-  public static <T> List<T> append(
+  public static <T> List<T> appendItem(
       @NotNull List<T> list,
       @NotNull T value
   ) {
@@ -68,7 +68,7 @@ public class ListsOps {
   @SuppressWarnings("ConstantValue")
   @NotNull
   @SafeVarargs
-  public static <T> List<T> append(@NotNull List<T>... lists) {
+  public static <T> List<T> appendLists(@NotNull List<T>... lists) {
     if (lists.length > 0) {
       var result = new ArrayList<T>();
       IntStream.range(0, lists.length)
