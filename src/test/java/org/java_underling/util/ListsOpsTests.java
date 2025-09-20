@@ -14,15 +14,15 @@ public class ListsOpsTests {
     assertNotNull(listEmptyNull);
     assertTrue(listEmptyNull.isEmpty());
     assertTrue(CollectionsOps.isUnmodifiable(listEmptyNull));
-    var listEmptySetOf = ListsOps.nullToEmpty(List.of());
-    assertNotNull(listEmptySetOf);
-    assertTrue(listEmptySetOf.isEmpty());
-    assertTrue(CollectionsOps.isUnmodifiable(listEmptySetOf));
-    var listEmptySetOf1 = ListsOps.nullToEmpty(List.of(1));
-    assertNotNull(listEmptySetOf1);
-    assertFalse(listEmptySetOf1.isEmpty());
-    assertTrue(CollectionsOps.isUnmodifiable(listEmptySetOf1));
-    assertEquals(List.of(1), listEmptySetOf1);
+    var listEmptyListOf = ListsOps.nullToEmpty(List.of());
+    assertNotNull(listEmptyListOf);
+    assertTrue(listEmptyListOf.isEmpty());
+    assertTrue(CollectionsOps.isUnmodifiable(listEmptyListOf));
+    var listEmptyListOf1 = ListsOps.nullToEmpty(List.of(1));
+    assertNotNull(listEmptyListOf1);
+    assertFalse(listEmptyListOf1.isEmpty());
+    assertTrue(CollectionsOps.isUnmodifiable(listEmptyListOf1));
+    assertEquals(List.of(1), listEmptyListOf1);
   }
 
   @Test
@@ -33,10 +33,12 @@ public class ListsOpsTests {
     var listB = ListsOps.appendItem(listA, 3);
     assertTrue(CollectionsOps.isUnmodifiable(listB));
     assertEquals(List.of(1, 2, 3), listB);
+    var listC = ListsOps.appendItem(List.of(), 10);
+    assertEquals(List.of(10), listC);
   }
 
   @Test
-  public void testAppendSets() {
+  public void testAppendLists() {
     var listAppendA = ListsOps.appendLists(List.of(1), List.of(2, 3), List.of(4));
     assertTrue(CollectionsOps.isUnmodifiable(listAppendA));
     assertEquals(List.of(1, 2, 3, 4), listAppendA);
@@ -46,6 +48,11 @@ public class ListsOpsTests {
     var listAppendB = ListsOps.appendLists(listAppendA, List.of(4, 5, 6), listContainingNull);
     assertTrue(CollectionsOps.isUnmodifiable(listAppendB));
     assertEquals(List.of(1, 2, 3, 4, 4, 5, 6, 7), listAppendB);
+    var listAppendC = ListsOps.appendLists(List.of(), null, List.of());
+    assertEquals(List.of(), listAppendC);
+    var a = new List[]{};
+    var listAppendD = ListsOps.appendLists(a);
+    assertEquals(List.of(), listAppendD);
   }
 
   @Test

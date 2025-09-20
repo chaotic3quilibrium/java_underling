@@ -6,18 +6,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.Serial;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * {@code ParametersValidationException} is an <em>unchecked exception</em> final class designed to
- * collect a set of failed validations during the construction of a class or record.
+ * {@code ParametersValidationException} is an <em>unchecked exception</em> final class designed to collect a set of
+ * failed validations during the construction of a class or record.
  * <p>
- * It's intended to facilitate the "validated record instance" pattern that implements the principle
- * of only allowing the creation of instances with a valid state.
+ * It's intended to facilitate the "validated record instance" pattern that implements the principle of only allowing
+ * the creation of instances with a valid state.
  */
 public final class ParametersValidationException extends RuntimeException {
-  @SuppressWarnings("SerialVersionUIDWithWrongSignature")
   @Serial
-  static final long serialVersionUID = -9038356209898408524L;
+  private static final long serialVersionUID = -2463403636851524272L;
 
   public static final String DEFAULT_MESSAGE = "Parameters validation failed";
 
@@ -133,5 +133,17 @@ public final class ParametersValidationException extends RuntimeException {
   @NotNull
   public List<String> getParametersValidationFailureMessages() {
     return this.parametersValidationFailureMessages;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    return ((this == object) ||
+        ((object instanceof ParametersValidationException that) &&
+            Objects.equals(this.parametersValidationFailureMessages, that.parametersValidationFailureMessages)));
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(this.parametersValidationFailureMessages);
   }
 }

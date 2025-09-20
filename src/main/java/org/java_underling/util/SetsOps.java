@@ -120,11 +120,13 @@ public class SetsOps {
   }
 
   /**
-   * Returns an unmodifiable <i>ordered</i> set consisting of each set (filtered to non-null) from sets added together
+   * Returns an unmodifiable <i>ordered</i> set consisting of each set (filtered to non-null) from sets appended
+   * together.
    *
    * @param sets the (assumed to be) <i>ordered</i> sets to append
    * @param <T>  the type of instances contained in all the sets
-   * @return an unmodifiable <i>ordered</i> set consisting of each set (filtered to non-null) from sets added together
+   * @return an unmodifiable <i>ordered</i> set consisting of each set (filtered to non-null) from sets appended
+   *     together
    */
   @SuppressWarnings("ConstantValue")
   @NotNull

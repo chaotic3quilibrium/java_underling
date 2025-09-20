@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 /**
  * Utility class providing static methods to create and work with {@link Integer} instances.
  */
-public class IntegerOps {
+public class IntegersOps {
 
   public static int[] findSetBitIndices(int bits) {
     if (bits == 0) {

@@ -1,5 +1,6 @@
 package org.java_underling.util;
 
+import org.java_underling.lang.MissingImplementationException;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -22,4 +23,33 @@ public class CollectionsOpsTests {
     assertFalse(CollectionsOps.isUnmodifiable(new HashMap<>()));
   }
 
+  @Test
+  public void testDefensiveCopyToListUnmodifiableNonNulls() {
+    throw new MissingImplementationException();
+  }
+
+  @Test
+  public void testDefensiveCopyToSetUnmodifiableNonNulls() {
+    throw new MissingImplementationException();
+  }
+
+  @Test
+  public void testDefensiveCopyToSetOrderedUnmodifiableNonNulls() {
+    throw new MissingImplementationException();
+  }
+
+  @Test
+  public void testDefensiveCopyToMapUnmodifiableNonNulls() {
+    throw new MissingImplementationException();
+  }
+
+  @Test
+  public void testDefensiveCopyToMapOrderedUnmodifiableNonNulls() {
+    throw new MissingImplementationException();
+  }
+
+  @Test
+  public void testToDistinctSortedArrayInt() {
+    throw new MissingImplementationException("x2");
+  }
 }

@@ -1,5 +1,6 @@
 package org.java_underling.util.stream;
 
+import org.java_underling.lang.MissingImplementationException;
 import org.java_underling.util.CollectionsOps;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +30,16 @@ public class StreamsOpsTests {
     assertEquals(fruitsString, String.join(",", fruitsStreamFromIterator.toList()));
     var fruitsStreamFromIteratorParallel = StreamsOps.from(fruits.iterator(), true);
     assertEquals(fruitsString, String.join(",", fruitsStreamFromIteratorParallel.toList()));
+  }
+
+  @Test
+  public void testZip() {
+    throw new MissingImplementationException();
+  }
+
+  @Test
+  public void testZipWithIndex() {
+    throw new MissingImplementationException();
   }
 
   @Test
@@ -65,6 +76,8 @@ public class StreamsOpsTests {
 
   @Test
   public void testToSetOrderedUnmodifiable() {
+    var setEmpty = StreamsOps.toSetOrderedUnmodifiable(Stream.empty());
+    assertEquals(Set.of(), setEmpty);
     var expectedSetOrdered = new LinkedHashSet<>(Stream.of(null, 3, 2, 1).toList());
     var nullContainingSetOrdered = new LinkedHashSet<>(Stream.of(null, 3, null, 2, null, 1, null).toList());
     assertEquals(4, nullContainingSetOrdered.size());
@@ -77,21 +90,11 @@ public class StreamsOpsTests {
 
   @Test
   public void testToMapOrderedUnmodifiableNonNulls() {
-    //TODO: fill in
+    throw new MissingImplementationException();
   }
 
   @Test
   public void testToMapOrderedUnmodifiable() {
-    //TODO: fill in
-  }
-
-  @Test
-  public void testToMapOrderedUnmodifiableNonNullsFlatMap() {
-    //TODO: fill in
-  }
-
-  @Test
-  public void testToMapOrderedUnmodifiableFlatMap() {
-    //TODO: fill in
+    throw new MissingImplementationException();
   }
 }

@@ -15,13 +15,14 @@ import java.util.stream.Stream;
  * {@link Stream} operations.
  */
 public final class WrappedCheckedException extends RuntimeException {
-  @SuppressWarnings("SerialVersionUIDWithWrongSignature")
   @Serial
-  static final long serialVersionUID = 596085657495556565L;
+  private static final long serialVersionUID = -7411859319326389055L;
 
   /**
-   * Returns a new runtime exception with the specified detail message and cause.  <p>Note that the detail message
-   * associated with {@code cause} is <i>not</i> automatically incorporated in this runtime exception's detail message.
+   * Returns a new runtime exception with the specified detail message and cause.
+   * <p>
+   * <b>Note:</b> The detail message associated with {@code cause} is <i>not</i> automatically incorporated in this
+   * runtime exception's detail message.
    *
    * @param message the detail message (which is saved for later retrieval by the {@link #getMessage()} method).
    * @param cause   the cause (which is saved for later retrieval by the {@link #getCause()} method).  (A {@code null}
@@ -54,8 +55,8 @@ public final class WrappedCheckedException extends RuntimeException {
    *
    * @param message            the detail message.
    * @param cause              the cause.  (A {@code null} value is <i>not</i> permitted.)
-   * @param enableSuppression  whether or not suppression is enabled or disabled
-   * @param writableStackTrace whether or not the stack trace should be writable
+   * @param enableSuppression  whether suppression is enabled or disabled
+   * @param writableStackTrace whether the stack trace should be writable
    */
   public WrappedCheckedException(
       @NotNull String message,
