@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.function.Function;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 //TODO: fill out javadoc
@@ -172,7 +172,7 @@ public final class CollectionsOps {
   public static int[] toDistinctSortedArrayInt(
       @NotNull Collection<Integer> integers
   ) {
-    return toDistinctSortedArrayInt(integers, Function.identity());
+    return toDistinctSortedArrayInt(integers, Integer::intValue);
   }
 
   /**
@@ -187,18 +187,17 @@ public final class CollectionsOps {
    */
   public static <T> int[] toDistinctSortedArrayInt(
       @NotNull Collection<T> ts,
-      @NotNull Function<T, Integer> fTToId
+      @NotNull ToIntFunction<T> fTToId
   ) {
     return !ts.isEmpty()
         //@formatter:off
         ? ts
-        .stream()
-        .map(fTToId)
-        .distinct()
-        .sorted(Comparator.comparingInt(Integer::valueOf))
-        .mapToInt(Integer::intValue)
-        .toArray()
-        : ArraysOps.EMTPY_INT_ARRAY;
+            .stream()
+            .mapToInt(fTToId)
+            .distinct()
+            .sorted()
+            .toArray()
+        : ArraysOps.EMPTY_INT_ARRAY;
     //@formatter:on
   }
 }

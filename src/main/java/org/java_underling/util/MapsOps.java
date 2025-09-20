@@ -3,13 +3,11 @@ package org.java_underling.util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+//TODO: fill out javadoc
 public class MapsOps {
 
   private MapsOps() {
@@ -31,6 +29,21 @@ public class MapsOps {
         : Map.of();
   }
 
+  public static <K, V> Optional<String> containsNulls(
+      @NotNull Entry<K, V> entry
+  ) {
+    return (entry.getKey() == null) || (entry.getValue() == null)
+        //@formatter:off
+        ? Optional.of(
+            (entry.getKey() == null) && (entry.getValue() == null)
+                ? "entry.getKey() and entry.getValue() are null"
+                : entry.getKey() == null
+                    ? "entry.getKey() is null"
+                    : "entry.getValue() is null")
+        : Optional.empty();
+        //@formatter:on
+  }
+
   /**
    * Return a new {@link Map} from an existing {@code map}, adding/updating an {@link Entry}.
    *
@@ -39,12 +52,18 @@ public class MapsOps {
    * @param <K>   the type of the keys contained in the {@code map}
    * @param <V>   the type of the values contained in the {@code map}
    * @return a new {@link Map} from an existing {@code map}, adding/updating an {@link Entry}
+   * @throws NullPointerException if the provided {@link Entry} contains {@code null} in either its key or value.
    */
   @NotNull
   public static <K, V> Map<K, V> add(
       @NotNull Map<K, V> map,
       @NotNull Entry<K, V> entry
   ) {
+    containsNulls(entry)
+        .ifPresent(message -> {
+          throw new NullPointerException(message);
+        });
+
     return add(map, entry.getKey(), entry.getValue());
   }
 
@@ -87,48 +106,23 @@ public class MapsOps {
    * @param <K> the type of the key instances
    * @param <V> the type of the value instances
    * @return an unmodifiable unordered map where the keys and values have been swapped
+   * @throws NullPointerException if an {@link Entry} contains {@code null} in either its key or value.
    */
   @NotNull
   public static <K, V> Map<V, K> swap(
       @NotNull Map<K, V> map
   ) {
-    return swap(map, false, false);
-  }
-
-  /**
-   * Returns an unmodifiable unordered map where the keys and values have been swapped.
-   * <p>
-   * ---
-   * <p>
-   * Swaps a Map where, for each entry, the value becomes the key, and the key becomes the value. In the event the
-   * values in the supplied Map are not unique, i.e. there is more than one key with the same value (according to
-   * {@link Object#equals}), it is undefined which unique key is retained as a value, and which other keys are silently
-   * dropped.
-   *
-   * @param map                   the map in which every entry will swap the key and value
-   * @param isRetainingNullsKey   when true, allows the use of a {@code null} key, otherwise filters out the
-   *                              {@link Entry}
-   * @param isRetainingNullsValue when true, allows the use of a {@code null} value, otherwise filters out the
-   *                              {@link Entry}
-   * @param <K>                   the type of the key instances
-   * @param <V>                   the type of the value instances
-   * @return an unmodifiable unordered map where the keys and values have been swapped
-   */
-  @NotNull
-  public static <K, V> Map<V, K> swap(
-      @NotNull Map<K, V> map,
-      boolean isRetainingNullsKey,
-      boolean isRetainingNullsValue
-  ) {
     return !map.isEmpty()
         //@formatter:off
         ? Collections.unmodifiableMap(map
-        .entrySet()
-        .stream()
-        .filter(entry ->
-            (isRetainingNullsKey || (entry.getKey() != null)) &&
-                (isRetainingNullsValue || (entry.getValue() != null)))
-        .collect(Collectors.toMap(Entry::getValue, Entry::getKey)))
+            .entrySet()
+            .stream()
+            .peek(entry ->
+                containsNulls(entry)
+                    .ifPresent(message -> {
+                      throw new NullPointerException(message);
+                    }))
+            .collect(Collectors.toMap(Entry::getValue, Entry::getKey)))
         : Map.of();
     //@formatter:on
   }
@@ -147,52 +141,24 @@ public class MapsOps {
    * @param <K> the type of the key instances
    * @param <V> the type of the value instances
    * @return an unmodifiable unordered map where the keys and values have been swapped
+   * @throws NullPointerException if an {@link Entry} contains {@code null} in either its key or value.
    */
   @NotNull
   public static <K, V> Map<V, K> swapOrdered(
       @NotNull Map<K, V> map
   ) {
-    return swapOrdered(map, false, false);
-  }
-
-  /**
-   * Returns an unmodifiable <i>ordered</i> map where the keys and values have been swapped.
-   * <p>
-   * ---
-   * <p>
-   * Swaps a Map where, for each entry, the value becomes the key, and the key becomes the value. In the event the
-   * values in the supplied Map are not unique, i.e. there is more than one key with the same value (according to
-   * {@link Object#equals}), it is undefined which unique key is retained as a value, and which other keys are silently
-   * dropped.
-   *
-   * @param map                   the map in which every entry will swap the key and value
-   * @param isRetainingNullsKey   when true, allows the use of a {@code null} key, otherwise filters out the
-   *                              {@link Entry}
-   * @param isRetainingNullsValue when true, allows the use of a {@code null} value, otherwise filters out the
-   *                              {@link Entry}
-   * @param <K>                   the type of the key instances
-   * @param <V>                   the type of the value instances
-   * @return an unmodifiable unordered map where the keys and values have been swapped
-   */
-  @NotNull
-  public static <K, V> Map<V, K> swapOrdered(
-      @NotNull Map<K, V> map,
-      boolean isRetainingNullsKey,
-      boolean isRetainingNullsValue
-  ) {
     if (!map.isEmpty()) {
       var result = new LinkedHashMap<V, K>();
       //noinspection SimplifyStreamApiCallChains
-      map.keySet()
+      map.entrySet()
           .stream()
           .forEachOrdered(
-              k -> {
-                if (isRetainingNullsKey || (k != null)) {
-                  var v = map.get(k);
-                  if (isRetainingNullsValue || (v != null)) {
-                    result.put(v, k);
-                  }
-                }
+              entry -> {
+                containsNulls(entry)
+                    .ifPresent(message -> {
+                      throw new NullPointerException(message);
+                    });
+                result.put(entry.getValue(), entry.getKey());
               });
 
       return Collections.unmodifiableMap(result);

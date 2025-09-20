@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+//TODO: fill out javadoc
 public class SetsOps {
 
   private SetsOps() {
@@ -76,33 +77,16 @@ public class SetsOps {
   }
 
   /**
-   * An unmodifiable unordered set consisting of each set from sets added together
+   * An unmodifiable unordered set consisting of each set (filtered to non-null) from sets added together
    *
    * @param sets the sets to append
    * @param <T>  the type of instances contained in all the sets
-   * @return an unmodifiable unordered set consisting of each set from sets added together
-   */
-  @NotNull
-  @SafeVarargs
-  public static <T> Set<T> add(
-      @NotNull Set<T>... sets
-  ) {
-    return add(false, sets);
-  }
-
-  /**
-   * An unmodifiable unordered set consisting of each set from sets added together
-   *
-   * @param isRetainingNulls if true, allows elements with a {@code null} value
-   * @param sets             the sets to append
-   * @param <T>              the type of instances contained in all the sets
-   * @return an unmodifiable unordered set consisting of each set from sets added together
+   * @return unmodifiable unordered set consisting of each set (filtered to non-null) from sets added together
    */
   @SuppressWarnings("ConstantValue")
   @NotNull
   @SafeVarargs
   public static <T> Set<T> add(
-      boolean isRetainingNulls,
       @NotNull Set<T>... sets
   ) {
     if (sets.length > 0) {
@@ -111,14 +95,10 @@ public class SetsOps {
           .forEach(index -> {
             var set = sets[index];
             if (set != null) {
-              var resolvedSet = !isRetainingNulls
-                  //@formatter:off
-                  ? set
-                  .stream()
-                  .filter(Objects::nonNull)
-                  .collect(Collectors.toUnmodifiableSet())
-                  : set;
-              //@formatter:on
+              var resolvedSet =
+                  set.stream()
+                      .filter(Objects::nonNull)
+                      .collect(Collectors.toUnmodifiableSet());
               if (!resolvedSet.isEmpty()) {
                 result.addAll(resolvedSet);
               }
@@ -134,33 +114,16 @@ public class SetsOps {
   }
 
   /**
-   * Return an unmodifiable <i>ordered</i> set consisting of each set from sets added together
+   * Return an unmodifiable <i>ordered</i> set consisting of each set (filtered to non-null) from sets added together
    *
    * @param sets the (assumed to be) <i>ordered</i> sets to append
    * @param <T>  the type of instances contained in all the sets
-   * @return an unmodifiable <i>ordered</i> set consisting of each set from sets added together
-   */
-  @NotNull
-  @SafeVarargs
-  public static <T> Set<T> append(
-      @NotNull Set<T>... sets
-  ) {
-    return add(false, sets);
-  }
-
-  /**
-   * Return an unmodifiable <i>ordered</i> set consisting of each set from sets added together
-   *
-   * @param isRetainingNulls if true, allows elements with a {@code null} value
-   * @param sets             the (assumed to be) <i>ordered</i> sets to append
-   * @param <T>              the type of instances contained in all the sets
-   * @return an unmodifiable <i>ordered</i> set consisting of each set from sets added together
+   * @return an unmodifiable <i>ordered</i> set consisting of each set (filtered to non-null) from sets added together
    */
   @SuppressWarnings("ConstantValue")
   @NotNull
   @SafeVarargs
   public static <T> Set<T> append(
-      boolean isRetainingNulls,
       @NotNull Set<T>... sets
   ) {
     if (sets.length > 0) {
@@ -169,23 +132,19 @@ public class SetsOps {
           .forEach(index -> {
             var set = sets[index];
             if (set != null) {
-              var resolvedSet = !isRetainingNulls
-                  ? StreamsOps.toSetOrderedUnmodifiableNonNulls(set.stream())
-                  : set;
+              var resolvedSet = StreamsOps.toSetOrderedUnmodifiableNonNulls(set.stream());
               if (!resolvedSet.isEmpty()) {
                 result.addAll(resolvedSet);
               }
             }
           });
 
-      return !result.isEmpty() || isRetainingNulls
+      return !result.isEmpty()
           ? Collections.unmodifiableSet(result)
           : Set.of();
     }
 
-    return isRetainingNulls
-        ? Collections.unmodifiableSet(new LinkedHashSet<>())
-        : Set.of();
+    return Set.of();
   }
 
   /**

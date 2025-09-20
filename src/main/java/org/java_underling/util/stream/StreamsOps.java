@@ -91,6 +91,17 @@ public final class StreamsOps {
     return StreamSupport.stream(iterable.spliterator(), isParallel);
   }
 
+  /**
+   * Returns a new lazy Stream of Entry where each entry is composed of the next element at the same index in both
+   * streams, terminating with the shorter of the two Streams.
+   *
+   * @param streamLs the source of the left side (key) elements
+   * @param streamRs the source of the right side (value) elements
+   * @param <L>      the type of the left elements in the stream
+   * @param <R>      the type of the right elements in the stream
+   * @return a new lazy Stream of Entry where each entry is composed of the next element at the same index in both
+   *     streams, terminating with the shorter of the two Streams
+   */
   @NotNull
   public static <L, R> Stream<Entry<L, R>> zip(
       @NotNull Stream<L> streamLs,
@@ -105,6 +116,15 @@ public final class StreamsOps {
             entry(l, iteratorRs.next()));
   }
 
+  /**
+   * Return a new lazy Stream of Entry where each entry is composed of the next element, and its associated zero-based
+   * index.
+   *
+   * @param streamTs the source of the elements (keys) with which to associate an zero based index
+   * @param <T>      the type of the elements in the stream
+   * @return a new lazy Stream of Entry where each entry is composed of the next element, and its associated zero-based
+   *     index
+   */
   @NotNull
   public static <T> Stream<Entry<T, Integer>> zipWithIndex(
       @NotNull Stream<T> streamTs
@@ -115,7 +135,6 @@ public final class StreamsOps {
         .map(t ->
             entry(t, atomicInteger.getAndIncrement()));
   }
-
 
   /**
    * Returns an unmodifiable list with the null elements filtered out.
@@ -218,13 +237,15 @@ public final class StreamsOps {
   }
 
   /**
-   * Returns an unmodifiable <i>ordered</i> map with the null entries, key and/or value, filtered out.
+   * Returns an unmodifiable <i>ordered</i> map with the null entries, key and/or value, filtered out, and where any
+   * duplicate key discards the entry.
    *
    * @param ts  the source of the input to create entries
    * @param <T> the type of the source value the entries
    * @param <K> the type of the key in the entries
    * @param <V> the type of the value in the entries
-   * @return an unmodifiable <i>ordered</i> map with the null entries, key or value, filtered out
+   * @return an unmodifiable <i>ordered</i> map with the null entries, key or value, filtered out, and where any
+   *     duplicate key discards the entry
    */
   @NotNull
   public static <T, K, V> Map<K, V> toMapOrderedUnmodifiableNonNulls(
@@ -241,14 +262,14 @@ public final class StreamsOps {
 
   /**
    * Returns an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or
-   * value.
+   * value, and where any duplicate key discards the entry.
    *
    * @param ts  the source of the input to create the entries
    * @param <T> the type of the input value to create the entries
    * @param <K> the type of the key in the created entry
    * @param <V> the type of the value in the created entry
    * @return an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or
-   *     value
+   *     value, and where any duplicate key discards the entry
    */
   @NotNull
   public static <T, K, V> Map<K, V> toMapOrderedUnmodifiable(

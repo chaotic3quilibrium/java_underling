@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
+//TODO: fill out javadoc
 public class ListsOps {
 
   private ListsOps() {
