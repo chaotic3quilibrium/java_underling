@@ -26,7 +26,7 @@ public final class StreamsOps {
   }
 
   /**
-   * Creates a sequential {@link Stream} from a given {@link Iterator}.
+   * Returns a sequential {@link Stream} from a given {@link Iterator}.
    *
    * @param iterator The {@code Iterator} to create the stream from. Must not be {@code null}.
    * @param <T>      The type of elements in the stream.
@@ -41,7 +41,7 @@ public final class StreamsOps {
   }
 
   /**
-   * Creates a {@link Stream} from a given {@link Iterator}, allowing for parallel processing.
+   * Returns a {@link Stream} from a given {@link Iterator}, allowing for parallel processing.
    *
    * @param iterator   The {@code Iterator} to create the stream from. Must not be {@code null}.
    * @param isParallel If {@code true}, the resulting stream will be parallel; otherwise, it will be sequential.
@@ -60,7 +60,7 @@ public final class StreamsOps {
   }
 
   /**
-   * Creates a sequential {@link Stream} from a given {@link Iterable}.
+   * Returns a sequential {@link Stream} from a given {@link Iterable}.
    *
    * @param iterable The {@code Iterable} to create the stream from. Must not be {@code null}.
    * @param <T>      The type of elements in the stream.
@@ -75,7 +75,7 @@ public final class StreamsOps {
   }
 
   /**
-   * Creates a {@link Stream} from a given {@link Iterable}, allowing for parallel processing.
+   * Returns a {@link Stream} from a given {@link Iterable}, allowing for parallel processing.
    *
    * @param iterable   The {@code Iterable} to create the stream from. Must not be {@code null}.
    * @param isParallel If {@code true}, the resulting stream will be parallel; otherwise, it will be sequential.
@@ -117,7 +117,7 @@ public final class StreamsOps {
   }
 
   /**
-   * Return a new lazy Stream of Entry where each entry is composed of the next element, and its associated zero-based
+   * Returns a new lazy Stream of Entry where each entry is composed of the next element, and its associated zero-based
    * index.
    *
    * @param streamTs the source of the elements (keys) with which to associate an zero based index

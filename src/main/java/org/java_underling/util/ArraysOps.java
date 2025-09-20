@@ -1,6 +1,8 @@
 package org.java_underling.util;
 
-//TODO: fill out javadoc
+/**
+ * Utility class providing static methods to create and work with array instances.
+ */
 public class ArraysOps {
 
   private ArraysOps() {

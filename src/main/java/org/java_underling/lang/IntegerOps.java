@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-//TODO: add javadocs
+/**
+ * Utility class providing static methods to create and work with {@link Integer} instances.
+ */
 public class IntegerOps {
 
   public static int[] findSetBitIndices(int bits) {

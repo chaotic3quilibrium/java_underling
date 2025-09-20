@@ -1,5 +1,6 @@
 package org.java_underling.util;
 
+import org.java_underling.util.refined.NonEmptySet;
 import org.java_underling.util.stream.StreamsOps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +10,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-//TODO: fill out javadoc
+/**
+ * Utility class providing static methods to create {@link Set} instances.
+ */
 public class SetsOps {
 
   private SetsOps() {
@@ -17,11 +20,14 @@ public class SetsOps {
   }
 
   /**
-   * Returns an empty set using {@link Set#of}, if {@code ts} is {@code null}, otherwise returns {@code ts}.
+   * Returns an empty {@link Set} using {@link Set#of}, if {@code ts} is {@code null}, otherwise returns {@code ts}.
+   * <p>
+   * Note: If the requirement is to both avoid a {@code null} value, and an empty {@link Set}, the refined class of
+   * {@link NonEmptySet} enable <i>compile-time enforcement</i> of said contract requirements.
    *
-   * @param ts  the set to reify to make null safe
+   * @param ts  possibly {@code null} {@link Set} to reify to make {@code null} safe
    * @param <T> the type of instances contained in the {@link Set}
-   * @return an empty set using {@link Set#of}, if {@code ts} is {@code null}, otherwise returns {@code ts}
+   * @return an empty {@link Set} using {@link Set#of}, if {@code ts} is {@code null}, otherwise returns {@code ts}
    */
   @NotNull
   public static <T> Set<T> nullToEmpty(@Nullable Set<T> ts) {
@@ -77,7 +83,7 @@ public class SetsOps {
   }
 
   /**
-   * An unmodifiable unordered set consisting of each set (filtered to non-null) from sets added together
+   * Returns an unmodifiable unordered set consisting of each set (filtered to non-null) from sets added together.
    *
    * @param sets the sets to append
    * @param <T>  the type of instances contained in all the sets
@@ -114,7 +120,7 @@ public class SetsOps {
   }
 
   /**
-   * Return an unmodifiable <i>ordered</i> set consisting of each set (filtered to non-null) from sets added together
+   * Returns an unmodifiable <i>ordered</i> set consisting of each set (filtered to non-null) from sets added together
    *
    * @param sets the (assumed to be) <i>ordered</i> sets to append
    * @param <T>  the type of instances contained in all the sets
@@ -273,7 +279,7 @@ public class SetsOps {
   private static final int CONTRAST_SET_PAIR_INDEX_RIGHT_DIFFERENCE = 4;
 
   /**
-   * Return an unmodifiable {@link Map} of the contrast between two {@link Set}s, where for each key of type
+   * Returns an unmodifiable {@link Map} of the contrast between two {@link Set}s, where for each key of type
    * {@link SetPairViewKey}, the value associated is an unmodifiable {@link Set} (which includes defensively copying the
    * two {@link Set}s) contains the relevant elements of type {@code T} based on the comparison described by said
    * {@link SetPairViewKey}.
@@ -376,7 +382,7 @@ public class SetsOps {
           SetPairViewKey.RIGHT_DIFFERENCE, rightTsDefensiveCopy,
           SetPairViewKey.DIFFERENCE, rightTsDefensiveCopy);
     }
-    //leftTs.isEmpty() is false, and rightTs.isEmpty() is false
+    //leftTs.isEmpty() is true, and rightTs.isEmpty() is true
 
     return Map.of(
         SetPairViewKey.UNION, Set.of(),

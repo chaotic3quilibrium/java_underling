@@ -76,7 +76,7 @@ public final class Either<L, R> {
   }
 
   /**
-   * The right side of a disjoint union, as opposed to the left side.
+   * Returns the right side of a disjoint union, as opposed to the left side.
    *
    * @param value instance of type R to be contained
    * @param <L>   the type of the left value to be contained
@@ -90,7 +90,7 @@ public final class Either<L, R> {
   }
 
   /**
-   * The left side of a disjoint union, as opposed to the right side.
+   * Returns the left side of a disjoint union, as opposed to the right side.
    *
    * @param value instance of type L to be contained
    * @param <L>   the type of the left value to be contained

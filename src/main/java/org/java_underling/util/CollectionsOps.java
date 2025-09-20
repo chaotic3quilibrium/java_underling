@@ -9,7 +9,9 @@ import java.util.Map.Entry;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
-//TODO: fill out javadoc
+/**
+ * Utility class providing static methods to create and work with {@link Collection} instances.
+ */
 public final class CollectionsOps {
 
   private CollectionsOps() {
@@ -164,7 +166,7 @@ public final class CollectionsOps {
   }
 
   /**
-   * Return a new {@code int} array from a collection of {@link Integer}s.
+   * Returns a new {@code int} array from a collection of {@link Integer}s.
    *
    * @param integers the source of the derived {@code int} values
    * @return a new {@code int} array from a collection of {@link Integer}s
@@ -176,7 +178,7 @@ public final class CollectionsOps {
   }
 
   /**
-   * Return a new {@code int} array from a collection of {@code ts} deriving the {@code int} value via the function
+   * Returns a new {@code int} array from a collection of {@code ts} deriving the {@code int} value via the function
    * {@code fTToId}.
    *
    * @param ts     the source of the derived {@code int} values
@@ -198,6 +200,6 @@ public final class CollectionsOps {
             .sorted()
             .toArray()
         : ArraysOps.EMPTY_INT_ARRAY;
-    //@formatter:on
+        //@formatter:on
   }
 }

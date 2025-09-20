@@ -1,5 +1,6 @@
 package org.java_underling.util;
 
+import org.java_underling.util.refined.NonEmptyList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -7,7 +8,9 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
-//TODO: fill out javadoc
+/**
+ * Utility class providing static methods to create {@link List} instances.
+ */
 public class ListsOps {
 
   private ListsOps() {
@@ -15,11 +18,14 @@ public class ListsOps {
   }
 
   /**
-   * Returns an empty list using {@link List#of}, if {@code ts} is {@code null}, otherwise returns {@code ts}.
+   * Returns an empty {@link List} using {@link List#of}, if {@code ts} is {@code null}, otherwise returns {@code ts}.
+   * <p>
+   * Note: If the requirement is to both avoid a {@code null} value, and an empty {@link List}, the refined class of
+   * {@link NonEmptyList} enable <i>compile-time enforcement</i> of said contract requirements.
    *
-   * @param ts  the list to reify to make null safe
+   * @param ts  possibly {@code null} {@link List} to reify to make {@code null} safe
    * @param <T> the type of instances contained in the {@link List}
-   * @return an empty list using {@link List#of}, if {@code ts} is {@code null}, otherwise returns {@code ts}
+   * @return an empty {@link List} using {@link List#of}, if {@code ts} is {@code null}, otherwise returns {@code ts}
    */
   @NotNull
   public static <T> List<T> nullToEmpty(@Nullable List<T> ts) {
@@ -52,7 +58,8 @@ public class ListsOps {
   }
 
   /**
-   * An unmodifiable list consisting of each list (filtered to non-null) from lists appended in iteration order.
+   * Returns an unmodifiable list consisting of each list (filtered to non-null) from lists appended in iteration
+   * order.
    *
    * @param lists the lists to append
    * @param <T>   the type of instances contained within all the lists
@@ -87,7 +94,7 @@ public class ListsOps {
   }
 
   /**
-   * Return a new {@link List} from a collection of {@code integers}.
+   * Returns a new {@link List} from a collection of {@code integers}.
    *
    * @param integers the source of the derived {@link Integer} values
    * @return a new {@link List} from a collection of {@code integers}
@@ -100,7 +107,7 @@ public class ListsOps {
   }
 
   /**
-   * Return a new {@link List} from a collection of {@code ts} deriving the {@link Integer} value via the function
+   * Returns a new {@link List} from a collection of {@code ts} deriving the {@link Integer} value via the function
    * {@code fTToId}.
    *
    * @param ts     the source of the derived {@link Integer} values

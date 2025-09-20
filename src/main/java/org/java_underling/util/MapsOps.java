@@ -1,5 +1,6 @@
 package org.java_underling.util;
 
+import org.java_underling.util.refined.NonEmptyMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -7,7 +8,9 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-//TODO: fill out javadoc
+/**
+ * Utility class providing static methods to create {@link Map} instances.
+ */
 public class MapsOps {
 
   private MapsOps() {
@@ -15,12 +18,17 @@ public class MapsOps {
   }
 
   /**
-   * Returns an empty map using {@link Map#of}, if {@code mapKv} is {@code null}, otherwise returns {@code mapKv}.
+   * Returns an empty {@link Map} using {@link Map#of}, if {@code mapKv} is {@code null}, otherwise returns
+   * {@code mapKv}.
+   * <p>
+   * Note: If the requirement is to both avoid a {@code null} value, and an empty {@link Map}, the refined class of
+   * {@link NonEmptyMap} enable <i>compile-time enforcement</i> of said contract requirements.
    *
-   * @param mapKv the map to reify to make null safe
+   * @param mapKv possibly {@code null} {@link Map} to reify to make {@code null} safe
    * @param <K>   the type of the key instances contained in the {@link Map}
    * @param <V>   the type of the value instances contained in the {@link Map}
-   * @return an empty map using {@link Map#of}, if {@code mapKv} is {@code null}, otherwise returns {@code mapKv}
+   * @return an empty {@link Map} using {@link Map#of}, if {@code mapKv} is {@code null}, otherwise returns
+   *     {@code mapKv}.
    */
   @NotNull
   public static <K, V> Map<K, V> nullToEmpty(@Nullable Map<K, V> mapKv) {
@@ -45,7 +53,7 @@ public class MapsOps {
   }
 
   /**
-   * Return a new {@link Map} from an existing {@code map}, adding/updating an {@link Entry}.
+   * Returns a new {@link Map} from an existing {@code map}, adding/updating an {@link Entry}.
    *
    * @param map   the source of the existing key/value pairs
    * @param entry the key/value pair as an {@link Entry}
@@ -68,7 +76,7 @@ public class MapsOps {
   }
 
   /**
-   * Return a new {@link Map} from an existing {@code map}, adding/updating a {@code key} and its associated
+   * Returns a new {@link Map} from an existing {@code map}, adding/updating a {@code key} and its associated
    * {@code value}.
    *
    * @param map   the source of the existing key/value pairs
