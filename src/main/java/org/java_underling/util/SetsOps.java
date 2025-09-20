@@ -45,7 +45,7 @@ public class SetsOps {
    * @return an unmodifiable unordered set with the {@code value} added
    */
   @NotNull
-  public static <T> Set<T> add(
+  public static <T> Set<T> addItem(
       @NotNull Set<T> set,
       @NotNull T value
   ) {
@@ -68,7 +68,7 @@ public class SetsOps {
    * @return an unmodifiable <i>ordered</i> set with the {@code value} appended
    */
   @NotNull
-  public static <T> Set<T> append(
+  public static <T> Set<T> appendItem(
       @NotNull Set<T> set,
       @NotNull T value
   ) {
@@ -92,7 +92,7 @@ public class SetsOps {
   @SuppressWarnings("ConstantValue")
   @NotNull
   @SafeVarargs
-  public static <T> Set<T> add(
+  public static <T> Set<T> addSets(
       @NotNull Set<T>... sets
   ) {
     if (sets.length > 0) {
@@ -129,7 +129,7 @@ public class SetsOps {
   @SuppressWarnings("ConstantValue")
   @NotNull
   @SafeVarargs
-  public static <T> Set<T> append(
+  public static <T> Set<T> appendSets(
       @NotNull Set<T>... sets
   ) {
     if (sets.length > 0) {
