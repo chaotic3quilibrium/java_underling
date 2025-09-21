@@ -3,10 +3,7 @@ package org.java_underling.util;
 import org.java_underling.util.SetsOps.SetPairViewKey;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -73,7 +70,7 @@ public class SetsOpsTests {
     var setContainingNull = new HashSet<Integer>();
     setContainingNull.add(null);
     setContainingNull.add(6);
-    var setAppendB = SetsOps.addSets(setAppendA, Set.of(4), Set.of(5), setContainingNull);
+    var setAppendB = SetsOps.appendSets(setAppendA, Set.of(4), Set.of(5), setContainingNull);
     assertTrue(CollectionsOps.isUnmodifiable(setAppendB));
     assertEquals(List.of(1, 2, 3, 4, 5, 6), setAppendB.stream().toList());
   }
@@ -143,5 +140,215 @@ public class SetsOpsTests {
             SetPairViewKey.RIGHT_DIFFERENCE, Set.of(1),
             SetPairViewKey.DIFFERENCE, Set.of(1, 4)),
         SetsOps.contrastSetPair(setB, setA));
+  }
+
+  @Test
+  public void testOfOrderedX1() {
+    var set = SetsOps.ofOrdered(
+        1);
+    assertNotNull(set);
+    assertFalse(set.isEmpty());
+    assertTrue(CollectionsOps.isUnmodifiable(set));
+    var set2 = new LinkedHashSet<Integer>();
+    set2.add(1);
+    assertEquals(set2, set);
+  }
+
+  @Test
+  public void testOfOrderedX2() {
+    var set = SetsOps.ofOrdered(
+        1,
+        2);
+    assertNotNull(set);
+    assertFalse(set.isEmpty());
+    assertTrue(CollectionsOps.isUnmodifiable(set));
+    var set2 = new LinkedHashSet<Integer>();
+    set2.add(1);
+    set2.add(2);
+    assertEquals(set2, set);
+  }
+
+  @Test
+  public void testOfOrderedX3() {
+    var set = SetsOps.ofOrdered(
+        1,
+        2,
+        3);
+    assertNotNull(set);
+    assertFalse(set.isEmpty());
+    assertTrue(CollectionsOps.isUnmodifiable(set));
+    var set2 = new LinkedHashSet<Integer>();
+    set2.add(1);
+    set2.add(2);
+    set2.add(3);
+    assertEquals(set2, set);
+  }
+
+  @Test
+  public void testOfOrderedX4() {
+    var set = SetsOps.ofOrdered(
+        1,
+        2,
+        3,
+        4);
+    assertNotNull(set);
+    assertFalse(set.isEmpty());
+    assertTrue(CollectionsOps.isUnmodifiable(set));
+    var set2 = new LinkedHashSet<Integer>();
+    set2.add(1);
+    set2.add(2);
+    set2.add(3);
+    set2.add(4);
+    assertEquals(set2, set);
+  }
+
+  @Test
+  public void testOfOrderedX5() {
+    var set = SetsOps.ofOrdered(
+        1,
+        2,
+        3,
+        4,
+        5);
+    assertNotNull(set);
+    assertFalse(set.isEmpty());
+    assertTrue(CollectionsOps.isUnmodifiable(set));
+    var set2 = new LinkedHashSet<Integer>();
+    set2.add(1);
+    set2.add(2);
+    set2.add(3);
+    set2.add(4);
+    set2.add(5);
+    assertEquals(set2, set);
+  }
+
+  @Test
+  public void testOfOrderedX6() {
+    var set = SetsOps.ofOrdered(
+        1,
+        2,
+        3,
+        4,
+        5,
+        6);
+    assertNotNull(set);
+    assertFalse(set.isEmpty());
+    assertTrue(CollectionsOps.isUnmodifiable(set));
+    var set2 = new LinkedHashSet<Integer>();
+    set2.add(1);
+    set2.add(2);
+    set2.add(3);
+    set2.add(4);
+    set2.add(5);
+    set2.add(6);
+    assertEquals(set2, set);
+  }
+
+  @Test
+  public void testOfOrderedX7() {
+    var set = SetsOps.ofOrdered(
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7);
+    assertNotNull(set);
+    assertFalse(set.isEmpty());
+    assertTrue(CollectionsOps.isUnmodifiable(set));
+    var set2 = new LinkedHashSet<Integer>();
+    set2.add(1);
+    set2.add(2);
+    set2.add(3);
+    set2.add(4);
+    set2.add(5);
+    set2.add(6);
+    set2.add(7);
+    assertEquals(set2, set);
+  }
+
+  @Test
+  public void testOfOrderedX8() {
+    var set = SetsOps.ofOrdered(
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8);
+    assertNotNull(set);
+    assertFalse(set.isEmpty());
+    assertTrue(CollectionsOps.isUnmodifiable(set));
+    var set2 = new LinkedHashSet<Integer>();
+    set2.add(1);
+    set2.add(2);
+    set2.add(3);
+    set2.add(4);
+    set2.add(5);
+    set2.add(6);
+    set2.add(7);
+    set2.add(8);
+    assertEquals(set2, set);
+  }
+
+  @Test
+  public void testOfOrderedX9() {
+    var set = SetsOps.ofOrdered(
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9);
+    assertNotNull(set);
+    assertFalse(set.isEmpty());
+    assertTrue(CollectionsOps.isUnmodifiable(set));
+    var set2 = new LinkedHashSet<Integer>();
+    set2.add(1);
+    set2.add(2);
+    set2.add(3);
+    set2.add(4);
+    set2.add(5);
+    set2.add(6);
+    set2.add(7);
+    set2.add(8);
+    set2.add(9);
+    assertEquals(set2, set);
+  }
+
+  @Test
+  public void testOfOrderedX10() {
+    var set = SetsOps.ofOrdered(
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10);
+    assertNotNull(set);
+    assertFalse(set.isEmpty());
+    assertTrue(CollectionsOps.isUnmodifiable(set));
+    var set2 = new LinkedHashSet<Integer>();
+    set2.add(1);
+    set2.add(2);
+    set2.add(3);
+    set2.add(4);
+    set2.add(5);
+    set2.add(6);
+    set2.add(7);
+    set2.add(8);
+    set2.add(9);
+    set2.add(10);
+    assertEquals(set2, set);
   }
 }

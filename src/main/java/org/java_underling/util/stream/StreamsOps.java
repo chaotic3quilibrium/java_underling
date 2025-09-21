@@ -1,5 +1,6 @@
 package org.java_underling.util.stream;
 
+import org.java_underling.util.MapsOps;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -171,11 +172,11 @@ public final class StreamsOps {
   }
 
   /**
-   * Returns an unmodifiable <i>ordered</i> set with the null elements filtered out.
+   * Returns an unmodifiable <u><i>ordered</i></u> set with the null elements filtered out.
    *
-   * @param stream the source of the T elements
+   * @param stream the (assumed to be) <u><i>ordered</i></u> source of the T elements
    * @param <T>    the type of the instances
-   * @return an unmodifiable <i>ordered</i> set with the null elements filtered out
+   * @return an unmodifiable <u><i>ordered</i></u> set with the null elements filtered out
    */
   @NotNull
   public static <T> Set<T> toSetOrderedUnmodifiableNonNulls(
@@ -186,11 +187,11 @@ public final class StreamsOps {
   }
 
   /**
-   * Returns an unmodifiable <i>ordered</i> set, which may contain {@code null} values.
+   * Returns an unmodifiable <u><i>ordered</i></u> set, which may contain {@code null} values.
    *
-   * @param stream the source of the T elements
+   * @param stream the (assumed to be) <u><i>ordered</i></u> source of the T elements
    * @param <T>    the type of the instances
-   * @return an unmodifiable <i>ordered</i> set, which may contain {@code null} values
+   * @return an unmodifiable <u><i>ordered</i></u> set, which may contain {@code null} values
    */
   @NotNull
   public static <T> Set<T> toSetOrderedUnmodifiable(
@@ -204,30 +205,30 @@ public final class StreamsOps {
   }
 
   /**
-   * Returns an unmodifiable <i>ordered</i> map with the null entries, key or value, filtered out.
+   * Returns an unmodifiable <u><i>ordered</i></u> map with the null entries, key or value, filtered out.
    *
-   * @param kAndVs the source of the entries
+   * @param kAndVs the (assumed to be) <u><i>ordered</i></u> source of the entries
    * @param <K>    the type of the key in the entries
    * @param <V>    the type of the value in the entries
-   * @return an unmodifiable <i>ordered</i> map with the null entries, key or value, filtered out
+   * @return an unmodifiable <u><i>ordered</i></u> map with the null entries, key or value, filtered out
    */
   @NotNull
   public static <K, V> Map<K, V> toMapOrderedUnmodifiableNonNulls(
       @NotNull Stream<Entry<K, V>> kAndVs
   ) {
-    return toMapOrderedUnmodifiable(kAndVs.filter(t ->
-        !Objects.isNull(t) && (!Objects.isNull(t.getKey()) && !Objects.isNull(t.getValue()))));
+    return toMapOrderedUnmodifiable(kAndVs.filter(entry ->
+        !Objects.isNull(entry) && MapsOps.isNonNulls(entry)));
   }
 
   /**
-   * Returns an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or
-   * value.
+   * Returns an unmodifiable <u><i>ordered</i></u> map, which may contain {@code null} within each entry for the key
+   * and/or value.
    *
-   * @param kAndVs the source of the entries
+   * @param kAndVs the (assumed to be) <u><i>ordered</i></u> source of the entries
    * @param <K>    the type of the key in the entries
    * @param <V>    the type of the value in the entries
-   * @return an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or
-   *     value
+   * @return an unmodifiable <u><i>ordered</i></u> map, which may contain {@code null} within each entry for the key
+   *     and/or value
    */
   @NotNull
   public static <K, V> Map<K, V> toMapOrderedUnmodifiable(
@@ -237,14 +238,14 @@ public final class StreamsOps {
   }
 
   /**
-   * Returns an unmodifiable <i>ordered</i> map with the null entries, key and/or value, filtered out, and where any
-   * duplicate key discards the entry.
+   * Returns an unmodifiable <u><i>ordered</i></u> map with the null entries, key and/or value, filtered out, and where
+   * any duplicate key discards the entry.
    *
-   * @param ts  the source of the input to create entries
+   * @param ts  the (assumed to be) <u><i>ordered</i></u> source of the input to create entries
    * @param <T> the type of the source value the entries
    * @param <K> the type of the key in the entries
    * @param <V> the type of the value in the entries
-   * @return an unmodifiable <i>ordered</i> map with the null entries, key or value, filtered out, and where any
+   * @return an unmodifiable <u><i>ordered</i></u> map with the null entries, key or value, filtered out, and where any
    *     duplicate key discards the entry
    */
   @NotNull
@@ -256,20 +257,19 @@ public final class StreamsOps {
         ts.filter(t ->
             !Objects.isNull(t)),
         fTtoOptionalEntry.andThen(optionalEntry ->
-            optionalEntry.filter(entry ->
-                (entry.getKey() != null) && (entry.getValue() != null))));
+            optionalEntry.filter(MapsOps::isNonNulls)));
   }
 
   /**
-   * Returns an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or
-   * value, and where any duplicate key discards the entry.
+   * Returns an unmodifiable <u><i>ordered</i></u> map, which may contain {@code null} within each entry for the key
+   * and/or value, and where any duplicate key discards the entry.
    *
-   * @param ts  the source of the input to create the entries
+   * @param ts  the (assumed to be) <u><i>ordered</i></u> source of the input to create the entries
    * @param <T> the type of the input value to create the entries
    * @param <K> the type of the key in the created entry
    * @param <V> the type of the value in the created entry
-   * @return an unmodifiable <i>ordered</i> map, which may contain {@code null} within each entry for the key and/or
-   *     value, and where any duplicate key discards the entry
+   * @return an unmodifiable <u><i>ordered</i></u> map, which may contain {@code null} within each entry for the key
+   *     and/or value, and where any duplicate key discards the entry
    */
   @NotNull
   public static <T, K, V> Map<K, V> toMapOrderedUnmodifiable(

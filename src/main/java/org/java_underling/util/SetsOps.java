@@ -60,12 +60,12 @@ public class SetsOps {
   }
 
   /**
-   * Returns an unmodifiable <i>ordered</i> set with the {@code value} appended.
+   * Returns an unmodifiable <u><i>ordered</i></u> set with the {@code value} appended.
    *
-   * @param set   the (assumed to be) <i>ordered</i> source from which the copy is made
+   * @param set   the (assumed to be) <u><i>ordered</i></u> source from which the copy is made
    * @param value the value to add to the copy of the set
    * @param <T>   the type of instances contained in the set
-   * @return an unmodifiable <i>ordered</i> set with the {@code value} appended
+   * @return an unmodifiable <u><i>ordered</i></u> set with the {@code value} appended
    */
   @NotNull
   public static <T> Set<T> appendItem(
@@ -120,12 +120,12 @@ public class SetsOps {
   }
 
   /**
-   * Returns an unmodifiable <i>ordered</i> set consisting of each set (filtered to non-null) from sets appended
+   * Returns an unmodifiable <u><i>ordered</i></u> set consisting of each set (filtered to non-null) from sets appended
    * together.
    *
-   * @param sets the (assumed to be) <i>ordered</i> sets to append
+   * @param sets the (assumed to be) <u><i>ordered</i></u> sets to append
    * @param <T>  the type of instances contained in all the sets
-   * @return an unmodifiable <i>ordered</i> set consisting of each set (filtered to non-null) from sets appended
+   * @return an unmodifiable <u><i>ordered</i></u> set consisting of each set (filtered to non-null) from sets appended
    *     together
    */
   @SuppressWarnings("ConstantValue")
@@ -394,5 +394,347 @@ public class SetsOps {
         SetPairViewKey.LEFT_DIFFERENCE, Set.of(),
         SetPairViewKey.RIGHT_DIFFERENCE, Set.of(),
         SetPairViewKey.DIFFERENCE, Set.of());
+  }
+
+  /**
+   * Returns the passed in <u><i>mutable</i></u> {@code Set}, if a value was successfully added/appended without the
+   * value pre-existing, otherwise throws an {@link IllegalArgumentException} that identifies the {@code value} causing
+   * the collision.
+   * <p>
+   * ---
+   * <p>
+   * <b>WARNING:</b> This is a <b>SIDE-EFFECTING</b> method in that it modifies the {@code mutableSet} parameter.
+   *
+   * @param mutableSet the map into which the entry will be added/appended - SIDE EFFECTING
+   * @param t          the value to add/append
+   * @param <T>        the type of instances contained in the set
+   * @return the passed in <u><i>mutable</i></u> {@code Set}, if a value was successfully added/appended without * the
+   *     value pre-existing, otherwise throws an {@link IllegalArgumentException} that identifies the * {@code value}
+   *     causing the collision
+   */
+  @SuppressWarnings("UnusedReturnValue")
+  private static <T> Set<T> add(
+      Set<T> mutableSet,
+      T t
+  ) {
+    if (!mutableSet.add(t)) {
+      throw new IllegalArgumentException("duplicate element: " + t);
+    }
+
+    return mutableSet;
+  }
+
+  /**
+   * Returns an unmodifiable <u><i>ordered</i></u> {@code Set} containing a single element.
+   *
+   * @param t1  the element
+   * @param <T> the type of instances contained in the set
+   * @return an unmodifiable <u><i>ordered</i></u> {@code Set} containing a single element
+   */
+  @NotNull
+  public static <T> Set<T> ofOrdered(
+      @NotNull T t1
+  ) {
+    var result = new LinkedHashSet<T>();
+    result.add(t1);
+
+    return Collections.unmodifiableSet(result);
+  }
+
+  /**
+   * Returns an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements.
+   *
+   * @param t1  the first element
+   * @param t2  the second element
+   * @param <T> the type of instances contained in the set
+   * @return an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements
+   * @throws IllegalArgumentException if the values are not unique
+   */
+  @NotNull
+  public static <T> Set<T> ofOrdered(
+      @NotNull T t1,
+      @NotNull T t2
+  ) {
+    var result = new LinkedHashSet<T>();
+    result.add(t1);
+    add(result, t2);
+
+    return Collections.unmodifiableSet(result);
+  }
+
+  /**
+   * Returns an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements.
+   *
+   * @param t1  the first element
+   * @param t2  the second element
+   * @param t3  the third element
+   * @param <T> the type of instances contained in the set
+   * @return an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements
+   * @throws IllegalArgumentException if the values are not unique
+   */
+  @NotNull
+  public static <T> Set<T> ofOrdered(
+      @NotNull T t1,
+      @NotNull T t2,
+      @NotNull T t3
+  ) {
+    var result = new LinkedHashSet<T>();
+    result.add(t1);
+    add(result, t2);
+    add(result, t3);
+
+    return Collections.unmodifiableSet(result);
+  }
+
+  /**
+   * Returns an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements.
+   *
+   * @param t1  the first element
+   * @param t2  the second element
+   * @param t3  the third element
+   * @param t4  the fourth element
+   * @param <T> the type of instances contained in the set
+   * @return an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements
+   * @throws IllegalArgumentException if the values are not unique
+   */
+  @NotNull
+  public static <T> Set<T> ofOrdered(
+      @NotNull T t1,
+      @NotNull T t2,
+      @NotNull T t3,
+      @NotNull T t4
+  ) {
+    var result = new LinkedHashSet<T>();
+    result.add(t1);
+    add(result, t2);
+    add(result, t3);
+    add(result, t4);
+
+    return Collections.unmodifiableSet(result);
+  }
+
+  /**
+   * Returns an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements.
+   *
+   * @param t1  the first element
+   * @param t2  the second element
+   * @param t3  the third element
+   * @param t4  the fourth element
+   * @param t5  the fifth element
+   * @param <T> the type of instances contained in the set
+   * @return an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements
+   * @throws IllegalArgumentException if the values are not unique
+   */
+  @NotNull
+  public static <T> Set<T> ofOrdered(
+      @NotNull T t1,
+      @NotNull T t2,
+      @NotNull T t3,
+      @NotNull T t4,
+      @NotNull T t5
+  ) {
+    var result = new LinkedHashSet<T>();
+    result.add(t1);
+    add(result, t2);
+    add(result, t3);
+    add(result, t4);
+    add(result, t5);
+
+    return Collections.unmodifiableSet(result);
+  }
+
+  /**
+   * Returns an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements.
+   *
+   * @param t1  the first element
+   * @param t2  the second element
+   * @param t3  the third element
+   * @param t4  the fourth element
+   * @param t5  the fifth element
+   * @param t6  the sixth element
+   * @param <T> the type of instances contained in the set
+   * @return an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements
+   * @throws IllegalArgumentException if the values are not unique
+   */
+  @NotNull
+  public static <T> Set<T> ofOrdered(
+      @NotNull T t1,
+      @NotNull T t2,
+      @NotNull T t3,
+      @NotNull T t4,
+      @NotNull T t5,
+      @NotNull T t6
+  ) {
+    var result = new LinkedHashSet<T>();
+    result.add(t1);
+    add(result, t2);
+    add(result, t3);
+    add(result, t4);
+    add(result, t5);
+    add(result, t6);
+
+    return Collections.unmodifiableSet(result);
+  }
+
+  /**
+   * Returns an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements.
+   *
+   * @param t1  the first element
+   * @param t2  the second element
+   * @param t3  the third element
+   * @param t4  the fourth element
+   * @param t5  the fifth element
+   * @param t6  the sixth element
+   * @param t7  the seventh element
+   * @param <T> the type of instances contained in the set
+   * @return an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements
+   * @throws IllegalArgumentException if the values are not unique
+   */
+  @NotNull
+  public static <T> Set<T> ofOrdered(
+      @NotNull T t1,
+      @NotNull T t2,
+      @NotNull T t3,
+      @NotNull T t4,
+      @NotNull T t5,
+      @NotNull T t6,
+      @NotNull T t7
+  ) {
+    var result = new LinkedHashSet<T>();
+    result.add(t1);
+    add(result, t2);
+    add(result, t3);
+    add(result, t4);
+    add(result, t5);
+    add(result, t6);
+    add(result, t7);
+
+    return Collections.unmodifiableSet(result);
+  }
+
+  /**
+   * Returns an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements.
+   *
+   * @param t1  the first element
+   * @param t2  the second element
+   * @param t3  the third element
+   * @param t4  the fourth element
+   * @param t5  the fifth element
+   * @param t6  the sixth element
+   * @param t7  the seventh element
+   * @param t8  the eighth element
+   * @param <T> the type of instances contained in the set
+   * @return an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements
+   * @throws IllegalArgumentException if the values are not unique
+   */
+  @NotNull
+  public static <T> Set<T> ofOrdered(
+      @NotNull T t1,
+      @NotNull T t2,
+      @NotNull T t3,
+      @NotNull T t4,
+      @NotNull T t5,
+      @NotNull T t6,
+      @NotNull T t7,
+      @NotNull T t8
+  ) {
+    var result = new LinkedHashSet<T>();
+    result.add(t1);
+    add(result, t2);
+    add(result, t3);
+    add(result, t4);
+    add(result, t5);
+    add(result, t6);
+    add(result, t7);
+    add(result, t8);
+
+    return Collections.unmodifiableSet(result);
+  }
+
+  /**
+   * Returns an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements.
+   *
+   * @param t1  the first element
+   * @param t2  the second element
+   * @param t3  the third element
+   * @param t4  the fourth element
+   * @param t5  the fifth element
+   * @param t6  the sixth element
+   * @param t7  the seventh element
+   * @param t8  the eighth element
+   * @param t9  the nineth element
+   * @param <T> the type of instances contained in the set
+   * @return an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements
+   * @throws IllegalArgumentException if the values are not unique
+   */
+  @NotNull
+  public static <T> Set<T> ofOrdered(
+      @NotNull T t1,
+      @NotNull T t2,
+      @NotNull T t3,
+      @NotNull T t4,
+      @NotNull T t5,
+      @NotNull T t6,
+      @NotNull T t7,
+      @NotNull T t8,
+      @NotNull T t9
+  ) {
+    var result = new LinkedHashSet<T>();
+    result.add(t1);
+    add(result, t2);
+    add(result, t3);
+    add(result, t4);
+    add(result, t5);
+    add(result, t6);
+    add(result, t7);
+    add(result, t8);
+    add(result, t9);
+
+    return Collections.unmodifiableSet(result);
+  }
+
+  /**
+   * Returns an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements.
+   *
+   * @param t1  the first element
+   * @param t2  the second element
+   * @param t3  the third element
+   * @param t4  the fourth element
+   * @param t5  the fifth element
+   * @param t6  the sixth element
+   * @param t7  the seventh element
+   * @param t8  the eighth element
+   * @param t9  the nineth element
+   * @param t10 the tenth element
+   * @param <T> the type of instances contained in the set
+   * @return an unmodifiable <u><i>ordered</i></u> {@code Set} containing ten elements
+   * @throws IllegalArgumentException if the values are not unique
+   */
+  @NotNull
+  public static <T> Set<T> ofOrdered(
+      @NotNull T t1,
+      @NotNull T t2,
+      @NotNull T t3,
+      @NotNull T t4,
+      @NotNull T t5,
+      @NotNull T t6,
+      @NotNull T t7,
+      @NotNull T t8,
+      @NotNull T t9,
+      @NotNull T t10
+  ) {
+    var result = new LinkedHashSet<T>();
+    result.add(t1);
+    add(result, t2);
+    add(result, t3);
+    add(result, t4);
+    add(result, t5);
+    add(result, t6);
+    add(result, t7);
+    add(result, t8);
+    add(result, t9);
+    add(result, t10);
+
+    return Collections.unmodifiableSet(result);
   }
 }
