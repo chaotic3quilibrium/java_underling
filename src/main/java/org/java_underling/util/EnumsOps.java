@@ -57,7 +57,7 @@ public final class EnumsOps<E extends Enum<E>> {
   private static <E extends Enum<E>> Map<String, E> toOrderedMapAsEnumByNameLowerCaseHelper(
       @NotNull Class<E> classEnum
   ) {
-    return StreamsOps.toMapOrderedUnmodifiable(
+    return StreamsOps.toMapOrderedUnmodifiableNonNulls(
         Arrays.stream(classEnum.getEnumConstants()),
         (e) ->
             Optional.of(entry(e.name().toLowerCase(), e)));
@@ -164,7 +164,7 @@ public final class EnumsOps<E extends Enum<E>> {
    */
   @NotNull
   public Map<String, E> toOrderedMapByName() {
-    return StreamsOps.toMapOrderedUnmodifiable(
+    return StreamsOps.toMapOrderedUnmodifiableNonNulls(
         stream(),
         (e) ->
             Optional.of(entry(e.name(), e)));

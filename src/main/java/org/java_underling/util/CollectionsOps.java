@@ -142,23 +142,21 @@ public final class CollectionsOps {
 
   /**
    * Returns an unmodifiable <u><i>ordered</i></u> defensively copied map consisting of {@code kAndVs}, filtering out
-   * any contained {@code null} entries, within the key or the value.
+   * any contained {@code null} entries, or containing {@code null} for either the key or the value.
    *
    * @param kAndVs the (assumed to be) <u><i>ordered</i></u> source of instances of entry, some elements of which may be
-   *               {@code null} in either the key or the value, and will be filtered out
+   *               {@code null}, or containing {@code null} for either the key or the value, and will be filtered out
    * @param <K>    the type of the key instances within each collection entry
    * @param <V>    the type of the value instances within each collection entry
-   * @return an unmodifiable <u><i>ordered</i></u> defensively copied map consisting of {@code kAndVs}, filtering out
-   *     any contained {@code null} entries, within the key or the value
+   * @return an unmodifiable <u><i>ordered</i></u> defensively copied map consisting of {@code kAndVs}, filtering out *
+   *     any contained {@code null} entries, or containing {@code null} for either the key or the value
    */
   @NotNull
   public static <K, V> Map<K, V> defensiveCopyToMapOrderedUnmodifiableNonNulls(
       @Nullable Collection<Entry<K, V>> kAndVs
   ) {
     if ((kAndVs != null) && !kAndVs.isEmpty()) {
-      return StreamsOps.toMapOrderedUnmodifiable(kAndVs
-          .stream()
-          .filter(MapsOps::isNonNulls));
+      return StreamsOps.toMapOrderedUnmodifiableNonNulls(kAndVs.stream());
     }
 
     return Map.of();

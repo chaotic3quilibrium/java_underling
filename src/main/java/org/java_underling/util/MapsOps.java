@@ -215,7 +215,7 @@ public class MapsOps {
    * Returns an unmodifiable unordered map consisting of each map, filtered to non-null in both the keys and the values,
    * from maps added together.
    *
-   * @param maps the sets to append
+   * @param maps the maps to append
    * @param <K>  the type of the keys contained in the {@code map}
    * @param <V>  the type of the values contained in the {@code map}
    * @return an unmodifiable unordered map consisting of each map ,filtered to non-null in both the keys and the values,
@@ -252,7 +252,7 @@ public class MapsOps {
    * Returns an unmodifiable <u><i>ordered</i></u> map consisting of each map, filtered to non-null in both the keys and
    * the values, from maps appended together.
    *
-   * @param maps the (assumed to be) <u><i>ordered</i></u> sets to append
+   * @param maps the (assumed to be) <u><i>ordered</i></u> maps to append
    * @param <K>  the type of the keys contained in the {@code map}
    * @param <V>  the type of the values contained in the {@code map}
    * @return an unmodifiable <u><i>ordered</i></u> map consisting of each map, filtered to non-null in both the keys and

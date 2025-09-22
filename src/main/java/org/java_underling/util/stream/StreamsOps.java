@@ -182,59 +182,21 @@ public final class StreamsOps {
   public static <T> Set<T> toSetOrderedUnmodifiableNonNulls(
       @NotNull Stream<T> stream
   ) {
-    return toSetOrderedUnmodifiable(stream.filter(t ->
-        !Objects.isNull(t)));
-  }
-
-  /**
-   * Returns an unmodifiable <u><i>ordered</i></u> set, which may contain {@code null} values.
-   *
-   * @param stream the (assumed to be) <u><i>ordered</i></u> source of the T elements
-   * @param <T>    the type of the instances
-   * @return an unmodifiable <u><i>ordered</i></u> set, which may contain {@code null} values
-   */
-  @NotNull
-  public static <T> Set<T> toSetOrderedUnmodifiable(
-      @NotNull Stream<T> stream
-  ) {
-    var set = stream.collect(Collectors.toCollection(LinkedHashSet::new));
+    var set = stream
+        .filter(t ->
+            !Objects.isNull(t))
+        .collect(Collectors.toCollection(LinkedHashSet::new));
 
     return !set.isEmpty()
         ? Collections.unmodifiableSet(set)
         : Set.of();
   }
 
-  /**
-   * Returns an unmodifiable <u><i>ordered</i></u> map with the null entries, key or value, filtered out.
-   *
-   * @param kAndVs the (assumed to be) <u><i>ordered</i></u> source of the entries
-   * @param <K>    the type of the key in the entries
-   * @param <V>    the type of the value in the entries
-   * @return an unmodifiable <u><i>ordered</i></u> map with the null entries, key or value, filtered out
-   */
   @NotNull
-  public static <K, V> Map<K, V> toMapOrderedUnmodifiableNonNulls(
-      @NotNull Stream<Entry<K, V>> kAndVs
+  public static <T, K, V> Map<K, V> toMapOrderedUnmodifiableNonNulls(
+      @NotNull Stream<Entry<K, V>> entries
   ) {
-    return toMapOrderedUnmodifiable(kAndVs.filter(entry ->
-        !Objects.isNull(entry) && MapsOps.isNonNulls(entry)));
-  }
-
-  /**
-   * Returns an unmodifiable <u><i>ordered</i></u> map, which may contain {@code null} within each entry for the key
-   * and/or value.
-   *
-   * @param kAndVs the (assumed to be) <u><i>ordered</i></u> source of the entries
-   * @param <K>    the type of the key in the entries
-   * @param <V>    the type of the value in the entries
-   * @return an unmodifiable <u><i>ordered</i></u> map, which may contain {@code null} within each entry for the key
-   *     and/or value
-   */
-  @NotNull
-  public static <K, V> Map<K, V> toMapOrderedUnmodifiable(
-      @NotNull Stream<Entry<K, V>> kAndVs
-  ) {
-    return toMapOrderedUnmodifiable(kAndVs, Optional::of);
+    return toMapOrderedUnmodifiableNonNulls(entries, Optional::ofNullable);
   }
 
   /**
@@ -253,37 +215,23 @@ public final class StreamsOps {
       @NotNull Stream<T> ts,
       @NotNull Function<T, Optional<Entry<K, V>>> fTtoOptionalEntry
   ) {
-    return toMapOrderedUnmodifiable(
-        ts.filter(t ->
-            !Objects.isNull(t)),
-        fTtoOptionalEntry.andThen(optionalEntry ->
-            optionalEntry.filter(MapsOps::isNonNulls)));
-  }
-
-  /**
-   * Returns an unmodifiable <u><i>ordered</i></u> map, which may contain {@code null} within each entry for the key
-   * and/or value, and where any duplicate key discards the entry.
-   *
-   * @param ts  the (assumed to be) <u><i>ordered</i></u> source of the input to create the entries
-   * @param <T> the type of the input value to create the entries
-   * @param <K> the type of the key in the created entry
-   * @param <V> the type of the value in the created entry
-   * @return an unmodifiable <u><i>ordered</i></u> map, which may contain {@code null} within each entry for the key
-   *     and/or value, and where any duplicate key discards the entry
-   */
-  @NotNull
-  public static <T, K, V> Map<K, V> toMapOrderedUnmodifiable(
-      @NotNull Stream<T> ts,
-      @NotNull Function<T, Optional<Entry<K, V>>> fTtoOptionalEntry
-  ) {
-    return Collections.unmodifiableMap(ts
+    var map = ts
+        .filter(t ->
+            !Objects.isNull(t))
         .flatMap(t ->
-            fTtoOptionalEntry.apply(t).stream())
+            fTtoOptionalEntry
+                .apply(t)
+                .filter(MapsOps::isNonNulls)
+                .stream())
         .collect(Collectors.toMap(
             Entry::getKey,
             Entry::getValue,
             (vOld, vNew) ->
                 vOld,
-            LinkedHashMap::new)));
+            LinkedHashMap::new));
+
+    return !map.isEmpty()
+        ? Collections.unmodifiableMap(map)
+        : Map.of();
   }
 }
