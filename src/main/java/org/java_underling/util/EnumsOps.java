@@ -71,7 +71,8 @@ public final class EnumsOps<E extends Enum<E>> {
       synchronized (ENUM_VALUE_BY_NAME_LOWER_CASE_BY_ENUM_CLASS_SYNC) {
         if (ENUM_VALUE_BY_NAME_LOWER_CASE_BY_ENUM_CLASS == null) {
           ENUM_VALUE_BY_NAME_LOWER_CASE_BY_ENUM_CLASS = Memoizer.from(
-              enumClassE -> toOrderedMapAsEnumByNameLowerCaseHelper((Class<E>) enumClassE));
+              enumClassE ->
+                  toOrderedMapAsEnumByNameLowerCaseHelper((Class<E>) enumClassE));
         }
       }
     }
@@ -245,7 +246,7 @@ public final class EnumsOps<E extends Enum<E>> {
   ) {
     return Optional.ofNullable(
         fetchCachedEnumInstanceByNameLowerCase(this.enumClass)
-            .get(Objects.requireNonNull(search).toLowerCase()));
+            .get(search.toLowerCase()));
   }
 
   /**

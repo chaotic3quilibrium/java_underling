@@ -20,33 +20,56 @@ public final class EnumsIdOps<E extends Enum<E>, ID> {
 
   @NotNull
   public static <E extends Enum<E>> EnumsIdOps<E, Integer> from(
-      @NotNull Class<E> enumClassE
+      @NotNull Class<E> classE
   ) {
-    return from(enumClassE, 0);
+    return from(classE, 0);
   }
 
   @NotNull
   public static <E extends Enum<E>> EnumsIdOps<E, Integer> from(
-      @NotNull Class<E> enumClassE,
+      @NotNull Class<E> classE,
       int ordinalOffset
   ) {
     return from(
-        enumClassE,
+        classE,
         enumValue ->
-            enumValue.ordinal() + ordinalOffset,
+            enumValue.ordinal() + ordinalOffset);
+  }
+
+  public static <E extends Enum<E>, ID> EnumsIdOps<E, ID> from(
+      @NotNull Class<E> classE,
+      @NotNull Function<E, ID> fEToId
+  ) {
+    return create(
+        classE,
+        fEToId,
         Object::toString,
         Optional.empty());
   }
 
   public static <E extends Enum<E>, ID> EnumsIdOps<E, ID> from(
-      @NotNull Class<E> enumClassE,
-      @NotNull Function<E, ID> fEToId
+      @NotNull Class<E> classE,
+      @NotNull Function<E, ID> fEToId,
+      @NotNull Function<ID, String> fIdToString
   ) {
-    return from(
-        enumClassE,
+    return create(
+        classE,
         fEToId,
-        Object::toString,
+        fIdToString,
         Optional.empty());
+  }
+
+  public static <E extends Enum<E>, ID> EnumsIdOps<E, ID> from(
+      @NotNull Class<E> classE,
+      @NotNull Function<E, ID> fEToId,
+      @NotNull Function<ID, String> fIdToString,
+      @NotNull Function<E, String> fEToAltString
+  ) {
+    return create(
+        classE,
+        fEToId,
+        fIdToString,
+        Optional.of(fEToAltString));
   }
 
   private record ExtendedContext<E extends Enum<E>, ID>(
@@ -59,7 +82,7 @@ public final class EnumsIdOps<E extends Enum<E>, ID> {
 
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   @NotNull
-  public static <E extends Enum<E>, ID> EnumsIdOps<E, ID> from(
+  private static <E extends Enum<E>, ID> EnumsIdOps<E, ID> create(
       @NotNull Class<E> classE,
       @NotNull Function<E, ID> fEToId,
       @NotNull Function<ID, String> fIdToString,
@@ -215,8 +238,9 @@ public final class EnumsIdOps<E extends Enum<E>, ID> {
   }
 
   @NotNull
-  public Optional<E> get(@NotNull String valueOrIdOrAltToString) {
-    return Optional.ofNullable(getEnumValueByValueOrIdOrAltToStringLowerCase().get(valueOrIdOrAltToString.toLowerCase()));
+  public Optional<Entry<E, ID>> get(@NotNull String valueOrIdOrAltToString) {
+    return Optional.ofNullable(getEnumValueByValueOrIdOrAltToStringLowerCase().get(valueOrIdOrAltToString.toLowerCase()))
+        .map(enumValue -> entry(enumValue, getOrderedMapIdByEnumValue().get(enumValue)));
   }
 
   @NotNull

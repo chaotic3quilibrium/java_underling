@@ -1,17 +1,66 @@
 package org.java_underling.util;
 
-import org.java_underling.lang.MissingImplementationException;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ArraysOpsTests {
 
+  private void testFindSetBitIndicesCase(
+      int value,
+      int length,
+      int[] content
+  ) {
+    var indices = ArraysOps.findSetBitIndices(value);
+    assertEquals(length, indices.length);
+    assertArrayEquals(content, indices);
+  }
+
   @Test
   public void testFindSetBitIndices() {
-    throw new MissingImplementationException();
+    testFindSetBitIndicesCase(
+        0,
+        0,
+        new int[]{});
+    testFindSetBitIndicesCase(
+        1,
+        1,
+        new int[]{0});
+    testFindSetBitIndicesCase(
+        2,
+        1,
+        new int[]{1});
+    testFindSetBitIndicesCase(
+        3,
+        2,
+        new int[]{0, 1});
+    testFindSetBitIndicesCase(
+        4,
+        1,
+        new int[]{2});
+    testFindSetBitIndicesCase(
+        5,
+        2,
+        new int[]{0, 2});
+    testFindSetBitIndicesCase(
+        6,
+        2,
+        new int[]{1, 2});
+    testFindSetBitIndicesCase(
+        7,
+        3,
+        new int[]{0, 1, 2});
+    testFindSetBitIndicesCase(
+        255,
+        8,
+        new int[]{0, 1, 2, 3, 4, 5, 6, 7});
+    testFindSetBitIndicesCase(
+        256,
+        1,
+        new int[]{8});
   }
 
   @Test
