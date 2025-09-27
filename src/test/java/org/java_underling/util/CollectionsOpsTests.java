@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CollectionsOpsTests {
   @Test
@@ -50,6 +49,10 @@ public class CollectionsOpsTests {
 
   @Test
   public void testToDistinctSortedArrayInt() {
-    throw new MissingImplementationException("x2");
+    var arrayFromInt = CollectionsOps.toDistinctSortedArrayInt(List.of(1, 3, 2, 6, 6, 5, 7, 8, 9, 4, 0, 1));
+    var arrayExpected = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    assertArrayEquals(arrayExpected, arrayFromInt);
+    var arrayFromString = CollectionsOps.toDistinctSortedArrayInt(List.of("1", "3", "2", "6", "6", "5", "7", "8", "9", "4", "0", "1"), Integer::parseInt);
+    assertArrayEquals(arrayExpected, arrayFromString);
   }
 }

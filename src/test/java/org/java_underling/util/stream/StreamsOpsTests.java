@@ -1,13 +1,10 @@
 package org.java_underling.util.stream;
 
-import org.java_underling.lang.MissingImplementationException;
 import org.java_underling.util.CollectionsOps;
+import org.java_underling.util.MapsOps;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -91,11 +88,32 @@ public class StreamsOpsTests {
 
   @Test
   public void testToMapOrderedUnmodifiableNonNulls() {
-    throw new MissingImplementationException();
-  }
+    var mapA = new LinkedHashMap<Integer, String>();
+    mapA.put(null, "xnull");
+    mapA.put(1, "x1");
+    mapA.put(-1, null);
+    mapA.put(2, "x2");
+    @SuppressWarnings("SimplifyStreamApiCallChains")
+    var entries = mapA.entrySet().stream().collect(Collectors.toList());
+    entries.add(1, null);
+    var mapB = StreamsOps.toMapOrderedUnmodifiableNonNulls(entries.stream());
+    var list = new ArrayList<String>();
+    list.add(null);
+    list.add("x1");
+    list.add(null);
+    list.add("x");
+    list.add(null);
+    list.add("2");
+    list.add("x2");
+    var mapC = StreamsOps.toMapOrderedUnmodifiableNonNulls(
+        list.stream(),
+        string -> {
+          if ((string != null) && (string.length() > 1)) {
+            return Optional.of(entry(Integer.parseInt(string.substring(1, 2)), string));
+          }
 
-  @Test
-  public void testToMapOrderedUnmodifiable() {
-    throw new MissingImplementationException();
+          return Optional.empty();
+        });
+    assertEquals(MapsOps.ofOrdered(1, "x1", 2, "x2"), mapC);
   }
 }
