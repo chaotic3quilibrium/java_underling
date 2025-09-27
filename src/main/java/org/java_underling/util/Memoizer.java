@@ -40,8 +40,8 @@ import java.util.function.Supplier;
  * -
  * <p>
  * <b>CAUTION:</b> Because this design eliminates multi-thread race conditions, and this
- * implementation allows a compute function to be defined within the {@link
- * #from(Function, MethodOverride, InsertionOrder)} factory method, as well as allowing a compute function to be
+ * implementation allows a compute function to be defined within the {@link #from(Function, MethodOverride, InsertionOrder)}
+ * factory method, as well as allowing a compute function to be
  * provided with the {@link #get(K, Function)} method, it is important to note that when a computed
  * result (the value) is associated with the input parameter (the key), the association is made
  * permanent and immutable in a thread-safe manner.

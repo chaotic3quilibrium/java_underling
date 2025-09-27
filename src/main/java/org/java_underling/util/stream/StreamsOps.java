@@ -1,13 +1,13 @@
 package org.java_underling.util.stream;
 
-import org.java_underling.util.MapsOps;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -135,103 +135,5 @@ public final class StreamsOps {
     return streamTs
         .map(t ->
             entry(t, atomicInteger.getAndIncrement()));
-  }
-
-  /**
-   * Returns an unmodifiable list with the null elements filtered out.
-   *
-   * @param stream the source of the T elements
-   * @param <T>    the type of the instances
-   * @return an unmodifiable list with the null elements filtered out
-   */
-  @NotNull
-  public static <T> List<T> toListUnmodifiableNonNulls(
-      @NotNull Stream<T> stream
-  ) {
-    return stream
-        .filter(t ->
-            !Objects.isNull(t))
-        .toList();
-  }
-
-  /**
-   * Returns an unmodifiable set with the null elements filtered out.
-   *
-   * @param stream the source of the T elements
-   * @param <T>    the type of the instances
-   * @return an unmodifiable set with the null elements filtered out
-   */
-  @NotNull
-  public static <T> Set<T> toSetUnmodifiableNonNulls(
-      @NotNull Stream<T> stream
-  ) {
-    return stream
-        .filter(t ->
-            !Objects.isNull(t))
-        .collect(Collectors.toUnmodifiableSet());
-  }
-
-  /**
-   * Returns an unmodifiable <u><i>ordered</i></u> set with the null elements filtered out.
-   *
-   * @param stream the (assumed to be) <u><i>ordered</i></u> source of the T elements
-   * @param <T>    the type of the instances
-   * @return an unmodifiable <u><i>ordered</i></u> set with the null elements filtered out
-   */
-  @NotNull
-  public static <T> Set<T> toSetOrderedUnmodifiableNonNulls(
-      @NotNull Stream<T> stream
-  ) {
-    var set = stream
-        .filter(t ->
-            !Objects.isNull(t))
-        .collect(Collectors.toCollection(LinkedHashSet::new));
-
-    return !set.isEmpty()
-        ? Collections.unmodifiableSet(set)
-        : Set.of();
-  }
-
-  @NotNull
-  public static <T, K, V> Map<K, V> toMapOrderedUnmodifiableNonNulls(
-      @NotNull Stream<Entry<K, V>> entries
-  ) {
-    return toMapOrderedUnmodifiableNonNulls(entries, Optional::ofNullable);
-  }
-
-  /**
-   * Returns an unmodifiable <u><i>ordered</i></u> map with the null entries, key and/or value, filtered out, and where
-   * any duplicate key discards the entry.
-   *
-   * @param ts  the (assumed to be) <u><i>ordered</i></u> source of the input to create entries
-   * @param <T> the type of the source value the entries
-   * @param <K> the type of the key in the entries
-   * @param <V> the type of the value in the entries
-   * @return an unmodifiable <u><i>ordered</i></u> map with the null entries, key or value, filtered out, and where any
-   *     duplicate key discards the entry
-   */
-  @NotNull
-  public static <T, K, V> Map<K, V> toMapOrderedUnmodifiableNonNulls(
-      @NotNull Stream<T> ts,
-      @NotNull Function<T, Optional<Entry<K, V>>> fTtoOptionalEntry
-  ) {
-    var map = ts
-        .filter(t ->
-            !Objects.isNull(t))
-        .flatMap(t ->
-            fTtoOptionalEntry
-                .apply(t)
-                .filter(MapsOps::isNonNulls)
-                .stream())
-        .collect(Collectors.toMap(
-            Entry::getKey,
-            Entry::getValue,
-            (vOld, vNew) ->
-                vOld,
-            LinkedHashMap::new));
-
-    return !map.isEmpty()
-        ? Collections.unmodifiableMap(map)
-        : Map.of();
   }
 }

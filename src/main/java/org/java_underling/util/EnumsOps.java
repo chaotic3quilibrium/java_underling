@@ -1,6 +1,5 @@
 package org.java_underling.util;
 
-import org.java_underling.util.stream.StreamsOps;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -57,7 +56,7 @@ public final class EnumsOps<E extends Enum<E>> {
   private static <E extends Enum<E>> Map<String, E> toOrderedMapAsEnumByNameLowerCaseHelper(
       @NotNull Class<E> classEnum
   ) {
-    return StreamsOps.toMapOrderedUnmodifiableNonNulls(
+    return MapsOps.toMapOrderedUnmodifiable(
         Arrays.stream(classEnum.getEnumConstants()),
         (e) ->
             Optional.of(entry(e.name().toLowerCase(), e)));
@@ -164,7 +163,7 @@ public final class EnumsOps<E extends Enum<E>> {
    */
   @NotNull
   public Map<String, E> toOrderedMapByName() {
-    return StreamsOps.toMapOrderedUnmodifiableNonNulls(
+    return MapsOps.toMapOrderedUnmodifiable(
         stream(),
         (e) ->
             Optional.of(entry(e.name(), e)));
@@ -301,7 +300,7 @@ public final class EnumsOps<E extends Enum<E>> {
       @NotNull Function<E, String> eToString,
       @NotNull String separator
   ) {
-    return join(toList(), eToString, separator);
+    return join(stream(), eToString, separator);
   }
 
   /**
@@ -313,7 +312,7 @@ public final class EnumsOps<E extends Enum<E>> {
    *     joined together with a copy of the {@link EnumsOps#DEFAULT_SEPARATOR}
    */
   @NotNull
-  public String join(@NotNull Collection<E> es) {
+  public String join(@NotNull Stream<E> es) {
     return join(es, Enum::name);
   }
 
@@ -328,7 +327,7 @@ public final class EnumsOps<E extends Enum<E>> {
    */
   @NotNull
   public String join(
-      @NotNull Collection<E> es,
+      @NotNull Stream<E> es,
       @NotNull Function<E, String> eToString
   ) {
     return join(es, eToString, DEFAULT_SEPARATOR);
@@ -345,7 +344,7 @@ public final class EnumsOps<E extends Enum<E>> {
    */
   @NotNull
   public String join(
-      @NotNull Collection<E> es,
+      @NotNull Stream<E> es,
       @NotNull String separator
   ) {
     return join(es, Enum::name, separator);
@@ -363,13 +362,13 @@ public final class EnumsOps<E extends Enum<E>> {
    */
   @NotNull
   public String join(
-      @NotNull Collection<E> es,
+      @NotNull Stream<E> es,
       @NotNull Function<E, String> eToString,
       @NotNull String separator
   ) {
     return String.join(
         separator,
-        es.stream()
+        es
             .map(eToString)
             .toList());
   }

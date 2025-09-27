@@ -1,15 +1,13 @@
 package org.java_underling.util.stream;
 
-import org.java_underling.util.CollectionsOps;
-import org.java_underling.util.MapsOps;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static java.util.Map.entry;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StreamsOpsTests {
 
@@ -54,66 +52,4 @@ public class StreamsOpsTests {
     assertEquals(List.of(entry("x0", 0), entry("x1", 1), entry("x2", 2)), stringAndIndexes);
   }
 
-  @Test
-  public void testToListUnmodifiableNonNulls() {
-    var expectedList = List.of(1, 2, 3);
-    var nullContainingList = Arrays.asList(null, 1, null, 2, null, 3, null);
-    assertEquals(7, nullContainingList.size());
-    var actualList = StreamsOps.toListUnmodifiableNonNulls(nullContainingList.stream());
-    assertEquals(expectedList, actualList);
-    assertTrue(CollectionsOps.isUnmodifiable(actualList));
-  }
-
-  @Test
-  public void testToSetUnmodifiableNonNulls() {
-    var expectedSet = Set.of(3, 2, 1);
-    var nullContainingSet = Stream.of(null, 2, null, 1, null, 3, null).collect(Collectors.toSet());
-    assertEquals(4, nullContainingSet.size());
-    var actualSet = StreamsOps.toSetUnmodifiableNonNulls(nullContainingSet.stream());
-    assertEquals(expectedSet, actualSet);
-    assertTrue(CollectionsOps.isUnmodifiable(actualSet));
-  }
-
-  @Test
-  public void testToSetOrderedUnmodifiableNonNulls() {
-    var expectedSetOrdered = new LinkedHashSet<>(List.of(3, 2, 1));
-    var nullContainingSetOrdered = new LinkedHashSet<>(Stream.of(null, 3, null, 2, null, 1, null).toList());
-    assertEquals(4, nullContainingSetOrdered.size());
-    assertNull(nullContainingSetOrdered.iterator().next());
-    var actualSetOrdered = StreamsOps.toSetOrderedUnmodifiableNonNulls(nullContainingSetOrdered.stream());
-    assertEquals(expectedSetOrdered, actualSetOrdered);
-    assertEquals(expectedSetOrdered.stream().toList(), actualSetOrdered.stream().toList());
-    assertTrue(CollectionsOps.isUnmodifiable(actualSetOrdered));
-  }
-
-  @Test
-  public void testToMapOrderedUnmodifiableNonNulls() {
-    var mapA = new LinkedHashMap<Integer, String>();
-    mapA.put(null, "xnull");
-    mapA.put(1, "x1");
-    mapA.put(-1, null);
-    mapA.put(2, "x2");
-    @SuppressWarnings("SimplifyStreamApiCallChains")
-    var entries = mapA.entrySet().stream().collect(Collectors.toList());
-    entries.add(1, null);
-    var mapB = StreamsOps.toMapOrderedUnmodifiableNonNulls(entries.stream());
-    var list = new ArrayList<String>();
-    list.add(null);
-    list.add("x1");
-    list.add(null);
-    list.add("x");
-    list.add(null);
-    list.add("2");
-    list.add("x2");
-    var mapC = StreamsOps.toMapOrderedUnmodifiableNonNulls(
-        list.stream(),
-        string -> {
-          if ((string != null) && (string.length() > 1)) {
-            return Optional.of(entry(Integer.parseInt(string.substring(1, 2)), string));
-          }
-
-          return Optional.empty();
-        });
-    assertEquals(MapsOps.ofOrdered(1, "x1", 2, "x2"), mapC);
-  }
 }

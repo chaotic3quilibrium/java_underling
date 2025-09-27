@@ -3,7 +3,9 @@ package org.java_underling.util;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,8 +58,25 @@ public class ListsOpsTests {
   }
 
   @Test
+  public void testToListUnmodifiable() {
+    var expectedList = List.of(1, 2, 3);
+    var nullContainingList = Arrays.asList(null, 1, null, 2, null, 3, null);
+    assertEquals(7, nullContainingList.size());
+    var actualList = ListsOps.toListUnmodifiable(nullContainingList.stream());
+    assertEquals(expectedList, actualList);
+    assertTrue(CollectionsOps.isUnmodifiable(actualList));
+  }
+
+  @Test
   public void testToDistinctSortedListInteger() {
-    assertEquals(List.of(1, 2, 3, 4), ListsOps.toDistinctSortedListInteger(List.of(4, 1, 2, 3)));
-    assertEquals(List.of(1, 2, 3, 4), ListsOps.toDistinctSortedListInteger(List.of("4", "1", "2", "3"), Integer::valueOf));
+    assertEquals(
+        List.of(1, 2, 3, 4),
+        ListsOps.toDistinctSortedListInteger(
+            Stream.of(4, 1, 2, 3)));
+    assertEquals(
+        List.of(1, 2, 3, 4),
+        ListsOps.toDistinctSortedListInteger(
+            Stream.of("4", "1", "2", "3"),
+            Integer::valueOf));
   }
 }

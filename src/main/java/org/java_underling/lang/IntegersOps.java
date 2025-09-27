@@ -13,32 +13,13 @@ import java.util.stream.Collectors;
  */
 public class IntegersOps {
 
-  public static int[] findSetBitIndices(int bits) {
-    if (bits == 0) {
-      return ArraysOps.EMPTY_INT_ARRAY;
-    }
-
-    int[] bitsIndices = new int[32];
-    int size = 0;
-    while (bits != 0) {
-      int c = bits & -bits;
-      int index = Integer.numberOfTrailingZeros(c);
-      bitsIndices[size++] = index;
-      bits = bits ^ c;
-    }
-    var result = new int[size];
-    System.arraycopy(bitsIndices, 0, result, 0, size);
-
-    return result;
-  }
-
   @NotNull
   public static List<Integer> findSetBitIndicesAsList(int bits) {
     if (bits == 0) {
       return List.of();
     }
 
-    return Arrays.stream(findSetBitIndices(bits))
+    return Arrays.stream(ArraysOps.findSetBitIndices(bits))
         .boxed()
         .toList();
   }
@@ -49,7 +30,7 @@ public class IntegersOps {
       return Set.of();
     }
 
-    return Arrays.stream(findSetBitIndices(bits))
+    return Arrays.stream(ArraysOps.findSetBitIndices(bits))
         .boxed()
         .collect(Collectors.toUnmodifiableSet());
   }

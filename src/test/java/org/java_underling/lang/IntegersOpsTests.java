@@ -4,11 +4,6 @@ import org.junit.jupiter.api.Test;
 
 public class IntegersOpsTests {
   @Test
-  public void testFindSetBitIndices() {
-    throw new MissingImplementationException();
-  }
-
-  @Test
   public void testFindSetBitIndicesAsList() {
     throw new MissingImplementationException();
   }

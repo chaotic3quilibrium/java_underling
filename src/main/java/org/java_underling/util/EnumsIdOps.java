@@ -2,7 +2,6 @@ package org.java_underling.util;
 
 
 import org.java_underling.lang.ClassesOps;
-import org.java_underling.util.stream.StreamsOps;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -10,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Map.Entry;
 import static java.util.Map.entry;
 
 public final class EnumsIdOps<E extends Enum<E>, ID> {
@@ -123,7 +123,7 @@ public final class EnumsIdOps<E extends Enum<E>, ID> {
     var enumsValues =
         this.enumsOps
             .toList();
-    this.orderedMapIdByEnumValue = StreamsOps.toMapOrderedUnmodifiableNonNulls(
+    this.orderedMapIdByEnumValue = MapsOps.toMapOrderedUnmodifiable(
         enumsValues.stream(),
         (e) ->
             Optional.of(entry(e, fEToId.apply(e))));
@@ -217,5 +217,300 @@ public final class EnumsIdOps<E extends Enum<E>, ID> {
   @NotNull
   public Optional<E> get(@NotNull String valueOrIdOrAltToString) {
     return Optional.ofNullable(getEnumValueByValueOrIdOrAltToStringLowerCase().get(valueOrIdOrAltToString.toLowerCase()));
+  }
+
+  @NotNull
+  public String generateJoinDefault(
+      @NotNull Entry<E, ID> entry
+  ) {
+    return "%s(%s)".formatted(
+        entry.getKey().name(),
+        entry.getValue().toString());
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum name} and {@code ID.toString()} as
+   * {@code "ENUM_NAME(ID_TO_STRING)"} for all the enum values, joined together with a copy of the
+   * {@link EnumsOps#DEFAULT_SEPARATOR}.
+   *
+   * @return a new {@code String} composed of copies of the {@code Enum name} and {@code ID.toString()} as *
+   *     {@code "ENUM_NAME(ID_TO_STRING)"} for all the enum values, joined together with a copy of the *
+   *     {@link EnumsOps#DEFAULT_SEPARATOR}
+   */
+  @NotNull
+  public String join() {
+    return join(EnumsOps.DEFAULT_SEPARATOR);
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum name} and {@code ID.toString()} as
+   * {@code "ENUM_NAME(ID_TO_STRING)"} for all the enum values, joined together with a copy of the specified
+   * {@code separator}.
+   *
+   * @param separator the string used to separate the enum values
+   * @return a new {@code String} composed of copies of the {@code Enum name} and {@code ID.toString()} as
+   *     {@code "ENUM_NAME(ID_TO_STRING)"} for all the enum values, joined together with a copy of the specified
+   *     {@code separator}
+   */
+  @NotNull
+  public String join(@NotNull String separator) {
+    return join(this::generateJoinDefault, separator);
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum} and {@code ID} transformed by the
+   * {@code eAndIdToString} function for all the enum values, and joined together with a copy of the
+   * {@link EnumsOps#DEFAULT_SEPARATOR}.
+   *
+   * @param eAndIdToString the function to transform an enum value into a String
+   * @return a new {@code String} composed of copies of the {@code Enum} and {@code ID} transformed by the
+   *     {@code eAndIdToString} function for all the enum values, and joined together with a copy of the
+   *     {@link EnumsOps#DEFAULT_SEPARATOR}
+   */
+  @NotNull
+  public String join(
+      @NotNull Function<Entry<E, ID>, String> eAndIdToString
+  ) {
+    return join(eAndIdToString, EnumsOps.DEFAULT_SEPARATOR);
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum} and {@code ID} transformed by the
+   * {@code eAndIdToString} function for all the enum values, and joined together with a copy of the specified
+   * {@code separator}.
+   *
+   * @param eAndIdToString the function to transform an enum value into a String
+   * @param separator      the string used to separate the enum values
+   * @return a new {@code String} composed of copies of the {@code Enum} and {@code ID} transformed by the
+   *     {@code eAndIdToString} function for all the enum values, and joined together with a copy of the specified
+   *     {@code separator}
+   */
+  @NotNull
+  public String join(
+      @NotNull Function<Entry<E, ID>, String> eAndIdToString,
+      @NotNull String separator
+  ) {
+    return join(getEnumsOps().stream(), eAndIdToString, separator);
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum} and {@code ID} as
+   * {@code "ENUM_NAME(ID_TO_STRING)"} for each of the provided {@link Enum} values, joined together with a copy of the
+   * {@link EnumsOps#DEFAULT_SEPARATOR}.
+   *
+   * @param es the list of enum values to use
+   * @return a new {@code String} composed of copies of the {@code Enum} and {@code ID} as
+   *     {@code "ENUM_NAME(ID_TO_STRING)"} for each of the provided {@link Enum} values, joined together with a copy of
+   *     the {@link EnumsOps#DEFAULT_SEPARATOR}
+   */
+  @NotNull
+  public String join(@NotNull Stream<E> es) {
+    return join(es, this::generateJoinDefault);
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum} and {@code ID} transformed by the
+   * {@code eAndIdToString} function for each of the provided {@link Enum} values, and joined together with a copy of
+   * the {@link EnumsOps#DEFAULT_SEPARATOR}.
+   *
+   * @param es             the list of enum values to use
+   * @param eAndIdToString the function to transform an enum value into a String
+   * @return a new {@code String} composed of copies of the {@code Enum} and {@code ID} transformed by the
+   *     {@code eAndIdToString} function for each of the provided {@link Enum} values, and joined together with a copy
+   *     of the {@link EnumsOps#DEFAULT_SEPARATOR}
+   */
+  @NotNull
+  public String join(
+      @NotNull Stream<E> es,
+      @NotNull Function<Entry<E, ID>, String> eAndIdToString
+  ) {
+    return join(es, eAndIdToString, EnumsOps.DEFAULT_SEPARATOR);
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum} and {@code ID} as
+   * {@code "ENUM_NAME(ID_TO_STRING)"} for each of the provided {@link Enum} values, joined together with a copy of the
+   * specified {@code separator}.
+   *
+   * @param es        the list of enum values to use
+   * @param separator the string used to separate the enum values
+   * @return a new {@code String} composed of copies of the {@code Enum} and {@code ID} as
+   *     {@code "ENUM_NAME(ID_TO_STRING)"} for each of the provided {@link Enum} values, joined together with a copy of
+   *     the specified {@code separator}
+   */
+  @NotNull
+  public String join(
+      @NotNull Stream<E> es,
+      @NotNull String separator
+  ) {
+    return join(es, this::generateJoinDefault, separator);
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the provided {@code Enum}s and their associated {@code ID}s
+   * transformed by the {@code eAndIdToString} function, and joined together with a copy of the specified
+   * {@code separator}.
+   *
+   * @param es             the list of enum values to use
+   * @param eAndIdToString the function to transform an enum and its associated id value into a String
+   * @param separator      the string used to separate the enum values
+   * @return a new {@code String} composed of copies of the provided {@code Enum}s and their associated {@code ID}s
+   *     transformed by the {@code eAndIdToString} function, and joined together with a copy of the specified
+   *     {@code separator}
+   */
+  @NotNull
+  public String join(
+      @NotNull Stream<E> es,
+      @NotNull Function<Entry<E, ID>, String> eAndIdToString,
+      @NotNull String separator
+  ) {
+    return String.join(
+        separator,
+        es.map(e ->
+                eAndIdToString.apply(entry(e, getOrderedMapIdByEnumValue().get(e))))
+            .toList());
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum name} and {@code ID.toString()} as
+   * {@code "ENUM_NAME(ID_TO_STRING)"} for all the id values, joined together with a copy of the
+   * {@link EnumsOps#DEFAULT_SEPARATOR}.
+   *
+   * @return a new {@code String} composed of copies of the {@code Enum name} and {@code ID.toString()} as
+   *     {@code "ENUM_NAME(ID_TO_STRING)"} for all the id values, joined together with a copy of the
+   *     {@link EnumsOps#DEFAULT_SEPARATOR}
+   */
+  @NotNull
+  public String joinOnIds() {
+    return joinOnIds(EnumsOps.DEFAULT_SEPARATOR);
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum name} and {@code ID.toString()} as
+   * {@code "ENUM_NAME(ID_TO_STRING)"} for all the id values, joined together with a copy of the specified
+   * {@code separator}.
+   *
+   * @param separator the string used to separate the enum values
+   * @return a new {@code String} composed of copies of the {@code Enum name} and {@code ID.toString()} as
+   *     {@code "ENUM_NAME(ID_TO_STRING)"} for all the id values, joined together with a copy of the specified
+   *     {@code separator}
+   */
+  @NotNull
+  public String joinOnIds(@NotNull String separator) {
+    return joinOnIds(this::generateJoinDefault, separator);
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum} and {@code ID} transformed by the
+   * {@code eAndIdToString} function for all the id values, and joined together with a copy of the
+   * {@link EnumsOps#DEFAULT_SEPARATOR}.
+   *
+   * @param eAndIdToString the function to transform an enum value into a String
+   * @return a new {@code String} composed of copies of the {@code Enum} and {@code ID} transformed by the
+   *     {@code eAndIdToString} function for all the id values, and joined together with a copy of the
+   *     {@link EnumsOps#DEFAULT_SEPARATOR}
+   */
+  @NotNull
+  public String joinOnIds(
+      @NotNull Function<Entry<E, ID>, String> eAndIdToString
+  ) {
+    return joinOnIds(eAndIdToString, EnumsOps.DEFAULT_SEPARATOR);
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum} and {@code ID} transformed by the
+   * {@code eAndIdToString} function for all the id values, and joined together with a copy of the specified
+   * {@code separator}.
+   *
+   * @param eAndIdToString the function to transform an enum value into a String
+   * @param separator      the string used to separate the enum values
+   * @return a new {@code String} composed of copies of the {@code Enum} and {@code ID} transformed by the
+   *     {@code eAndIdToString} function for all the id values, and joined together with a copy of the specified
+   *     {@code separator}
+   */
+  @NotNull
+  public String joinOnIds(
+      @NotNull Function<Entry<E, ID>, String> eAndIdToString,
+      @NotNull String separator
+  ) {
+    return joinOnIds(getOrderedMapEnumValueById().keySet().stream(), eAndIdToString, separator);
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum} and {@code ID} as
+   * {@code "ENUM_NAME(ID_TO_STRING)"} for each of the provided {@code ID} values, joined together with a copy of the
+   * {@link EnumsOps#DEFAULT_SEPARATOR}.
+   *
+   * @param ids the list of id values to use
+   * @return a new {@code String} composed of copies of the {@code Enum} and {@code ID} as
+   *     {@code "ENUM_NAME(ID_TO_STRING)"} for each of the provided {@code ID} values, joined together with a copy of
+   *     the {@link EnumsOps#DEFAULT_SEPARATOR}
+   */
+  @NotNull
+  public String joinOnIds(@NotNull Stream<ID> ids) {
+    return joinOnIds(ids, this::generateJoinDefault);
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum} and {@code ID} transformed by the
+   * {@code eAndIdToString} function for each of the provided {@code ID} values, and joined together with a copy of the
+   * {@link EnumsOps#DEFAULT_SEPARATOR}.
+   *
+   * @param ids            the list of id values to use
+   * @param eAndIdToString the function to transform an enum value into a String
+   * @return a new {@code String} composed of copies of the {@code Enum} and {@code ID} transformed by the
+   *     {@code eAndIdToString} function for each of the provided {@code ID} values, and joined together with a copy of
+   *     the {@link EnumsOps#DEFAULT_SEPARATOR}
+   */
+  @NotNull
+  public String joinOnIds(
+      @NotNull Stream<ID> ids,
+      @NotNull Function<Entry<E, ID>, String> eAndIdToString
+  ) {
+    return joinOnIds(ids, eAndIdToString, EnumsOps.DEFAULT_SEPARATOR);
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum} and {@code ID} as
+   * {@code "ENUM_NAME(ID_TO_STRING)"} for each of the provided {@code ID} values, joined together with a copy of the
+   * specified {@code separator}.
+   *
+   * @param ids       the list of id values to use
+   * @param separator the string used to separate the enum values
+   * @return a new {@code String} composed of copies of the {@code Enum} and {@code ID} as
+   *     {@code "ENUM_NAME(ID_TO_STRING)"} for each of the provided {@code ID} values, joined together with a copy of
+   *     the specified {@code separator}
+   */
+  @NotNull
+  public String joinOnIds(
+      @NotNull Stream<ID> ids,
+      @NotNull String separator
+  ) {
+    return joinOnIds(ids, this::generateJoinDefault, separator);
+  }
+
+  /**
+   * Returns a new {@code String} composed of copies of the {@code Enum} and {@code ID} transformed by the
+   * {@code eAndIdToString} function for each of the provided {@code ID} values, and joined together with a copy of the
+   * specified {@code separator}.
+   *
+   * @param ids            the list of enum values to use
+   * @param eAndIdToString the function to transform an enum and its associated id value into a String
+   * @param separator      the string used to separate the enum values
+   * @return a new {@code String} composed of copies of the {@code Enum} and {@code ID} transformed by the
+   *     {@code eAndIdToString} function for each of the provided {@code ID} values, and joined together with a copy of
+   *     the specified {@code separator}
+   */
+  @NotNull
+  public String joinOnIds(
+      @NotNull Stream<ID> ids,
+      @NotNull Function<Entry<E, ID>, String> eAndIdToString,
+      @NotNull String separator
+  ) {
+    return String.join(
+        separator,
+        ids.map(id ->
+                eAndIdToString.apply(entry(getOrderedMapEnumValueById().get(id), id)))
+            .toList());
   }
 }

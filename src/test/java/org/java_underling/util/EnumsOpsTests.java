@@ -1,9 +1,11 @@
 package org.java_underling.util;
 
-import org.java_underling.util.stream.StreamsOps;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,7 +48,7 @@ public class EnumsOpsTests {
       return ENUM_OPS.join();
     }
 
-    public static String join(Collection<TrafficLightBased> es) {
+    public static String join(Stream<TrafficLightBased> es) {
       return ENUM_OPS.join(es);
     }
   }
@@ -164,7 +166,7 @@ public class EnumsOpsTests {
   @Test
   public void testToOrderedMapThroughOps() {
     var orderedMapExpected =
-        StreamsOps.toMapOrderedUnmodifiableNonNulls(
+        MapsOps.toMapOrderedUnmodifiable(
             Arrays.stream(TrafficLightBased.values())
                 .map(trafficLightBased ->
                     Map.entry(
@@ -181,7 +183,7 @@ public class EnumsOpsTests {
   @Test
   public void testToOrderedMapKeysToLowerCaseThroughOps() {
     var orderedMapExpected =
-        StreamsOps.toMapOrderedUnmodifiableNonNulls(
+        MapsOps.toMapOrderedUnmodifiable(
             Arrays.stream(TrafficLightBased.values())
                 .map(
                     trafficLightBased ->
@@ -200,14 +202,12 @@ public class EnumsOpsTests {
   public void forEachPlus() {
     var counter = new int[]{0};
     TrafficLightBased.ops()
-        .forEach(trafficLightBased -> {
-          ++counter[0];
-        });
+        .forEach(trafficLightBased ->
+            ++counter[0]);
     assertEquals(3, counter[0]);
     TrafficLightBased.ops()
-        .forEachOrdered(trafficLightBased -> {
-          ++counter[0];
-        });
+        .forEachOrdered(trafficLightBased ->
+            ++counter[0]);
     assertEquals(6, counter[0]);
   }
 
@@ -285,8 +285,7 @@ public class EnumsOpsTests {
                     .ops()
                     .stream()
                     .filter(trafficLightBased ->
-                        trafficLightBased.toString().contains("R"))
-                    .toList()));
+                        trafficLightBased.toString().contains("R"))));
     assertEquals(
         "GREEN(0), RED(2)",
         TrafficLightBased
@@ -296,8 +295,7 @@ public class EnumsOpsTests {
                     .ops()
                     .stream()
                     .filter(trafficLightBased ->
-                        trafficLightBased.toString().contains("R"))
-                    .toList(),
+                        trafficLightBased.toString().contains("R")),
                 trafficLightBased -> "%s(%d)".formatted(
                     trafficLightBased.toString(),
                     trafficLightBased.ordinal())));
@@ -310,8 +308,7 @@ public class EnumsOpsTests {
                     .ops()
                     .stream()
                     .filter(trafficLightBased ->
-                        trafficLightBased.toString().contains("R"))
-                    .toList(),
+                        trafficLightBased.toString().contains("R")),
                 ","));
     assertEquals(
         "GREEN(0),RED(2)",
@@ -322,8 +319,7 @@ public class EnumsOpsTests {
                     .ops()
                     .stream()
                     .filter(trafficLightBased ->
-                        trafficLightBased.toString().contains("R"))
-                    .toList(),
+                        trafficLightBased.toString().contains("R")),
                 trafficLightBased -> "%s(%d)".formatted(
                     trafficLightBased.toString(),
                     trafficLightBased.ordinal()),
@@ -344,7 +340,6 @@ public class EnumsOpsTests {
                     .ops()
                     .stream()
                     .filter(trafficLightBased ->
-                        trafficLightBased.toString().contains("R"))
-                    .toList()));
+                        trafficLightBased.toString().contains("R"))));
   }
 }

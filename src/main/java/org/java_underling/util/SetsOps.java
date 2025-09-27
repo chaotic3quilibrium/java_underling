@@ -1,7 +1,6 @@
 package org.java_underling.util;
 
 import org.java_underling.util.refined.NonEmptySet;
-import org.java_underling.util.stream.StreamsOps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -140,7 +139,7 @@ public class SetsOps {
           .forEach(index -> {
             var set = sets[index];
             if (set != null) {
-              var resolvedSet = StreamsOps.toSetOrderedUnmodifiableNonNulls(set.stream());
+              var resolvedSet = toSetOrderedUnmodifiable(set.stream());
               if (!resolvedSet.isEmpty()) {
                 result.addAll(resolvedSet);
               }
@@ -153,6 +152,44 @@ public class SetsOps {
     }
 
     return Set.of();
+  }
+
+  /**
+   * Returns an unmodifiable set with the null elements filtered out.
+   *
+   * @param stream the source of the T elements
+   * @param <T>    the type of the instances
+   * @return an unmodifiable set with the null elements filtered out
+   */
+  @NotNull
+  public static <T> Set<T> toSetUnmodifiable(
+      @NotNull Stream<T> stream
+  ) {
+    return stream
+        .filter(t ->
+            !Objects.isNull(t))
+        .collect(Collectors.toUnmodifiableSet());
+  }
+
+  /**
+   * Returns an unmodifiable <u><i>ordered</i></u> set with the null elements filtered out.
+   *
+   * @param stream the (assumed to be) <u><i>ordered</i></u> source of the T elements
+   * @param <T>    the type of the instances
+   * @return an unmodifiable <u><i>ordered</i></u> set with the null elements filtered out
+   */
+  @NotNull
+  public static <T> Set<T> toSetOrderedUnmodifiable(
+      @NotNull Stream<T> stream
+  ) {
+    var set = stream
+        .filter(t ->
+            !Objects.isNull(t))
+        .collect(Collectors.toCollection(LinkedHashSet::new));
+
+    return !set.isEmpty()
+        ? Collections.unmodifiableSet(set)
+        : Set.of();
   }
 
   /**

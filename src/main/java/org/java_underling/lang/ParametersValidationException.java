@@ -1,6 +1,6 @@
 package org.java_underling.lang;
 
-import org.java_underling.util.CollectionsOps;
+import org.java_underling.util.ListsOps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,7 +77,7 @@ public final class ParametersValidationException extends RuntimeException {
       @NotNull List<String> parametersValidationFailureMessages
   ) {
     super(formatMessage(message, parametersValidationFailureMessages));
-    this.parametersValidationFailureMessages = CollectionsOps.defensiveCopyToListUnmodifiableNonNulls(parametersValidationFailureMessages);
+    this.parametersValidationFailureMessages = ListsOps.toListUnmodifiable(parametersValidationFailureMessages.stream());
   }
 
   public ParametersValidationException(
@@ -87,7 +87,7 @@ public final class ParametersValidationException extends RuntimeException {
     this(
         DEFAULT_MESSAGE,
         cause,
-        CollectionsOps.defensiveCopyToListUnmodifiableNonNulls(parametersValidationFailureMessages));
+        ListsOps.toListUnmodifiable(parametersValidationFailureMessages.stream()));
   }
 
   public ParametersValidationException(
@@ -104,7 +104,7 @@ public final class ParametersValidationException extends RuntimeException {
       @NotNull List<String> parametersValidationFailureMessages
   ) {
     super(message, cause);
-    this.parametersValidationFailureMessages = CollectionsOps.defensiveCopyToListUnmodifiableNonNulls(parametersValidationFailureMessages);
+    this.parametersValidationFailureMessages = ListsOps.toListUnmodifiable(parametersValidationFailureMessages.stream());
   }
 
   public ParametersValidationException(
@@ -121,7 +121,7 @@ public final class ParametersValidationException extends RuntimeException {
         cause,
         enableSuppression,
         writableStackTrace);
-    this.parametersValidationFailureMessages = CollectionsOps.defensiveCopyToListUnmodifiableNonNulls(parametersValidationFailureMessages);
+    this.parametersValidationFailureMessages = ListsOps.toListUnmodifiable(parametersValidationFailureMessages.stream());
     ;
   }
 

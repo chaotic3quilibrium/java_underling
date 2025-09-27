@@ -4,6 +4,7 @@ import org.java_underling.lang.ParametersValidationException;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.*;
@@ -192,6 +193,74 @@ public class MapsOpsTests {
     assertEquals(
         List.of(entry(1, "x1"), entry(2, "x2"), entry(3, "x3"), entry(4, "x4"), entry(5, "x5"), entry(6, "x6")),
         mapAppendB.entrySet().stream().toList());
+  }
+
+  @Test
+  public void testToMapUnmodifiable() {
+    var mapA = new HashMap<Integer, String>();
+    mapA.put(null, "xnull");
+    mapA.put(1, "x1");
+    mapA.put(-1, null);
+    mapA.put(2, "x2");
+    @SuppressWarnings("SimplifyStreamApiCallChains")
+    var entries = mapA.entrySet().stream().collect(Collectors.toList());
+    entries.add(1, null);
+    var mapB = MapsOps.toMapUnmodifiable(entries.stream());
+    assertEquals(Map.of(1, "x1", 2, "x2"), mapB);
+    var list = new ArrayList<String>();
+    list.add(null);
+    list.add("x1");
+    list.add(null);
+    list.add("x");
+    list.add(null);
+    list.add("2");
+    list.add("x2");
+    list.add("3");
+    list.add("x3");
+    var mapC = MapsOps.toMapUnmodifiable(
+        list.stream(),
+        string -> {
+          if ((string != null) && (string.length() > 1)) {
+            return Optional.of(entry(Integer.parseInt(string.substring(1, 2)), string));
+          }
+
+          return Optional.empty();
+        });
+    assertEquals(Map.of(1, "x1", 2, "x2", 3, "x3"), mapC);
+  }
+
+  @Test
+  public void testToMapOrderedUnmodifiable() {
+    var mapA = new LinkedHashMap<Integer, String>();
+    mapA.put(null, "xnull");
+    mapA.put(1, "x1");
+    mapA.put(-1, null);
+    mapA.put(2, "x2");
+    @SuppressWarnings("SimplifyStreamApiCallChains")
+    var entries = mapA.entrySet().stream().collect(Collectors.toList());
+    entries.add(1, null);
+    var mapB = MapsOps.toMapOrderedUnmodifiable(entries.stream());
+    assertEquals(MapsOps.ofOrdered(1, "x1", 2, "x2"), mapB);
+    var list = new ArrayList<String>();
+    list.add(null);
+    list.add("x1");
+    list.add(null);
+    list.add("x");
+    list.add(null);
+    list.add("2");
+    list.add("x2");
+    list.add("3");
+    list.add("x3");
+    var mapC = MapsOps.toMapOrderedUnmodifiable(
+        list.stream(),
+        string -> {
+          if ((string != null) && (string.length() > 1)) {
+            return Optional.of(entry(Integer.parseInt(string.substring(1, 2)), string));
+          }
+
+          return Optional.empty();
+        });
+    assertEquals(MapsOps.ofOrdered(1, "x1", 2, "x2", 3, "x3"), mapC);
   }
 
   @Test

@@ -4,9 +4,13 @@ import org.java_underling.util.refined.NonEmptyList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Utility class providing static methods to create {@link List} instances.
@@ -94,6 +98,23 @@ public class ListsOps {
   }
 
   /**
+   * Returns an unmodifiable list with the null elements filtered out.
+   *
+   * @param stream the source of the T elements
+   * @param <T>    the type of the instances
+   * @return an unmodifiable list with the null elements filtered out
+   */
+  @NotNull
+  public static <T> List<T> toListUnmodifiable(
+      @NotNull Stream<T> stream
+  ) {
+    return stream
+        .filter(t ->
+            !Objects.isNull(t))
+        .toList();
+  }
+
+  /**
    * Returns a new {@link List} from a collection of {@code integers}.
    *
    * @param integers the source of the derived {@link Integer} values
@@ -101,7 +122,7 @@ public class ListsOps {
    */
   @NotNull
   public static List<Integer> toDistinctSortedListInteger(
-      @NotNull Collection<Integer> integers
+      @NotNull Stream<Integer> integers
   ) {
     return toDistinctSortedListInteger(integers, Function.identity());
   }
@@ -118,11 +139,10 @@ public class ListsOps {
    */
   @NotNull
   public static <T> List<Integer> toDistinctSortedListInteger(
-      @NotNull Collection<T> ts,
+      @NotNull Stream<T> ts,
       @NotNull Function<T, Integer> fTToId
   ) {
     return ts
-        .stream()
         .map(fTToId)
         .distinct()
         .sorted()

@@ -4,6 +4,8 @@ import org.java_underling.util.SetsOps.SetPairViewKey;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -73,6 +75,28 @@ public class SetsOpsTests {
     var setAppendB = SetsOps.appendSets(setAppendA, Set.of(4), Set.of(5), setContainingNull);
     assertTrue(CollectionsOps.isUnmodifiable(setAppendB));
     assertEquals(List.of(1, 2, 3, 4, 5, 6), setAppendB.stream().toList());
+  }
+
+  @Test
+  public void testToSetUnmodifiable() {
+    var expectedSet = Set.of(3, 2, 1);
+    var nullContainingSet = Stream.of(null, 2, null, 1, null, 3, null).collect(Collectors.toSet());
+    assertEquals(4, nullContainingSet.size());
+    var actualSet = SetsOps.toSetUnmodifiable(nullContainingSet.stream());
+    assertEquals(expectedSet, actualSet);
+    assertTrue(CollectionsOps.isUnmodifiable(actualSet));
+  }
+
+  @Test
+  public void testToSetOrderedUnmodifiable() {
+    var expectedSetOrdered = new LinkedHashSet<>(List.of(3, 2, 1));
+    var nullContainingSetOrdered = new LinkedHashSet<>(Stream.of(null, 3, null, 2, null, 1, null).toList());
+    assertEquals(4, nullContainingSetOrdered.size());
+    assertNull(nullContainingSetOrdered.iterator().next());
+    var actualSetOrdered = SetsOps.toSetOrderedUnmodifiable(nullContainingSetOrdered.stream());
+    assertEquals(expectedSetOrdered, actualSetOrdered);
+    assertEquals(expectedSetOrdered.stream().toList(), actualSetOrdered.stream().toList());
+    assertTrue(CollectionsOps.isUnmodifiable(actualSetOrdered));
   }
 
   private <T> void validateContrastSetPairMap(
