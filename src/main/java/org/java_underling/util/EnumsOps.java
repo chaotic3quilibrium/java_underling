@@ -1,5 +1,7 @@
 package org.java_underling.util;
 
+import org.java_underling.lang.ClassesOps;
+import org.java_underling.lang.ParametersValidationException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -8,6 +10,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Map.Entry;
 import static java.util.Map.entry;
 
 /**
@@ -31,96 +34,108 @@ public final class EnumsOps<E extends Enum<E>> {
 
   public static final String DEFAULT_SEPARATOR = ", ";
 
-  private static final Object ENUM_OPS_BY_ENUM_CLASS_SYNC = new Object();
-  private static volatile Memoizer<Class<?>, EnumsOps<?>> ENUM_OPS_BY_ENUM_CLASS;
+  private static final Object ENUM_OPS_BY_CLASS_E_SYNC = new Object();
+  private static volatile Memoizer<Class<?>, EnumsOps<?>> ENUM_OPS_BY_CLASS_E;
 
-  @SuppressWarnings("unchecked")
+  /**
+   * Returns an {@link EnumsOps} <i>singleton</i> for the provided {@link Enum}'s class.
+   * <p>
+   * Due to use of a thread-safe internal cache, upon the first call to this factory method with a specific {@link Enum}
+   * class, an instance of {@link EnumsOps} will be generated stored within the internal cache. All future calls to this
+   * factory method specifying the same {@link Enum} class (at least within the same {@link ClassLoader}) will ensure
+   * the same {@link EnumsOps} instance is returned. There are no means provided to allow additional independent
+   * instances of {@link EnumsOps} for the same {@link Enum} class.
+   *
+   * @param classE the {@link Class} of the specific enum being augmented
+   * @param <E>    the specific Enum's type
+   * @return an {@link EnumsOps} <i>singleton</i> for the provided {@link Enum}'s class
+   */
   @NotNull
-  public static <E extends Enum<E>> EnumsOps<E> from(@NotNull Class<E> enumClass) {
-    if (ENUM_OPS_BY_ENUM_CLASS == null) {
-      synchronized (ENUM_OPS_BY_ENUM_CLASS_SYNC) {
-        if (ENUM_OPS_BY_ENUM_CLASS == null) {
-          ENUM_OPS_BY_ENUM_CLASS = Memoizer.from(enumClassE ->
-              new EnumsOps<>((Class<E>) enumClassE));
+  public static <E extends Enum<E>> EnumsOps<E> from(@NotNull Class<E> classE) {
+    if (ENUM_OPS_BY_CLASS_E == null) {
+      synchronized (ENUM_OPS_BY_CLASS_E_SYNC) {
+        if (ENUM_OPS_BY_CLASS_E == null) {
+          //noinspection unchecked
+          ENUM_OPS_BY_CLASS_E = Memoizer.from(classWildcard ->
+              ClassesOps.narrow(() ->
+                      new EnumsOps<>((Class<E>) classWildcard))
+                  .orElseThrow(() ->
+                      new IllegalStateException("unable to narrow to Class<E> for class " + classWildcard.getName())));
         }
       }
     }
 
-    return (EnumsOps<E>) ENUM_OPS_BY_ENUM_CLASS.get(enumClass);
+    //noinspection unchecked
+    return ClassesOps.narrow(() ->
+            (EnumsOps<E>) ENUM_OPS_BY_CLASS_E.get(classE))
+        .orElseThrow(() ->
+            new IllegalStateException("unable to narrow to EnumsOps<E> for class " + classE.getName()));
   }
 
-  private static final Object ENUM_VALUE_BY_NAME_LOWER_CASE_BY_ENUM_CLASS_SYNC = new Object();
-  private static volatile Memoizer<Class<?>, Map<String, ?>> ENUM_VALUE_BY_NAME_LOWER_CASE_BY_ENUM_CLASS;
-
-  @NotNull
-  private static <E extends Enum<E>> Map<String, E> toOrderedMapAsEnumByNameLowerCaseHelper(
-      @NotNull Class<E> classEnum
-  ) {
-    return MapsOps.toMapOrderedUnmodifiable(
-        Arrays.stream(classEnum.getEnumConstants()),
-        (e) ->
-            Optional.of(entry(e.name().toLowerCase(), e)));
-  }
-
-  @SuppressWarnings("unchecked")
-  @NotNull
-  private static <E extends Enum<E>> Map<String, E> fetchCachedEnumInstanceByNameLowerCase(
-      @NotNull Class<E> enumClass
-  ) {
-    if (ENUM_VALUE_BY_NAME_LOWER_CASE_BY_ENUM_CLASS == null) {
-      synchronized (ENUM_VALUE_BY_NAME_LOWER_CASE_BY_ENUM_CLASS_SYNC) {
-        if (ENUM_VALUE_BY_NAME_LOWER_CASE_BY_ENUM_CLASS == null) {
-          ENUM_VALUE_BY_NAME_LOWER_CASE_BY_ENUM_CLASS = Memoizer.from(
-              enumClassE ->
-                  toOrderedMapAsEnumByNameLowerCaseHelper((Class<E>) enumClassE));
-        }
-      }
-    }
-
-    return (Map<String, E>) ENUM_VALUE_BY_NAME_LOWER_CASE_BY_ENUM_CLASS.get(enumClass);
-  }
-
-  private final Class<E> enumClass;
-  //wraps backing array copy from enumClass.getEnumConstants() with Collections.unmodifiableList()
+  private final Class<E> classE;
   private final List<E> enumsValues;
+  private final Map<String, E> orderedMapEnumValueByNameLowerCase;
 
-  private EnumsOps(@NotNull Class<E> enumClass) {
-    var enumsValues = Collections.unmodifiableList(Arrays.asList(enumClass.getEnumConstants()));
+  private EnumsOps(@NotNull Class<E> classE) {
+    var enumsValues = Collections.unmodifiableList(Arrays.asList(classE.getEnumConstants()));
+    var nameLowerCaseAndEnumValues = enumsValues
+        .stream()
+        .map(enumValue ->
+            entry(
+                enumValue.name().toLowerCase(),
+                enumValue))
+        .toList();
     //validate name().toLowerCase() are distinct as all 3 valueOf* methods depend
-    //  upon this assumption
-    var enumValueCollisionsFromNameLowerCase =
-        enumsValues
+    //  upon this assumption.
+    var nameLowerCaseAndEnumValueCollisions =
+        nameLowerCaseAndEnumValues
             .stream()
-            .collect(Collectors.groupingBy(enumValue -> enumValue.name().toLowerCase()))
+            .collect(Collectors.groupingBy(Map.Entry::getKey))
             .values()
             .stream()
-            .filter(es -> es.size() > 1)
+            .filter(es ->
+                es.size() > 1)
             .flatMap(Collection::stream)
             .toList();
-    if (!enumValueCollisionsFromNameLowerCase.isEmpty()) {
-      throw new IllegalStateException(
+    if (!nameLowerCaseAndEnumValueCollisions.isEmpty()) {
+      throw new ParametersValidationException(
+          "EnumsOps invalid parameter(s)",
           "invalid state for enum [%s] where name().toLowerCase() is not unique across all the enums values - erred values: %s".formatted(
-              enumClass.getSimpleName(),
+              classE.getSimpleName(),
               String.join(
                   DEFAULT_SEPARATOR,
-                  enumsValues
+                  nameLowerCaseAndEnumValueCollisions
                       .stream()
-                      .filter(enumValueCollisionsFromNameLowerCase::contains)
-                      .map(Enum::name)
+                      .sorted(
+                          Comparator.<Entry<String, E>, Integer>comparing(entry ->
+                                  entry.getValue().ordinal())
+                              .thenComparing(Entry::getKey))
+                      .map(entry ->
+                          "keyLowerCase: %s -> enumValueName: %s".formatted(
+                              entry.getKey(),
+                              entry.getValue()))
                       .toList())));
     }
-    this.enumClass = enumClass;
+    //all preconditions have been validated, so assign the instance fields
+    this.classE = classE;
     this.enumsValues = enumsValues;
+    this.orderedMapEnumValueByNameLowerCase = MapsOps.toMapOrderedUnmodifiable(
+        enumsValues
+            .stream()
+            .map(enumValue ->
+                entry(
+                    enumValue.name().toLowerCase(),
+                    enumValue)));
   }
 
   /**
    * Returns the {@link Class} of the enum being augmented.
    *
-   * @return the {@link Class} of the enum being augmented.
+   * @return the {@link Class} of the enum being augmented
    */
   @NotNull
-  public Class<E> getEnumClass() {
-    return this.enumClass;
+  public Class<E> getClassE() {
+    return this.classE;
   }
 
   /**
@@ -152,7 +167,7 @@ public final class EnumsOps<E extends Enum<E>> {
    */
   @NotNull
   public Set<E> toOrderedSet() {
-    return Collections.unmodifiableSet(EnumSet.allOf(this.enumClass));
+    return Collections.unmodifiableSet(EnumSet.allOf(this.classE));
   }
 
   /**
@@ -178,8 +193,8 @@ public final class EnumsOps<E extends Enum<E>> {
    *     is the <i>lower case</i> {@link Enum#name()}, and the enum constant itself is the value
    */
   @NotNull
-  public Map<String, E> toOrderedMapByNameToLowerCase() {
-    return fetchCachedEnumInstanceByNameLowerCase(this.enumClass);
+  public Map<String, E> toOrderedMapEnumValueByNameLowerCase() {
+    return this.orderedMapEnumValueByNameLowerCase;
   }
 
   /**
@@ -245,7 +260,7 @@ public final class EnumsOps<E extends Enum<E>> {
       @NotNull String search
   ) {
     return Optional.ofNullable(
-        fetchCachedEnumInstanceByNameLowerCase(this.enumClass)
+        toOrderedMapEnumValueByNameLowerCase()
             .get(search.toLowerCase()));
   }
 

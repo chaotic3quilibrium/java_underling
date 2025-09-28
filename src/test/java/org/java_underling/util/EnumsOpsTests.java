@@ -1,5 +1,6 @@
 package org.java_underling.util;
 
+import org.java_underling.lang.ParametersValidationException;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -73,26 +74,26 @@ public class EnumsOpsTests {
     assertEquals(
         "SGREEN, SYELLOW, SRED",
         ENUMS_OPS_TRAFFIC_LIGHT.join());
-    var illegalStateExceptionX1 =
+    var parametersValidationExceptionX1 =
         assertThrows(
-            IllegalStateException.class,
+            ParametersValidationException.class,
             () -> EnumsOps.from(TrafficLightToStringLowerCaseConflictX1.class));
     assertEquals(
-        "invalid state for enum [TrafficLightToStringLowerCaseConflictX1] where name().toLowerCase() is not unique across all the enums values - erred values: RED, Red",
-        illegalStateExceptionX1.getMessage());
-    var illegalStateExceptionX2 =
+        "EnumsOps invalid parameter(s) - Parameter Validation Failures: [invalid state for enum [TrafficLightToStringLowerCaseConflictX1] where name().toLowerCase() is not unique across all the enums values - erred values: keyLowerCase: red -> enumValueName: RED, keyLowerCase: red -> enumValueName: Red]",
+        parametersValidationExceptionX1.getMessage());
+    var parametersValidationExceptionX2 =
         assertThrows(
-            IllegalStateException.class,
+            ParametersValidationException.class,
             () -> EnumsOps.from(TrafficLightToStringLowerCaseConflictX2.class));
     assertEquals(
-        "invalid state for enum [TrafficLightToStringLowerCaseConflictX2] where name().toLowerCase() is not unique across all the enums values - erred values: YELLOW, RED, Red, YelloW",
-        illegalStateExceptionX2.getMessage());
+        "EnumsOps invalid parameter(s) - Parameter Validation Failures: [invalid state for enum [TrafficLightToStringLowerCaseConflictX2] where name().toLowerCase() is not unique across all the enums values - erred values: keyLowerCase: yellow -> enumValueName: YELLOW, keyLowerCase: red -> enumValueName: RED, keyLowerCase: red -> enumValueName: Red, keyLowerCase: yellow -> enumValueName: YelloW]",
+        parametersValidationExceptionX2.getMessage());
   }
 
   @Test
   public void testCache() {
     assertSame(ENUMS_OPS_TRAFFIC_LIGHT, EnumsOps.from(TrafficLight.class));
-    assertSame(ENUMS_OPS_TRAFFIC_LIGHT, EnumsOps.from(ENUMS_OPS_TRAFFIC_LIGHT.getEnumClass()));
+    assertSame(ENUMS_OPS_TRAFFIC_LIGHT, EnumsOps.from(ENUMS_OPS_TRAFFIC_LIGHT.getClassE()));
     //noinspection AssertBetweenInconvertibleTypes
     assertNotSame(ENUMS_OPS_TRAFFIC_LIGHT, EnumsOps.from(TrafficLightBased.class));
     assertEquals(
@@ -192,10 +193,10 @@ public class EnumsOpsTests {
                             trafficLightBased)));
     assertEquals(
         orderedMapExpected.keySet().stream().toList(),
-        TrafficLightBased.ops().toOrderedMapByNameToLowerCase().keySet().stream().toList());
+        TrafficLightBased.ops().toOrderedMapEnumValueByNameLowerCase().keySet().stream().toList());
     assertEquals(
         orderedMapExpected,
-        TrafficLightBased.ops().toOrderedMapByNameToLowerCase());
+        TrafficLightBased.ops().toOrderedMapEnumValueByNameLowerCase());
   }
 
   @Test
