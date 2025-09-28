@@ -1,5 +1,6 @@
 package org.java_underling.util;
 
+import org.java_underling.lang.MissingImplementationException;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -65,5 +66,10 @@ public class EnumsIdOpsTests {
     assertEquals(Optional.empty(), tlwix.valueOf("SBLUE"));
     assertEquals(Optional.empty(), tlwix.valueOf("3"));
     assertEquals(Optional.empty(), tlwix.valueOf("X5"));
+  }
+
+  @Test
+  public void testManyMoreTestsRequired() {
+    throw new MissingImplementationException("copy from EnumsOps - this is at least 10 more tests");
   }
 }

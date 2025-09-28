@@ -2,74 +2,165 @@ package org.java_underling.lang;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ParametersValidationExceptionTests {
   @Test
   public void testConstructor() {
-    throw new MissingImplementationException();
+    var parametersValidationException = new ParametersValidationException();
+    assertEquals("Parameters validation failed", parametersValidationException.getMessage());
+    assertNull(parametersValidationException.getCause());
+    assertEquals(List.of(), parametersValidationException.getParametersValidationFailureMessages());
+    assertEquals("org.java_underling.lang.ParametersValidationException: Parameters validation failed", parametersValidationException.toString());
   }
 
   @Test
   public void testConstructorMessage() {
-    throw new MissingImplementationException();
+    var message = "Test Message";
+    var parametersValidationException = new ParametersValidationException(message);
+    assertEquals(message, parametersValidationException.getMessage());
+    assertNull(parametersValidationException.getCause());
+    assertEquals(List.of(), parametersValidationException.getParametersValidationFailureMessages());
+    assertEquals("org.java_underling.lang.ParametersValidationException: " + message, parametersValidationException.toString());
   }
 
   @Test
   public void testConstructorParametersValidationFailureMessages() {
-    throw new MissingImplementationException();
+    var messages = List.of("A", "B");
+    var parametersValidationException = new ParametersValidationException(messages);
+    assertEquals("Parameters validation failed - Parameter Validation Failures: [A|B]", parametersValidationException.getMessage());
+    assertNull(parametersValidationException.getCause());
+    assertEquals(messages, parametersValidationException.getParametersValidationFailureMessages());
+    assertEquals("org.java_underling.lang.ParametersValidationException: Parameters validation failed - Parameter Validation Failures: [A|B]", parametersValidationException.toString());
   }
 
   @Test
   public void testConstructorCause() {
-    throw new MissingImplementationException();
+    var cause = new IOException("test");
+    var parametersValidationException = new ParametersValidationException(cause);
+    assertEquals("Parameters validation failed", parametersValidationException.getMessage());
+    assertEquals(cause, parametersValidationException.getCause());
+    assertEquals(List.of(), parametersValidationException.getParametersValidationFailureMessages());
+    assertEquals("org.java_underling.lang.ParametersValidationException: Parameters validation failed", parametersValidationException.toString());
   }
 
   @Test
   public void testConstructorMessageAndCause() {
-    throw new MissingImplementationException();
+    var message = "Test Message";
+    var cause = new IOException("test");
+    var parametersValidationException = new ParametersValidationException(message, cause);
+    assertEquals(message, parametersValidationException.getMessage());
+    assertEquals(cause, parametersValidationException.getCause());
+    assertEquals(List.of(), parametersValidationException.getParametersValidationFailureMessages());
+    assertEquals("org.java_underling.lang.ParametersValidationException: Test Message", parametersValidationException.toString());
   }
 
   @Test
   public void testConstructorMessageAndParametersValidationFailureMessage() {
-    throw new MissingImplementationException();
+    var message = "Test Message";
+    var messageX1 = "Whoa there nelly!";
+    var parametersValidationException = new ParametersValidationException(message, messageX1);
+    assertEquals("Test Message - Parameter Validation Failures: [Whoa there nelly!]", parametersValidationException.getMessage());
+    assertNull(parametersValidationException.getCause());
+    assertEquals(List.of(messageX1), parametersValidationException.getParametersValidationFailureMessages());
+    assertEquals("org.java_underling.lang.ParametersValidationException: Test Message - Parameter Validation Failures: [Whoa there nelly!]", parametersValidationException.toString());
   }
 
   @Test
   public void testConstructorMessageAndParametersValidationFailureMessages() {
-    throw new MissingImplementationException();
+    var message = "Test Message";
+    var messages = List.of("A", "B");
+    var parametersValidationException = new ParametersValidationException(message, messages);
+    assertEquals("Test Message - Parameter Validation Failures: [A|B]", parametersValidationException.getMessage());
+    assertNull(parametersValidationException.getCause());
+    assertEquals(messages, parametersValidationException.getParametersValidationFailureMessages());
+    assertEquals("org.java_underling.lang.ParametersValidationException: Test Message - Parameter Validation Failures: [A|B]", parametersValidationException.toString());
   }
 
   @Test
   public void testConstructorCauseAndParametersValidationFailureMessages() {
-    throw new MissingImplementationException();
+    var cause = new IOException("test");
+    var messages = List.of("A", "B");
+    var parametersValidationException = new ParametersValidationException(cause, messages);
+    assertEquals("Parameters validation failed - Parameter Validation Failures: [A|B]", parametersValidationException.getMessage());
+    assertEquals(cause, parametersValidationException.getCause());
+    assertEquals(messages, parametersValidationException.getParametersValidationFailureMessages());
+    assertEquals("org.java_underling.lang.ParametersValidationException: Parameters validation failed - Parameter Validation Failures: [A|B]", parametersValidationException.toString());
   }
 
   @Test
   public void testConstructorMessageAndCauseAndParametersValidationFailureMessage() {
-    throw new MissingImplementationException();
+    var message = "Test Message";
+    var cause = new IOException("test");
+    var messageX1 = "Whoa there nelly!";
+    var parametersValidationException = new ParametersValidationException(message, cause, messageX1);
+    assertEquals("Test Message - Parameter Validation Failures: [Whoa there nelly!]", parametersValidationException.getMessage());
+    assertEquals(cause, parametersValidationException.getCause());
+    assertEquals(List.of(messageX1), parametersValidationException.getParametersValidationFailureMessages());
+    assertEquals("org.java_underling.lang.ParametersValidationException: Test Message - Parameter Validation Failures: [Whoa there nelly!]", parametersValidationException.toString());
   }
 
   @Test
   public void testConstructorMessageAndCauseAndParametersValidationFailureMessages() {
-    throw new MissingImplementationException();
+    var message = "Test Message";
+    var cause = new IOException("test");
+    var messages = List.of("A", "B");
+    var parametersValidationException = new ParametersValidationException(message, cause, messages);
+    assertEquals("Test Message - Parameter Validation Failures: [A|B]", parametersValidationException.getMessage());
+    assertEquals(cause, parametersValidationException.getCause());
+    assertEquals(messages, parametersValidationException.getParametersValidationFailureMessages());
+    assertEquals("org.java_underling.lang.ParametersValidationException: Test Message - Parameter Validation Failures: [A|B]", parametersValidationException.toString());
   }
 
   @Test
   public void testConstructorAll() {
-    throw new MissingImplementationException();
-  }
-
-  @Test
-  public void testGetParametersValidationFailureMessages() {
-    throw new MissingImplementationException();
-  }
-
-  @Test
-  public void testEqualsAndHashCode() {
-    throw new MissingImplementationException();
-  }
-
-  @Test
-  public void testToString() {
-    throw new MissingImplementationException();
+    var cause = new IOException("test");
+    var messages = List.of(
+        "A",
+        "B");
+    var parametersValidationException = new ParametersValidationException(
+        "test",
+        cause,
+        false,
+        false,
+        messages);
+    assertEquals("test - Parameter Validation Failures: [A|B]", parametersValidationException.getMessage());
+    assertEquals(cause, parametersValidationException.getCause());
+    assertEquals(messages, parametersValidationException.getParametersValidationFailureMessages());
+    assertEquals("org.java_underling.lang.ParametersValidationException: test - Parameter Validation Failures: [A|B]", parametersValidationException.toString());
+    var parametersValidationException2 = new ParametersValidationException(
+        "test",
+        cause,
+        true,
+        true,
+        messages);
+    //equals ignores the two boolean parameters
+    assertEquals(parametersValidationException, parametersValidationException2);
+    var parametersValidationException3 = new ParametersValidationException(
+        "test1",
+        cause,
+        messages);
+    assertNotEquals(parametersValidationException, parametersValidationException3);
+    var cause4 = new IOException("test4");
+    var parametersValidationException4 = new ParametersValidationException(
+        "test",
+        cause4,
+        messages);
+    assertNotEquals(parametersValidationException, parametersValidationException4);
+    assertNotEquals(parametersValidationException2, parametersValidationException4);
+    assertNotEquals(parametersValidationException3, parametersValidationException4);
+    var messages5 = List.of("A", "B", "C");
+    var parametersValidationException5 = new ParametersValidationException(
+        "test",
+        cause,
+        messages5);
+    assertNotEquals(parametersValidationException, parametersValidationException5);
+    assertNotEquals(parametersValidationException2, parametersValidationException5);
+    assertNotEquals(parametersValidationException3, parametersValidationException5);
+    assertNotEquals(parametersValidationException4, parametersValidationException5);
+    assertEquals("org.java_underling.lang.ParametersValidationException: test - Parameter Validation Failures: [A|B|C]", parametersValidationException5.toString());
   }
 }
