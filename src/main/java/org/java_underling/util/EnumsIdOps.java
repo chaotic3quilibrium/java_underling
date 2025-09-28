@@ -404,6 +404,12 @@ public final class EnumsIdOps<E extends Enum<E>, ID> {
         .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
   }
 
+  /**
+   * Returns an {@link EnumsOps} <i>singleton</i> for the provided {@link Enum}'s class used to delegate base
+   * behaviors.
+   *
+   * @return an {@link EnumsOps} <i>singleton</i> for the provided {@link Enum}'s class used to delegate base behaviors
+   */
   @NotNull
   public EnumsOps<E> getEnumsOps() {
     return this.enumsOps;
@@ -433,9 +439,9 @@ public final class EnumsIdOps<E extends Enum<E>, ID> {
   }
 
   /**
-   * Returns a {@link Stream} of each of the {@link Enum}s with its associated ID.
+   * Returns a {@link Stream} of each of the {@link Enum}s with its associated {@code ID}.
    *
-   * @return a {@link Stream} of each of the {@link Enum}s with its associated ID
+   * @return a {@link Stream} of each of the {@link Enum}s with its associated {@code ID}
    */
   @NotNull
   public Stream<Entry<E, ID>> stream() {
@@ -444,54 +450,112 @@ public final class EnumsIdOps<E extends Enum<E>, ID> {
         .stream();
   }
 
+  /**
+   * Returns an unmodifiable <u><i>ordered</i></u> map of each {@link Enum}'s value and its associated {@code ID}, with
+   * the {@link Map#keySet()} ordered by the {@link Enum#ordinal()}.
+   *
+   * @return an unmodifiable <u><i>ordered</i></u> map of each {@link Enum}'s value and its associated {@code ID}, with
+   *     the {@link Map#keySet()} ordered by the {@link Enum#ordinal()}
+   */
   @NotNull
   public Map<E, ID> getOrderedMapIdByEnumValue() {
     return this.orderedMapIdByEnumValue;
   }
 
+  /**
+   * Returns the {@code ID} associated with an {@link Enum}'s value.
+   *
+   * @param enumValue the value upon which to search
+   * @return the {@code ID} associated with an {@link Enum}'s value
+   */
   @NotNull
   public ID get(@NotNull E enumValue) {
     return getOrderedMapIdByEnumValue().get(enumValue);
   }
 
+  /**
+   * Returns an unmodifiable <u><i>ordered</i></u> map of each {@code ID} and it associated {@link Enum}'s value, with
+   * the {@link Map#keySet()} ordered by the {@link Enum#ordinal()}.
+   *
+   * @return an unmodifiable <u><i>ordered</i></u> map of each {@code ID} and it associated {@link Enum}'s value, with
+   *     the {@link Map#keySet()} ordered by the {@link Enum#ordinal()}
+   */
   @NotNull
   public Map<ID, E> getOrderedMapEnumValueById() {
     return this.orderedMapEnumValueById;
   }
 
+  /**
+   * Returns the {@link Enum}'s value associated with an {@code ID}.
+   *
+   * @param id the value upon which to search
+   * @return the {@link Enum}'s value associated with an {@code ID}
+   */
   @NotNull
   public Optional<E> get(@NotNull ID id) {
     return Optional.ofNullable(getOrderedMapEnumValueById().get(id));
   }
 
+  /**
+   * Returns an unmodifiable unordered map of each search String and its associated {@link Enum}'s value.
+   *
+   * @return an unmodifiable unordered map of each search String and its associated {@link Enum}'s value
+   */
   @NotNull
   public Map<String, E> getEnumValueByNameOrIdOrAltToStringLowerCase() {
     return this.enumValueByNameOrIdOrAltToStringLowerCase;
   }
 
+  /**
+   * Returns an {@link Optional} containing a {@link Entry} which contains the {@link Enum}'s value and its associated
+   * {@code ID} when the lower case of {@code nameOrIdOrAltToString} is found, otherwise an {@link Entry} containing the
+   * first {@link Enum} and its associated {@code ID}.
+   *
+   * @param nameOrIdOrAltToString the case-insensitive term with which the search is performed
+   * @return an {@link Optional} containing a {@link Entry} which contains the {@link Enum}'s value and its associated
+   *     {@code ID} when the lower case of {@code nameOrIdOrAltToString} is found, otherwise an {@link Entry} containing
+   *     the first {@link Enum} and its associated {@code ID}
+   */
   @NotNull
   public Entry<E, ID> valueOfOrDefaultToFirst(
-      @NotNull String search
+      @NotNull String nameOrIdOrAltToString
   ) {
     return valueOf(
-        search,
+        nameOrIdOrAltToString,
         this.orderedMapIdByEnumValue.entrySet().iterator().next());
   }
 
+  /**
+   * Returns an {@link Optional} containing a {@link Entry} which contains the {@link Enum}'s value and its associated
+   * {@code ID} when the lower case of {@code nameOrIdOrAltToString} is found, otherwise {@code orElseDefault}.
+   *
+   * @param nameOrIdOrAltToString the case-insensitive term with which the search is performed
+   * @param orElseDefault         the entry to provide if the search returns nothing
+   * @return an {@link Optional} containing a {@link Entry} which contains the {@link Enum}'s value and its associated
+   *     {@code ID} when the lower case of {@code nameOrIdOrAltToString} is found, otherwise {@code orElseDefault}
+   */
   @NotNull
   public Entry<E, ID> valueOf(
-      @NotNull String valueOrIdOrAltToString,
+      @NotNull String nameOrIdOrAltToString,
       @NotNull Entry<E, ID> orElseDefault
   ) {
-    return valueOf(valueOrIdOrAltToString)
+    return valueOf(nameOrIdOrAltToString)
         .orElse(orElseDefault);
   }
 
+  /**
+   * Returns an {@link Optional} containing a {@link Entry} which contains the {@link Enum}'s value and its associated
+   * {@code ID} when the lower case of {@code nameOrIdOrAltToString} is found, otherwise {@link Optional#empty}.
+   *
+   * @param nameOrIdOrAltToString the case-insensitive term with which the search is performed
+   * @return an {@link Optional} containing a {@link Entry} which contains the {@link Enum}'s value and its associated
+   *     {@code ID} when the lower case of {@code nameOrIdOrAltToString} is found, otherwise {@link Optional#empty}
+   */
   @NotNull
   public Optional<Entry<E, ID>> valueOf(
-      @NotNull String valueOrIdOrAltToString
+      @NotNull String nameOrIdOrAltToString
   ) {
-    return Optional.ofNullable(getEnumValueByNameOrIdOrAltToStringLowerCase().get(valueOrIdOrAltToString.toLowerCase()))
+    return Optional.ofNullable(getEnumValueByNameOrIdOrAltToStringLowerCase().get(nameOrIdOrAltToString.toLowerCase()))
         .map(enumValue ->
             entry(
                 enumValue,
