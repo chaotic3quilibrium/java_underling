@@ -37,20 +37,22 @@ public class FunctionsOps {
   };
 
   /**
-   * A simple way to apply a side-effecting function n number of times.
+   * A simple way to apply a side-effecting (optionally checked-exception) function n number of times. Uses
+   * {@code wrapCheckedException} to convert all non-{@link RuntimeException}s into a {@link WrappedCheckedException}.
    *
    * @param nTimes                                              number of times to apply the side-effecting function
-   * @param justDoItWithNoInputParametersAndThenIgnoreTheResult side-effecting function to apply
+   * @param justDoItWithNoInputParametersAndThenIgnoreTheResult side-effecting(optionally checked-exception) function to
+   *                                                            apply
    */
   public static void executeSideEffectNTimes(
       int nTimes,
-      @NotNull VoidSupplier justDoItWithNoInputParametersAndThenIgnoreTheResult
+      @NotNull VoidSupplierCheckedException justDoItWithNoInputParametersAndThenIgnoreTheResult
   ) {
     Stream
         .generate(() -> true)
         .limit(nTimes)
-        .forEach((ignored) ->
-            justDoItWithNoInputParametersAndThenIgnoreTheResult.execute());
+        .forEach(ignored ->
+            wrapCheckedException(justDoItWithNoInputParametersAndThenIgnoreTheResult).execute());
   }
 
   /**

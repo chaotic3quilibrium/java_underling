@@ -1,16 +1,50 @@
 package org.java_underling.util.function;
 
 import org.java_underling.lang.MissingImplementationException;
+import org.java_underling.lang.WrappedCheckedException;
 import org.junit.jupiter.api.Test;
+
+import java.io.StringReader;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FunctionsOpsTests {
   @Test
   public void testExecuteSideEffectNTimes() {
-    throw new MissingImplementationException();
+    //also tests VoidSupplier, VoidSupplier, and VoidSupplierCheckedException via the wrapCheckedException() pathways
+    var count = 5;
+    var arrayCounter = new int[]{0};
+    FunctionsOps.executeSideEffectNTimes(
+        count,
+        () ->
+            arrayCounter[0]++);
+    assertEquals(count, arrayCounter[0]);
+    var reader = new StringReader("x");
+    reader.close();
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    var wrappedCheckedException = assertThrows(
+        WrappedCheckedException.class,
+        () ->
+            FunctionsOps.executeSideEffectNTimes(2, reader::read));
+    assertEquals("java.io.IOException: Stream closed", wrappedCheckedException.getMessage());
+    assertEquals(java.io.IOException.class, wrappedCheckedException.getCause().getClass());
   }
 
   @Test
-  public void testWrapCheckedException() {
-    throw new MissingImplementationException("Represents a large surface area");
+  public void testWrapCheckedExceptions() {
+    //TODO: remaining pathways
+    //  - BiConsumer*
+    //  - BiFunction
+    //  - BinaryOperator*
+    //  - Consumer*
+    //  - Function*
+    //  - Predicate*
+    //  - Supplier*
+    //  - UnaryOperator*
+    //Completed:
+    //  - VoidSupplier*
+
+    throw new MissingImplementationException("There 8 remaining pathways");
   }
 }
