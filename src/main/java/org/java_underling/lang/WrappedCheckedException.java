@@ -4,6 +4,7 @@ import org.java_underling.util.function.FunctionsOps;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serial;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -27,12 +28,13 @@ public final class WrappedCheckedException extends RuntimeException {
    * @param message the detail message (which is saved for later retrieval by the {@link #getMessage()} method).
    * @param cause   the cause (which is saved for later retrieval by the {@link #getCause()} method).  (A {@code null}
    *                value is <i>not</i> permitted.)
+   * @throws NullPointerException if the provided {@code cause} is {@code null}.
    */
   public WrappedCheckedException(
       @NotNull String message,
       @NotNull Throwable cause
   ) {
-    super(message, cause);
+    super(message, Objects.requireNonNull(cause));
   }
 
   /**
@@ -42,11 +44,12 @@ public final class WrappedCheckedException extends RuntimeException {
    *
    * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).  (A {@code null}
    *              value is <i>not</i> permitted.)
+   * @throws NullPointerException if the provided {@code cause} is {@code null}.
    */
   public WrappedCheckedException(
       @NotNull Throwable cause
   ) {
-    super(cause);
+    super(Objects.requireNonNull(cause));
   }
 
   /**
@@ -57,6 +60,7 @@ public final class WrappedCheckedException extends RuntimeException {
    * @param cause              the cause.  (A {@code null} value is <i>not</i> permitted.)
    * @param enableSuppression  whether suppression is enabled or disabled
    * @param writableStackTrace whether the stack trace should be writable
+   * @throws NullPointerException if the provided {@code cause} is {@code null}.
    */
   public WrappedCheckedException(
       @NotNull String message,
@@ -64,6 +68,6 @@ public final class WrappedCheckedException extends RuntimeException {
       boolean enableSuppression,
       boolean writableStackTrace
   ) {
-    super(message, cause, enableSuppression, writableStackTrace);
+    super(message, Objects.requireNonNull(cause), enableSuppression, writableStackTrace);
   }
 }

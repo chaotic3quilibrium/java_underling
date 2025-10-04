@@ -29,4 +29,9 @@ public class WrappedCheckedExceptionTests {
     assertEquals("test", wrappedCheckedException.getMessage());
     assertEquals(cause, wrappedCheckedException.getCause());
   }
+
+  @Test
+  public void testThrowsExceptionOnNullCause() {
+    throw new MissingImplementationException();
+  }
 }

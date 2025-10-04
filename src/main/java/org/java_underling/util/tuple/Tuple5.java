@@ -1,0 +1,24 @@
+package org.java_underling.util.tuple;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.stream.Stream;
+
+public record Tuple5<T1, T2, T3, T4, T5>(
+    @NotNull T1 _1,
+    @NotNull T2 _2,
+    @NotNull T3 _3,
+    @NotNull T4 _4,
+    @NotNull T5 _5
+) implements Tuple {
+  @Override
+  public int arity() {
+    return 5;
+  }
+
+  @Override
+  public Stream<?> stream() {
+    return Stream.of(
+        _1, _2, _3, _4, _5);
+  }
+}
