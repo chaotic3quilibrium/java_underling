@@ -5,8 +5,15 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MissingImplementationExceptionTests {
+  @Test
+  public void testConstructorEmpty() {
+    var missingImplementationException = new MissingImplementationException();
+    assertNull(missingImplementationException.getMessage());
+  }
+
   @Test
   public void testConstructorMessage() {
     var missingImplementationException = new MissingImplementationException("test");

@@ -163,4 +163,29 @@ public class ParametersValidationExceptionTests {
     assertNotEquals(parametersValidationException4, parametersValidationException5);
     assertEquals("org.java_underling.lang.ParametersValidationException: test - Parameter Validation Failures: [A|B|C]", parametersValidationException5.toString());
   }
+
+  @Test
+  public void testEqualsAndHashCode() {
+    var cause = new IOException("test");
+    var messages = List.of(
+        "A",
+        "B");
+    var parametersValidationExceptionA = new ParametersValidationException(
+        "test",
+        cause,
+        false,
+        false,
+        messages);
+    var parametersValidationExceptionB = new ParametersValidationException(
+        "test",
+        cause,
+        false,
+        false,
+        messages);
+    //noinspection SimplifiableAssertion,EqualsWithItself
+    assertTrue(parametersValidationExceptionA.equals(parametersValidationExceptionA));
+    assertEquals(parametersValidationExceptionA, parametersValidationExceptionB);
+    assertEquals(parametersValidationExceptionB, parametersValidationExceptionA);
+    assertEquals(parametersValidationExceptionA.hashCode(), parametersValidationExceptionB.hashCode());
+  }
 }

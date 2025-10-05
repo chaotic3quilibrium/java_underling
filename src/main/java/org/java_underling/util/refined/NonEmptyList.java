@@ -52,7 +52,7 @@ public record NonEmptyList<T>(List<T> list) {
     if (!preconditionFailureMessages.isEmpty()) {
 
       return Optional.of(new ParametersValidationException(
-          "NonEmptySet<T> invalid parameter(s)",
+          "NonEmptyList<T> invalid parameter(s)",
           preconditionFailureMessages));
     }
 

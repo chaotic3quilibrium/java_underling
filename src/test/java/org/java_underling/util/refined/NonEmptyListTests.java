@@ -3,6 +3,7 @@ package org.java_underling.util.refined;
 import org.java_underling.lang.ParametersValidationException;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,5 +30,18 @@ public class NonEmptyListTests {
     assertTrue(errorOrValue.isRight());
     assertEquals(List.of(1), errorOrValue.getRight().list());
     assertTrue(NonEmptyList.from(List.of()).isLeft());
+  }
+
+  @Test
+  public void testIsUnmodifiable() {
+    var parametersValidationExceptionOrNonEmptyList = NonEmptyList.from(
+        new ArrayList<>(List.of(2, 3)));
+    assertTrue(parametersValidationExceptionOrNonEmptyList.isLeft());
+    assertEquals(
+        "NonEmptyList<T> invalid parameter(s) - Parameter Validation Failures: [list must be unmodifiable]",
+        parametersValidationExceptionOrNonEmptyList.getLeft().getMessage());
+    assertEquals(
+        1,
+        parametersValidationExceptionOrNonEmptyList.getLeft().getParametersValidationFailureMessages().size());
   }
 }

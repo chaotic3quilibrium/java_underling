@@ -3,6 +3,7 @@ package org.java_underling.util.refined;
 import org.java_underling.lang.ParametersValidationException;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,5 +30,20 @@ public class NonEmptyMapTests {
     assertTrue(errorOrValue.isRight());
     assertEquals(Map.of(1, "x"), errorOrValue.getRight().map());
     assertTrue(NonEmptyMap.from(Map.of()).isLeft());
+  }
+
+  @Test
+  public void testIsUnmodifiable() {
+    Map<Integer, String> map = new HashMap<>();
+    map.put(2, "b");
+    map.put(3, "c");
+    var parametersValidationExceptionOrNonEmptyMap = NonEmptyMap.from(map);
+    assertTrue(parametersValidationExceptionOrNonEmptyMap.isLeft());
+    assertEquals(
+        "NonEmptyMap<K, V> invalid parameter(s) - Parameter Validation Failures: [map must be unmodifiable]",
+        parametersValidationExceptionOrNonEmptyMap.getLeft().getMessage());
+    assertEquals(
+        1,
+        parametersValidationExceptionOrNonEmptyMap.getLeft().getParametersValidationFailureMessages().size());
   }
 }

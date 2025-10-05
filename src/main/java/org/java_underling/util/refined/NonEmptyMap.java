@@ -51,7 +51,7 @@ public record NonEmptyMap<K, V>(Map<K, V> map) {
     if (!preconditionFailureMessages.isEmpty()) {
 
       return Optional.of(new ParametersValidationException(
-          "NonEmptySet<T> invalid parameter(s)",
+          "NonEmptyMap<K, V> invalid parameter(s)",
           preconditionFailureMessages));
     }
 

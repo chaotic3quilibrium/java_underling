@@ -29,11 +29,12 @@ public class FunctionsOpsTests {
             FunctionsOps.executeSideEffectNTimes(2, reader::read));
     assertEquals("java.io.IOException: Stream closed", wrappedCheckedException.getMessage());
     assertEquals(java.io.IOException.class, wrappedCheckedException.getCause().getClass());
+    assertEquals("Stream closed", wrappedCheckedException.getCause().getMessage());
   }
 
   @Test
-  public void testWrapCheckedExceptions() {
-    //TODO: remaining pathways
+  public void testRemainingUnimplemented() {
+    //TODO: remaining wrapCheckedException() pathways
     //  - BiConsumer*
     //  - BiFunction
     //  - BinaryOperator*
@@ -45,6 +46,6 @@ public class FunctionsOpsTests {
     //Completed:
     //  - VoidSupplier*
 
-    throw new MissingImplementationException("There 8 remaining pathways");
+    throw new MissingImplementationException("missing x8 remaining tests");
   }
 }

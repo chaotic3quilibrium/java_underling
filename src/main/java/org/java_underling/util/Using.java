@@ -120,6 +120,50 @@ public class Using {
       A extends AutoCloseable,
       B extends AutoCloseable,
       C extends AutoCloseable,
+      T> Either<RuntimeException, T> apply(
+      @NotNull SupplierCheckedException<A> fceSupplierA,
+      @NotNull SupplierCheckedException<B> fceSupplierB,
+      @NotNull SupplierCheckedException<C> fceSupplierC,
+      @NotNull FunctionCheckedException<Tuple3<A, B, C>, T> fceAAndBAndCToT
+  ) {
+    try (
+        var a = fceSupplierA.get();
+        var b = fceSupplierB.get();
+        var c = fceSupplierC.get();
+    ) {
+
+      return Either.right(fceAAndBAndCToT.apply(new Tuple3<>(a, b, c)));
+    } catch (RuntimeException runtimeException) {
+      return Either.left(runtimeException);
+    } catch (Exception exception) {
+      return Either.left(new WrappedCheckedException(exception));
+    }
+  }
+
+  @NotNull
+  public static <
+      A extends AutoCloseable,
+      B extends AutoCloseable,
+      C extends AutoCloseable,
+      T> T applyUnsafe(
+      @NotNull SupplierCheckedException<A> fceSupplierA,
+      @NotNull SupplierCheckedException<B> fceSupplierB,
+      @NotNull SupplierCheckedException<C> fceSupplierC,
+      @NotNull FunctionCheckedException<Tuple3<A, B, C>, T> fceAAndBAndCToT
+  ) {
+    return apply(
+        fceSupplierA,
+        fceSupplierB,
+        fceSupplierC,
+        fceAAndBAndCToT)
+        .getRightOrThrowLeft();
+  }
+
+  @NotNull
+  public static <
+      A extends AutoCloseable,
+      B extends AutoCloseable,
+      C extends AutoCloseable,
       T> Either<RuntimeException, T> applyNested(
       @NotNull SupplierCheckedException<A> fceSupplierA,
       @NotNull FunctionCheckedException<A, B> fceAToB,
@@ -156,6 +200,56 @@ public class Using {
         fceAToB,
         fceAndBToC,
         fceAAndBAndCToT);
+  }
+
+  @NotNull
+  public static <
+      A extends AutoCloseable,
+      B extends AutoCloseable,
+      C extends AutoCloseable,
+      D extends AutoCloseable,
+      T> Either<RuntimeException, T> apply(
+      @NotNull SupplierCheckedException<A> fceSupplierA,
+      @NotNull SupplierCheckedException<B> fceSupplierB,
+      @NotNull SupplierCheckedException<C> fceSupplierC,
+      @NotNull SupplierCheckedException<D> fceSupplierD,
+      @NotNull FunctionCheckedException<Tuple4<A, B, C, D>, T> fceAAndBAndCAndDToT
+  ) {
+    try (
+        var a = fceSupplierA.get();
+        var b = fceSupplierB.get();
+        var c = fceSupplierC.get();
+        var d = fceSupplierD.get();
+    ) {
+
+      return Either.right(fceAAndBAndCAndDToT.apply(new Tuple4<>(a, b, c, d)));
+    } catch (RuntimeException runtimeException) {
+      return Either.left(runtimeException);
+    } catch (Exception exception) {
+      return Either.left(new WrappedCheckedException(exception));
+    }
+  }
+
+  @NotNull
+  public static <
+      A extends AutoCloseable,
+      B extends AutoCloseable,
+      C extends AutoCloseable,
+      D extends AutoCloseable,
+      T> T applyUnsafe(
+      @NotNull SupplierCheckedException<A> fceSupplierA,
+      @NotNull SupplierCheckedException<B> fceSupplierB,
+      @NotNull SupplierCheckedException<C> fceSupplierC,
+      @NotNull SupplierCheckedException<D> fceSupplierD,
+      @NotNull FunctionCheckedException<Tuple4<A, B, C, D>, T> fceAAndBAndCAndDToT
+  ) {
+    return apply(
+        fceSupplierA,
+        fceSupplierB,
+        fceSupplierC,
+        fceSupplierD,
+        fceAAndBAndCAndDToT)
+        .getRightOrThrowLeft();
   }
 
   @NotNull
@@ -205,6 +299,62 @@ public class Using {
         fceAndBToC,
         fceAndBAndCToD,
         fceAAndBAndCAndDToT);
+  }
+
+  @NotNull
+  public static <
+      A extends AutoCloseable,
+      B extends AutoCloseable,
+      C extends AutoCloseable,
+      D extends AutoCloseable,
+      E extends AutoCloseable,
+      T> Either<RuntimeException, T> apply(
+      @NotNull SupplierCheckedException<A> fceSupplierA,
+      @NotNull SupplierCheckedException<B> fceSupplierB,
+      @NotNull SupplierCheckedException<C> fceSupplierC,
+      @NotNull SupplierCheckedException<D> fceSupplierD,
+      @NotNull SupplierCheckedException<E> fceSupplierE,
+      @NotNull FunctionCheckedException<Tuple5<A, B, C, D, E>, T> fceAAndBAndCAndDAndEToT
+  ) {
+    try (
+        var a = fceSupplierA.get();
+        var b = fceSupplierB.get();
+        var c = fceSupplierC.get();
+        var d = fceSupplierD.get();
+        var e = fceSupplierE.get();
+    ) {
+
+      return Either.right(fceAAndBAndCAndDAndEToT.apply(new Tuple5<>(a, b, c, d, e)));
+    } catch (RuntimeException runtimeException) {
+      return Either.left(runtimeException);
+    } catch (Exception exception) {
+      return Either.left(new WrappedCheckedException(exception));
+    }
+  }
+
+  @NotNull
+  public static <
+      A extends AutoCloseable,
+      B extends AutoCloseable,
+      C extends AutoCloseable,
+      D extends AutoCloseable,
+      E extends AutoCloseable,
+      T> T applyUnsafe(
+      @NotNull SupplierCheckedException<A> fceSupplierA,
+      @NotNull SupplierCheckedException<B> fceSupplierB,
+      @NotNull SupplierCheckedException<C> fceSupplierC,
+      @NotNull SupplierCheckedException<D> fceSupplierD,
+      @NotNull SupplierCheckedException<E> fceSupplierE,
+      @NotNull FunctionCheckedException<Tuple5<A, B, C, D, E>, T> fceAAndBAndCAndDAndEToT
+  ) {
+    return apply(
+        fceSupplierA,
+        fceSupplierB,
+        fceSupplierC,
+        fceSupplierD,
+        fceSupplierE,
+        fceAAndBAndCAndDAndEToT)
+        .getRightOrThrowLeft();
   }
 
   @NotNull

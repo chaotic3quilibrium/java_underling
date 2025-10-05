@@ -4,8 +4,10 @@ import org.java_underling.util.stream.StreamsOps;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.stream.Stream;
 
+import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TuplesOpsTests {
@@ -155,5 +157,25 @@ public class TuplesOpsTests {
                 entry.getValue()));
     assertEquals(Tuple.MIN_ARITY, t1.arity());
     assertEquals(Tuple.MAX_ARITY, t10a.arity());
+  }
+
+  @Test
+  public void testEntry() {
+    var entry = TuplesOps.to(new Tuple2<>("a", 1));
+    assertEquals("a", entry.getKey());
+    assertEquals(1, entry.getValue());
+    var tuple2 = TuplesOps.from(entry(2, "B"));
+    assertEquals(2, tuple2._1());
+    assertEquals("B", tuple2._2());
+  }
+
+  @Test
+  public void testSimpleImmutableEntry() {
+    var entry = TuplesOps.toSimpleImmutableEntry(new Tuple2<>("a", 1));
+    assertEquals("a", entry.getKey());
+    assertEquals(1, entry.getValue());
+    var tuple2a = TuplesOps.from(new SimpleImmutableEntry<>(2, "B"));
+    assertEquals(2, tuple2a._1());
+    assertEquals("B", tuple2a._2());
   }
 }

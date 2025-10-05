@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
  */
 public class IntegersOps {
 
+  private IntegersOps() {
+    throw new UnsupportedOperationException("suppressing class instantiation");
+  }
+
   @NotNull
   public static List<Integer> findSetBitIndicesAsList(int bits) {
     if (bits == 0) {
