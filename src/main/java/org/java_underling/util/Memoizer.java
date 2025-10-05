@@ -214,8 +214,8 @@ public final class Memoizer<K, V> {
    *                            {@link UnsupportedOperationException}
    * @param insertionOrder      when {@link Memoizer.InsertionOrder#RETAIN}, retains the insertion order of the keys
    * @return an instance of {@link Memoizer} with a specified default {@code deriveVFromK} function, optionally allowing
-   *     this default function * to be overridden by the {@link #get(K, Function)} method, and optionally maintaining
-   *     the insertion order of the keys.
+   *     this default function to be overridden by the {@link #get(K, Function)} method, and optionally maintaining the
+   *     insertion order of the keys.
    */
   @NotNull
   public static <K, V> Memoizer<K, V> from(

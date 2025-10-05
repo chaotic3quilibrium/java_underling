@@ -330,10 +330,10 @@ public class SetsOps {
    * @param leftTs  the set of instances as the left side
    * @param rightTs the set of instances as the right side
    * @param <T>     the type of instances contained in the sets
-   * @return an unmodifiable {@link Map} of the contrast between two {@link Set}s, where for each key * of type
-   *     {@link SetPairViewKey}, the value associated is an unmodifiable {@link Set} (which * includes defensively
-   *     copying the two {@link Set}s) contains the relevant elements of type * {@code T} based on the comparison
-   *     described by said {@link SetPairViewKey}
+   * @return an unmodifiable {@link Map} of the contrast between two {@link Set}s, where for each key of type
+   *     {@link SetPairViewKey}, the value associated is an unmodifiable {@link Set} (which includes defensively copying
+   *     the two {@link Set}s) contains the relevant elements of type {@code T} based on the comparison described by
+   *     said {@link SetPairViewKey}
    * @throws NullPointerException if {@code leftTs} or {@code rightTs} contains any {@code null}s
    */
   @SuppressWarnings("unchecked")
@@ -445,8 +445,8 @@ public class SetsOps {
    * @param mutableSet the map into which the entry will be added/appended - SIDE EFFECTING
    * @param t          the value to add/append
    * @param <T>        the type of instances contained in the set
-   * @return the passed in <u><i>mutable</i></u> {@code Set}, if a value was successfully added/appended without * the
-   *     value pre-existing, otherwise throws an {@link IllegalArgumentException} that identifies the * {@code value}
+   * @return the passed in <u><i>mutable</i></u> {@code Set}, if a value was successfully added/appended without the
+   *     value pre-existing, otherwise throws an {@link IllegalArgumentException} that identifies the {@code value}
    *     causing the collision
    */
   @SuppressWarnings("UnusedReturnValue")

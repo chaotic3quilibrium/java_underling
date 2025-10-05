@@ -10,8 +10,42 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-//TODO: x18 missing javadocs
+//TODO: x17 missing javadocs
+
+/**
+ * A utility class focused on {@link RuntimeException}s n for transforming the Java try-with-resources statement
+ * {@code try(...) {}} into an expression, enabling the use of both the error-by-value ({@code apply()}) and
+ * error-by-exception ({@code applyUnsafe()}) while ensuring the proper {@link AutoCloseable#close()} of successfully
+ * obtained resources.
+ * <p>
+ * In contrast with {@link UsingCheckedException}'s ensuring all exceptions are wrapped with a
+ * {@link WrappedCheckedException}, this class ensures the non-{@link AutoCloseable#close()} pathways remain based on
+ * {@link RuntimeException}s, and only returns a {@link WrappedCheckedException} if any call to
+ * {@link AutoCloseable#close()} causes a checked exception.
+ */
 public class Using {
+
+  private Using() {
+    throw new UnsupportedOperationException("suppressing class instantiation");
+  }
+
+  /**
+   * Returns an {@link Either#right(Object)} with a value of type {@code T} obtained from a single {@link AutoCloseable}
+   * resource, ensuring the resource is properly closed via the proper {@link AutoCloseable#close()}, otherwise
+   * {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an
+   * {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException} with
+   * its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance.
+   *
+   * @param fSupplierA the function to "open" the resource
+   * @param fAToT      the function to "obtain" the value from resource
+   * @param <A>        the type of the {@link AutoCloseable} resource
+   * @param <T>        the type of the value obtained from the resource
+   * @return an {@link Either#right(Object)} with a value of type {@code T} obtained from a single {@link AutoCloseable}
+   *     resource, ensuring the resource is properly closed via the proper {@link AutoCloseable#close()}, otherwise
+   *     {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an
+   *     {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException}
+   *     with its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance
+   */
   @NotNull
   public static <A extends AutoCloseable, T> Either<RuntimeException, T> apply(
       @NotNull Supplier<A> fSupplierA,

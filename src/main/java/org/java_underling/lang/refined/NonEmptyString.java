@@ -88,9 +88,9 @@ public record NonEmptyString(
    * lexicographically equal to {@code that.value} (signed comparison).
    *
    * @param that the NonEmptyString to be numerically compared.
-   * @return a value less than {@code 0} when {@code this.string} is lexicographically less than {@code that.value}, *
-   *     otherwise a value greater than {@code 0} when {@code this.value} is lexicographically greater than *
-   *     {@code that.value}, otherwise the value {@code 0} because {@code this.value} must be by elimination *
+   * @return a value less than {@code 0} when {@code this.string} is lexicographically less than {@code that.value},
+   *     otherwise a value greater than {@code 0} when {@code this.value} is lexicographically greater than
+   *     {@code that.value}, otherwise the value {@code 0} because {@code this.value} must be by elimination
    *     lexicographically equal to {@code that.value} (signed comparison)
    */
   @Override
