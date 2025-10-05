@@ -2,74 +2,68 @@ package org.java_underling.util;
 
 import org.java_underling.lang.MissingImplementationException;
 import org.java_underling.lang.WrappedCheckedException;
-import org.java_underling.util.function.FunctionsOps;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UsingTests {
+public class UsingCheckedExceptionTests {
   @Test
   public void testSingleResource() {
     var arrayCharsX100 = new char[100];
-    var runtimeExceptionOrIntegerA = Using.apply(
+    var runtimeExceptionOrIntegerA = UsingCheckedException.apply(
         () ->
             new StringReader("x"),
         stringReader ->
-            FunctionsOps.wrapCheckedException(() ->
-                stringReader.read(arrayCharsX100)).get());
+            stringReader.read(arrayCharsX100));
     assertTrue(runtimeExceptionOrIntegerA.isRight());
     assertEquals(1, runtimeExceptionOrIntegerA.getRight());
-    var wrappedCheckedExceptionOrIntegerB = Using.apply(
+    var wrappedCheckedExceptionOrIntegerB = UsingCheckedException.apply(
         () ->
             new StringReader("x"),
-        stringReader ->
-            FunctionsOps.wrapCheckedException(() -> {
-              stringReader.close();
+        stringReader -> {
+          stringReader.close();
 
-              return stringReader.read(arrayCharsX100);
-            }).get());
+          return stringReader.read(arrayCharsX100);
+        });
     assertTrue(wrappedCheckedExceptionOrIntegerB.isLeft());
     assertEquals(WrappedCheckedException.class, wrappedCheckedExceptionOrIntegerB.getLeft().getClass());
     assertEquals(java.io.IOException.class, wrappedCheckedExceptionOrIntegerB.getLeft().getCause().getClass());
     assertEquals("java.io.IOException: Stream closed", wrappedCheckedExceptionOrIntegerB.getLeft().getMessage());
     assertEquals("Stream closed", wrappedCheckedExceptionOrIntegerB.getLeft().getCause().getMessage());
-    var integerA = Using.applyUnsafe(
+    var integerA = UsingCheckedException.applyUnsafe(
         () ->
             new StringReader("x"),
         stringReader ->
-            FunctionsOps.wrapCheckedException(() ->
-                stringReader.read(arrayCharsX100)).get());
+            stringReader.read(arrayCharsX100));
     assertEquals(1, integerA);
     var wrappedCheckedException = assertThrows(
         WrappedCheckedException.class,
-        () -> Using.applyUnsafe(
+        () -> UsingCheckedException.applyUnsafe(
             () ->
                 new StringReader("x"),
-            stringReader ->
-                FunctionsOps.wrapCheckedException(() -> {
-                  stringReader.close();
+            stringReader -> {
+              stringReader.close();
 
-                  return stringReader.read(arrayCharsX100);
-                }).get()));
+              return stringReader.read(arrayCharsX100);
+            }));
     assertEquals("java.io.IOException: Stream closed", wrappedCheckedException.getMessage());
     assertEquals(java.io.IOException.class, wrappedCheckedException.getCause().getClass());
     assertEquals("Stream closed", wrappedCheckedException.getCause().getMessage());
     var illegalStateException = assertThrows(
         IllegalStateException.class,
-        () -> Using.applyUnsafe(
+        () -> UsingCheckedException.applyUnsafe(
             () ->
                 new StringReader("x"),
-            stringReader ->
-                FunctionsOps.wrapCheckedException(() -> {
-                  //noinspection ConstantValue
-                  if (true) {
-                    throw new IllegalStateException("oopsie");
-                  }
+            stringReader -> {
+              //noinspection ConstantValue
+              if (true) {
+                throw new IllegalStateException("oopsie");
+              }
 
-                  return stringReader.read(arrayCharsX100);
-                }).get()));
+              return stringReader.read(arrayCharsX100);
+            }));
     assertEquals("oopsie", illegalStateException.getMessage());
   }
 
