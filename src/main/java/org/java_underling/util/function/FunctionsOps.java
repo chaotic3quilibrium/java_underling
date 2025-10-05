@@ -490,4 +490,43 @@ public class FunctionsOps {
             .mapLeft(fRuntimeExceptionWrapper)
             .getRightOrThrowLeft();
   }
+
+  //TODO: x35 unimplemented wrapCheckedException methods
+  //        The core Function class upon which the following interfaces depend are not currently defined for either (or
+  //        both) the *Checked and *CheckedException
+  // - BiPredicate
+  // - BooleanSupplier
+  // - DoubleBinaryOperator
+  // - DoubleConsumer
+  // - DoubleFunction
+  // - DoublePredicate
+  // - DoubleSupplier
+  // - DoubleToIntFunction
+  // - DoubleToLongFunction
+  // - DoubleUnaryOperator
+  // - IntBinaryOperator
+  // - IntConsumer
+  // - IntFunction
+  // - IntPredicate
+  // - IntSupplier
+  // - IntToDoubleFunction
+  // - IntToLongFunction
+  // - IntUnaryOperator
+  // - LongBinaryOperator
+  // - LongConsumer
+  // - LongFunction
+  // - LongPredicate
+  // - LongSupplier
+  // - LongToDoubleFunction
+  // - LongToIntFunction
+  // - LongUnaryOperator
+  // - ObjDoubleConsumer
+  // - ObjIntConsumer
+  // - ObjLongConsumer
+  // - ToDoubleBiFunction
+  // - ToDoubleFunction
+  // - ToIntBiFunction
+  // - ToIntFunction
+  // - ToLongBiFunction
+  // - ToLongFunction
 }

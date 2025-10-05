@@ -16,6 +16,7 @@ public class ArraysOps {
 
   public static final int[] EMPTY_INT_ARRAY = new int[0];
 
+  //TODO: x1 missing javadoc
   public static int[] findSetBitIndices(int bits) {
     if (bits == 0) {
       return ArraysOps.EMPTY_INT_ARRAY;

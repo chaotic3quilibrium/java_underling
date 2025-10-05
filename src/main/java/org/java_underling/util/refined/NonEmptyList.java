@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -17,7 +16,7 @@ import java.util.stream.Stream;
  * {@link ParametersValidationException} within any attempt to instantiate with a value which returns a non-empty
  * {@link Optional} from the {@link NonEmptyList#validate} method.
  *
- * @param list a {@link Set} that is non-empty and unmodifiable
+ * @param list a {@link List} that is non-empty and unmodifiable
  */
 public record NonEmptyList<T>(List<T> list) {
 

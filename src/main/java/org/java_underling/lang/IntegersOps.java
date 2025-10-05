@@ -17,6 +17,7 @@ public class IntegersOps {
     throw new UnsupportedOperationException("suppressing class instantiation");
   }
 
+  //TODO: x1 missing javadoc
   @NotNull
   public static List<Integer> findSetBitIndicesAsList(int bits) {
     if (bits == 0) {
@@ -28,6 +29,7 @@ public class IntegersOps {
         .toList();
   }
 
+  //TODO: x1 missing javadoc
   @NotNull
   public static Set<Integer> findSetBitIndicesAsSet(int bits) {
     if (bits == 0) {

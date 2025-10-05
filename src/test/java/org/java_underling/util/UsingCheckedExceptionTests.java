@@ -69,7 +69,7 @@ public class UsingCheckedExceptionTests {
 
   @Test
   public void testRemainingUnimplemented() {
-    //TODO: remaining pathways
+    //TODO: x16 remaining pathways
     //  - X2 Resources, apply/applyUnsafe/applyNested/applyNestedUnsafe
     //  - X3 Resources, apply/applyUnsafe/applyNested/applyNestedUnsafe
     //  - X4 Resources, apply/applyUnsafe/applyNested/applyNestedUnsafe

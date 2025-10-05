@@ -9,6 +9,7 @@ import org.java_underling.util.tuple.Tuple4;
 import org.java_underling.util.tuple.Tuple5;
 import org.jetbrains.annotations.NotNull;
 
+//TODO: x18 missing javadocs
 public class UsingCheckedException {
   @NotNull
   public static <A extends AutoCloseable, T> Either<RuntimeException, T> apply(

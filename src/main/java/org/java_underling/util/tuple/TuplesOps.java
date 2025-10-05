@@ -8,14 +8,15 @@ import java.util.Objects;
 
 import static java.util.Map.entry;
 
+//TODO: x4 missing javadocs
 public class TuplesOps {
   private TuplesOps() {
     throw new UnsupportedOperationException("suppressing class instantiation");
   }
 
   @NotNull
-  public static <A, B> Tuple2<A, B> from(
-      @NotNull Entry<A, B> entry
+  public static <K, V> Tuple2<K, V> from(
+      @NotNull Entry<K, V> entry
   ) {
     return new Tuple2<>(
         Objects.requireNonNull(entry.getKey()),
@@ -23,8 +24,8 @@ public class TuplesOps {
   }
 
   @NotNull
-  public static <A, B> Entry<A, B> to(
-      @NotNull Tuple2<A, B> tuple
+  public static <K, V> Entry<K, V> to(
+      @NotNull Tuple2<K, V> tuple
   ) {
     return entry(
         tuple._1(),
@@ -32,8 +33,8 @@ public class TuplesOps {
   }
 
   @NotNull
-  public static <A, B> Tuple2<A, B> from(
-      @NotNull SimpleImmutableEntry<A, B> simpleImmutableEntry
+  public static <K, V> Tuple2<K, V> from(
+      @NotNull SimpleImmutableEntry<K, V> simpleImmutableEntry
   ) {
     return new Tuple2<>(
         Objects.requireNonNull(simpleImmutableEntry.getKey()),
@@ -41,8 +42,8 @@ public class TuplesOps {
   }
 
   @NotNull
-  public static <A, B> SimpleImmutableEntry<A, B> toSimpleImmutableEntry(
-      @NotNull Tuple2<A, B> tuple
+  public static <K, V> SimpleImmutableEntry<K, V> toSimpleImmutableEntry(
+      @NotNull Tuple2<K, V> tuple
   ) {
     return new SimpleImmutableEntry<>(
         tuple._1(),

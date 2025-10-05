@@ -34,7 +34,7 @@ public class FunctionsOpsTests {
 
   @Test
   public void testRemainingUnimplemented() {
-    //TODO: remaining wrapCheckedException() pathways
+    //TODO: x8 remaining wrapCheckedException() pathways
     //  - BiConsumer*
     //  - BiFunction
     //  - BinaryOperator*
