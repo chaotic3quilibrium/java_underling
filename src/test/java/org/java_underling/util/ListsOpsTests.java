@@ -1,10 +1,13 @@
 package org.java_underling.util;
 
+import org.java_underling.util.tuple.Tuple2;
+import org.java_underling.util.tuple.Tuple3;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -78,5 +81,89 @@ public class ListsOpsTests {
         ListsOps.toDistinctSortedListInteger(
             Stream.of("4", "1", "2", "3"),
             Integer::valueOf));
+  }
+
+  @Test
+  public void testFlatten() {
+    assertEquals(
+        ListsOps.flatten(
+            Stream.of(
+                Optional.empty(),
+                Optional.of(1),
+                Optional.of(2),
+                Optional.empty(),
+                Optional.of(3),
+                Optional.empty())),
+        List.of(1, 2, 3));
+  }
+
+  @Test
+  public void testUnzip() {
+    var tuple2s = Stream.of(
+        new Tuple2<>("a", 1),
+        new Tuple2<>("b", 2),
+        new Tuple2<>("c", 3),
+        new Tuple2<>("d", 4));
+    var tuple2 = ListsOps.unzip(tuple2s);
+    assertEquals(List.of("a", "b", "c", "d"), tuple2._1());
+    assertEquals(List.of(1, 2, 3, 4), tuple2._2());
+  }
+
+  @Test
+  public void testUnzip3() {
+    var tuple3s = Stream.of(
+        new Tuple3<>("a", 1, 1.0),
+        new Tuple3<>("b", 2, 2.0),
+        new Tuple3<>("c", 3, 3.0),
+        new Tuple3<>("d", 4, 4.0));
+    var tuple3 = ListsOps.unzip3(tuple3s);
+    assertEquals(List.of("a", "b", "c", "d"), tuple3._1());
+    assertEquals(List.of(1, 2, 3, 4), tuple3._2());
+    assertEquals(List.of(1.0, 2.0, 3.0, 4.0), tuple3._3());
+  }
+
+  @Test
+  public void testUnzipAndFlatten() {
+    var tuple2s = Stream.of(
+        new Tuple2<>("a", 1),
+        new Tuple2<>("b", 2),
+        new Tuple2<>("c", 3),
+        new Tuple2<>("d", 4));
+    var tuple2 = ListsOps.unzipAndFlatten(
+        tuple2s,
+        stringAndInteger ->
+            stringAndInteger._1().equals("c")
+                ? Optional.empty()
+                : stringAndInteger._2() == 4
+                    ? Optional.of(new Tuple2<>(Optional.of(stringAndInteger._1()), Optional.of(stringAndInteger._2())))
+                    : stringAndInteger._1().equals("a")
+                        ? Optional.of(new Tuple2<>(Optional.of(stringAndInteger._1()), Optional.empty()))
+                        : Optional.of(new Tuple2<>(Optional.empty(), Optional.of(stringAndInteger._2()))));
+    assertEquals(List.of("a", "d"), tuple2._1());
+    assertEquals(List.of(2, 4), tuple2._2());
+  }
+
+  @Test
+  public void testUnzipEithers() {
+    var eithers = Stream.<Either<String, Integer>>of(
+        Either.right(1),
+        Either.left("b"),
+        Either.left("c"),
+        Either.right(4));
+    var tuple2 = ListsOps.unzipEithers(eithers);
+    assertEquals(List.of(Optional.empty(), Optional.of("b"), Optional.of("c"), Optional.empty()), tuple2._1());
+    assertEquals(List.of(Optional.of(1), Optional.empty(), Optional.empty(), Optional.of(4)), tuple2._2());
+  }
+
+  @Test
+  public void testUnzipAndFlattenEithers() {
+    var eithers = Stream.<Either<String, Integer>>of(
+        Either.right(1),
+        Either.left("b"),
+        Either.left("c"),
+        Either.right(4));
+    var tuple2 = ListsOps.unzipAndFlattenEithers(eithers);
+    assertEquals(List.of("b", "c"), tuple2._1());
+    assertEquals(List.of(1, 4), tuple2._2());
   }
 }

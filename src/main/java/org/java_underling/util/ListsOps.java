@@ -1,13 +1,12 @@
 package org.java_underling.util;
 
 import org.java_underling.util.refined.NonEmptyList;
+import org.java_underling.util.tuple.Tuple2;
+import org.java_underling.util.tuple.Tuple3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -147,5 +146,172 @@ public class ListsOps {
         .distinct()
         .sorted()
         .toList();
+  }
+
+  /**
+   * Returns a new {@link List} from a {@link Stream} of {@link Optional}  elements, extracting the non-empty
+   * {@link Optional} elements, and filtering out the {@link Optional} empty elements.
+   *
+   * @param optionalTs the list from which to extract the non-empty optional values
+   * @param <T>        the type of instances contained in the collection
+   * @return a new {@link List} from a {@link Stream} of {@link Optional}  elements, extracting the non-empty
+   *     {@link Optional} elements, and filtering out the {@link Optional} empty elements
+   */
+  @NotNull
+  public static <T> List<T> flatten(
+      @NotNull Stream<Optional<T>> optionalTs
+  ) {
+    return optionalTs
+        .flatMap(Optional::stream)
+        .toList();
+  }
+
+  /**
+   * Returns {@link List}s in a {@link Tuple2} extracted from a {@link Stream} of {@link Tuple2}s.
+   *
+   * @param aAndBs the list of tuples from which to extract the lists
+   * @param <A>    the type of instances contained within the first element of each tuple
+   * @param <B>    the type of instances contained within the second element of each tuple
+   * @return {@link List}s in a {@link Tuple2} extracted from a {@link Stream} of {@link Tuple2}s
+   */
+  @NotNull
+  public static <A, B> Tuple2<List<A>, List<B>> unzip(
+      @NotNull Stream<Tuple2<A, B>> aAndBs
+  ) {
+    var listA = new ArrayList<A>();
+    var listB = new ArrayList<B>();
+    aAndBs.forEachOrdered(lAndR -> {
+      listA.add(lAndR._1());
+      listB.add(lAndR._2());
+    });
+    if (!listA.isEmpty()) {
+
+      return new Tuple2<>(
+          Collections.unmodifiableList(listA),
+          Collections.unmodifiableList(listB));
+    }
+
+    return new Tuple2<>(
+        List.of(),
+        List.of());
+  }
+
+  /**
+   * Returns {@link List}s in a {@link Tuple3} extracted from a {@link Stream} of {@link Tuple3}s.
+   *
+   * @param aAndBAndCs the list of tuples from which to extract the lists
+   * @param <A>        the type of instances contained within the first element of each tuple
+   * @param <B>        the type of instances contained within the second element of each tuple
+   * @param <C>        the type of instances contained within the third element of each tuple
+   * @return {@link List}s in a {@link Tuple3} extracted from a {@link Stream} of {@link Tuple3}s
+   */
+  @NotNull
+  public static <A, B, C> Tuple3<List<A>, List<B>, List<C>> unzip3(
+      @NotNull Stream<Tuple3<A, B, C>> aAndBAndCs
+  ) {
+    var listA = new ArrayList<A>();
+    var listB = new ArrayList<B>();
+    var listC = new ArrayList<C>();
+    aAndBAndCs.forEachOrdered(aAndBAndC -> {
+      listA.add(aAndBAndC._1());
+      listB.add(aAndBAndC._2());
+      listC.add(aAndBAndC._3());
+    });
+    if (!listA.isEmpty()) {
+
+      return new Tuple3<>(
+          Collections.unmodifiableList(listA),
+          Collections.unmodifiableList(listB),
+          Collections.unmodifiableList(listC));
+    }
+
+    return new Tuple3<>(
+        List.of(),
+        List.of(),
+        List.of());
+  }
+
+  /**
+   * Return {@link List}s in a {@link Tuple2} extracted from a {@link Stream} of {@link Tuple2}s filtered by a the
+   * {@code fAAndBToToOptionalOptionalAAndOptionalB} function.
+   *
+   * @param aAndBs                                  the list of tuples from which to extract the lists
+   * @param fAAndBToToOptionalOptionalAAndOptionalB the function to use to extract the values from an element of the
+   *                                                collection and optionally return a value, and when non-empty,
+   *                                                optionally return each of the element values
+   * @param <A>                                     the type of instances contained within the first element of each
+   *                                                tuple
+   * @param <B>                                     the type of instances contained within the second element of each
+   *                                                tuple
+   * @return {@link List}s in a {@link Tuple2} extracted from a {@link Stream} of {@link Tuple2}s filtered by a the
+   *     {@code fAAndBToToOptionalOptionalAAndOptionalB} function.
+   */
+  @NotNull
+  public static <A, B> Tuple2<List<A>, List<B>> unzipAndFlatten(
+      @NotNull Stream<Tuple2<A, B>> aAndBs,
+      @NotNull Function<Tuple2<A, B>, Optional<Tuple2<Optional<A>, Optional<B>>>> fAAndBToToOptionalOptionalAAndOptionalB
+  ) {
+    var listA = new ArrayList<A>();
+    var listB = new ArrayList<B>();
+    aAndBs.forEachOrdered(aAndB -> {
+      var optionalOptionalAAndOptionalB = fAAndBToToOptionalOptionalAAndOptionalB.apply(aAndB);
+      optionalOptionalAAndOptionalB
+          .ifPresent(optionalAAndOptionalB -> {
+            optionalAAndOptionalB._1()
+                .ifPresent(listA::add);
+            optionalAAndOptionalB._2()
+                .ifPresent(listB::add);
+          });
+    });
+    if (!listA.isEmpty() || !listB.isEmpty()) {
+      return new Tuple2<>(
+          Collections.unmodifiableList(listA),
+          Collections.unmodifiableList(listB));
+    }
+
+    return new Tuple2<>(
+        List.of(),
+        List.of());
+  }
+
+  /**
+   * Returns {@link List}s in a {@link Tuple2} extracted from a {@link Stream} of {@link Either}s.
+   *
+   * @param eithers the list from which to extract the lists
+   * @param <L>     the type of instances contained within the left element of each either
+   * @param <R>     the type of instances contained within the right element of each either
+   * @return {@link List}s in a {@link Tuple2} extracted from a {@link Stream} of {@link Either}s
+   */
+  @NotNull
+  public static <L, R> Tuple2<List<Optional<L>>, List<Optional<R>>> unzipEithers(
+      @NotNull Stream<Either<L, R>> eithers
+  ) {
+    return unzip(eithers
+        .map(
+            either ->
+                new Tuple2<>(
+                    either.toOptionalLeft(),
+                    either.toOptionalRight())));
+  }
+
+  /**
+   * Returns {@link List}s in a {@link Tuple2} extracted from a {@link Stream} of {@link Either}s, {@link #flatten}ing
+   * each returned list.
+   *
+   * @param eithers the list from which to extract the lists
+   * @param <L>     the type of instances contained within the left element of each either
+   * @param <R>     the type of instances contained within the right element of each either
+   * @return {@link List}s in a {@link Tuple2} extracted from a {@link Stream} of {@link Either}s, {@link #flatten}ing
+   *     each returned list
+   */
+  @NotNull
+  public static <L, R> Tuple2<List<L>, List<R>> unzipAndFlattenEithers(
+      @NotNull Stream<Either<L, R>> eithers
+  ) {
+    var unzippedEithers = unzipEithers(eithers);
+
+    return new Tuple2<>(
+        flatten(unzippedEithers._1().stream()),
+        flatten(unzippedEithers._2().stream()));
   }
 }
