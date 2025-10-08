@@ -17,7 +17,12 @@ public class IntegersOps {
     throw new UnsupportedOperationException("suppressing class instantiation");
   }
 
-  //TODO: x1 missing javadoc
+  /**
+   * Return a {@link List} containing the index for each bit set in {@code bits}.
+   *
+   * @param bits the value from which to extract the list of indexes
+   * @return a {@link List} containing the index for each bit set in {@code bits}
+   */
   @NotNull
   public static List<Integer> findSetBitIndicesAsList(int bits) {
     if (bits == 0) {
@@ -29,7 +34,12 @@ public class IntegersOps {
         .toList();
   }
 
-  //TODO: x1 missing javadoc
+  /**
+   * Return a {@link Set} containing the index for each bit set in {@code bits}.
+   *
+   * @param bits the value from which to extract the list of indexes
+   * @return a {@link Set} containing the index for each bit set in {@code bits}
+   */
   @NotNull
   public static Set<Integer> findSetBitIndicesAsSet(int bits) {
     if (bits == 0) {

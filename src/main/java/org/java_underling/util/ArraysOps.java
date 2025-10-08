@@ -14,9 +14,17 @@ public class ArraysOps {
     throw new UnsupportedOperationException("suppressing class instantiation");
   }
 
+  /**
+   * An immutable singleton instance of an empty int array.
+   */
   public static final int[] EMPTY_INT_ARRAY = new int[0];
 
-  //TODO: x1 missing javadoc
+  /**
+   * Return an array containing the index for each bit set in {@code bits}.
+   *
+   * @param bits the value from which to extract the array of indexes
+   * @return an array containing the index for each bit set in {@code bits}
+   */
   public static int[] findSetBitIndices(int bits) {
     if (bits == 0) {
       return ArraysOps.EMPTY_INT_ARRAY;
