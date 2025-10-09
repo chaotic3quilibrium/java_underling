@@ -491,15 +491,287 @@ public class FunctionsOps {
             .getRightOrThrowLeft();
   }
 
-  //TODO: x35 unimplemented wrapCheckedException methods
+  /**
+   * Returns a {@link BiPredicate} that wraps the checked exception lambda, {@code biPredicateCheckedExceptionT}, with a
+   * {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   * operations.
+   *
+   * @param biPredicateCheckedExceptionT the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                     {@link RuntimeException}
+   * @param <T>                          the type of the first parameter passed by the predicate
+   * @param <U>                          the type of the second parameter passed by the predicate
+   * @return a {@link BiPredicate} that wraps the checked exception lambda, {@code biPredicateCheckedExceptionT}, with a
+   *     {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   *     operations
+   */
+  @NotNull
+  public static <T, U> BiPredicate<T, U> wrapCheckedException(
+      @NotNull BiPredicateCheckedException<T, U> biPredicateCheckedExceptionT
+  ) {
+    return wrapCheckedException(biPredicateCheckedExceptionT, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link BiPredicate} that wraps the checked exception lambda, {@code biPredicateCheckedExceptionT}, with a
+   * {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the lambda
+   * within {@link Stream} operations.
+   *
+   * @param biPredicateCheckedExceptionT the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                     {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper     the supplier of the RuntimeException descendant instance within which to wrap
+   *                                     the checked exception, if thrown
+   * @param <E>                          the type of the RuntimeException descendant instance within which to wrap the
+   *                                     checked exception, if thrown
+   * @param <T>                          the type of the first parameter passed by the predicate
+   * @param <U>                          the type of the second parameter passed by the predicate
+   * @return a {@link BiPredicate} that wraps the checked exception lambda, {@code biPredicateCheckedExceptionT}, with a
+   *     {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the
+   *     lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <E extends RuntimeException, T, U> BiPredicate<T, U> wrapCheckedException(
+      @NotNull BiPredicateCheckedException<T, U> biPredicateCheckedExceptionT,
+      @NotNull Function<Exception, E> fRuntimeExceptionWrapper
+  ) {
+    return (t, u) ->
+        Either.tryCatchChecked(() ->
+                biPredicateCheckedExceptionT.test(t, u))
+            .mapLeft(fRuntimeExceptionWrapper)
+            .getRightOrThrowLeft();
+  }
+
+  /**
+   * Returns a {@link BooleanSupplier} that wraps the checked exception lambda, {@code booleanSupplierCheckedException},
+   * with a {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within
+   * {@link Stream} operations.
+   *
+   * @param booleanSupplierCheckedException the lambda which may throw a checked exception that needs to be wrapped with
+   *                                        a {@link RuntimeException}
+   * @return a {@link BooleanSupplier} that wraps the checked exception lambda, {@code booleanSupplierCheckedException},
+   *     with a {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within
+   *     {@link Stream} operations
+   */
+  @NotNull
+  public static BooleanSupplier wrapCheckedException(
+      @NotNull BooleanSupplierCheckedException booleanSupplierCheckedException
+  ) {
+    return wrapCheckedException(booleanSupplierCheckedException, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link BooleanSupplier} that wraps the checked exception lambda, {@code booleanSupplierCheckedException},
+   * with a {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the
+   * lambda within {@link Stream} operations.
+   *
+   * @param booleanSupplierCheckedException the lambda which may throw a checked exception that needs to be wrapped with
+   *                                        a {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper        the supplier of the RuntimeException descendant instance within which to
+   *                                        wrap the checked exception, if thrown
+   * @param <E>                             the type of the RuntimeException descendant instance within which to wrap
+   *                                        the checked exception, if thrown
+   * @return a {@link BooleanSupplier} that wraps the checked exception lambda, {@code booleanSupplierCheckedException},
+   *     with a {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of
+   *     the lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <E extends RuntimeException> BooleanSupplier wrapCheckedException(
+      @NotNull BooleanSupplierCheckedException booleanSupplierCheckedException,
+      @NotNull Function<Exception, E> fRuntimeExceptionWrapper
+  ) {
+    return () ->
+        Either.tryCatchChecked(booleanSupplierCheckedException::getAsBoolean)
+            .mapLeft(fRuntimeExceptionWrapper)
+            .getRightOrThrowLeft();
+  }
+
+  /**
+   * Returns a {@link DoubleBinaryOperator} that wraps the checked exception lambda,
+   * {@code doubleBinaryOperatorCheckedException}, with a {@link RuntimeException} of {@link WrappedCheckedException} to
+   * enable use of the lambda within {@link Stream} operations.
+   *
+   * @param doubleBinaryOperatorCheckedException the lambda which may throw a checked exception that needs to be wrapped
+   *                                             with a {@link RuntimeException}
+   * @return a {@link DoubleBinaryOperator} that wraps the checked exception lambda,
+   *     {@code doubleBinaryOperatorCheckedException}, with a {@link RuntimeException} of
+   *     {@link WrappedCheckedException} to enable use of the lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static DoubleBinaryOperator wrapCheckedException(
+      @NotNull DoubleBinaryOperatorCheckedException doubleBinaryOperatorCheckedException
+  ) {
+    return wrapCheckedException(doubleBinaryOperatorCheckedException, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link DoubleBinaryOperator} that wraps the checked exception lambda,
+   * {@code doubleBinaryOperatorCheckedException}, with a {@link RuntimeException} returned by the supplier,
+   * {@code fRuntimeExceptionWrapper}, to enable use of the lambda within {@link Stream} operations.
+   *
+   * @param doubleBinaryOperatorCheckedException the lambda which may throw a checked exception that needs to be wrapped
+   *                                             with a {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper             the supplier of the RuntimeException descendant instance within which
+   *                                             to wrap the checked exception, if thrown
+   * @param <E>                                  the type of the RuntimeException descendant instance within which to
+   *                                             wrap the checked exception, if thrown
+   * @return a {@link DoubleBinaryOperator} that wraps the checked exception lambda,
+   *     {@code doubleBinaryOperatorCheckedException}, with a {@link RuntimeException} returned by the supplier,
+   *     {@code fRuntimeExceptionWrapper}, to enable use of the lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <E extends RuntimeException> DoubleBinaryOperator wrapCheckedException(
+      @NotNull DoubleBinaryOperatorCheckedException doubleBinaryOperatorCheckedException,
+      @NotNull Function<Exception, E> fRuntimeExceptionWrapper
+  ) {
+    return (left, right) ->
+        Either.tryCatchChecked(() ->
+                doubleBinaryOperatorCheckedException.applyAsDouble(left, right))
+            .mapLeft(fRuntimeExceptionWrapper)
+            .getRightOrThrowLeft();
+  }
+
+  /**
+   * Returns a {@link DoubleConsumer} that wraps the checked exception lambda, {@code doubleConsumerCheckedException},
+   * with a {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within
+   * {@link Stream} operations.
+   *
+   * @param doubleConsumerCheckedException the lambda which may throw a checked exception that needs to be wrapped with
+   *                                       a {@link RuntimeException}
+   * @return a {@link DoubleConsumer} that wraps the checked exception lambda, {@code doubleConsumerCheckedException},
+   *     with a {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within
+   *     {@link Stream} operations
+   */
+  @NotNull
+  public static DoubleConsumer wrapCheckedException(
+      @NotNull DoubleConsumerCheckedException doubleConsumerCheckedException
+  ) {
+    return wrapCheckedException(doubleConsumerCheckedException, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link DoubleConsumer} that wraps the checked exception lambda, {@code doubleConsumerCheckedException},
+   * with a {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the
+   * lambda within {@link Stream} operations.
+   *
+   * @param doubleConsumerCheckedException the lambda which may throw a checked exception that needs to be wrapped with
+   *                                       a {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper       the supplier of the RuntimeException descendant instance within which to wrap
+   *                                       the checked exception, if thrown
+   * @param <E>                            the type of the RuntimeException descendant instance within which to wrap the
+   *                                       checked exception, if thrown
+   * @return a {@link DoubleConsumer} that wraps the checked exception lambda, {@code doubleConsumerCheckedException},
+   *     with a {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of
+   *     the lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <E extends RuntimeException> DoubleConsumer wrapCheckedException(
+      @NotNull DoubleConsumerCheckedException doubleConsumerCheckedException,
+      @NotNull Function<Exception, E> fRuntimeExceptionWrapper
+  ) {
+    return (t) -> {
+      try {
+        doubleConsumerCheckedException.accept(t);
+      } catch (Exception exception) {
+        throw fRuntimeExceptionWrapper.apply(exception);
+      }
+    };
+  }
+
+  /**
+   * Returns a {@link DoubleFunction} that wraps the checked exception lambda, {@code doubleFunctionCheckedException},
+   * with a {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within
+   * {@link Stream} operations.
+   *
+   * @param doubleFunctionCheckedException the lambda which may throw a checked exception that needs to be wrapped with
+   *                                       a {@link RuntimeException}
+   * @param <R>                            the type of the result returned by the function
+   * @return a {@link DoubleFunction} that wraps the checked exception lambda, {@code doubleFunctionCheckedException},
+   *     with a {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within
+   *     {@link Stream} operations
+   */
+  @NotNull
+  public static <R> DoubleFunction<R> wrapCheckedException(
+      @NotNull DoubleFunctionCheckedException<R> doubleFunctionCheckedException
+  ) {
+    return wrapCheckedException(doubleFunctionCheckedException, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link DoubleFunction} that wraps the checked exception lambda, {@code doubleFunctionCheckedException},
+   * with a {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the
+   * lambda within {@link Stream} operations.
+   *
+   * @param doubleFunctionCheckedException the lambda which may throw a checked exception that needs to be wrapped with
+   *                                       a {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper       the supplier of the RuntimeException descendant instance within which to wrap
+   *                                       the checked exception, if thrown
+   * @param <E>                            the type of the RuntimeException descendant instance within which to wrap the
+   *                                       checked exception, if thrown
+   * @param <R>                            the type of the result returned by the function
+   * @return a {@link DoubleFunction} that wraps the checked exception lambda, {@code doubleFunctionCheckedException},
+   *     with a {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of
+   *     the lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <E extends RuntimeException, R> DoubleFunction<R> wrapCheckedException(
+      @NotNull DoubleFunctionCheckedException<R> doubleFunctionCheckedException,
+      @NotNull Function<Exception, E> fRuntimeExceptionWrapper
+  ) {
+    return (t) ->
+        Either.tryCatchChecked(() ->
+                doubleFunctionCheckedException.apply(t))
+            .mapLeft(fRuntimeExceptionWrapper)
+            .getRightOrThrowLeft();
+  }
+
+  /**
+   * Returns a {@link DoublePredicate} that wraps the checked exception lambda, {@code doublePredicateCheckedException},
+   * with a {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within
+   * {@link Stream} operations.
+   *
+   * @param doublePredicateCheckedException the lambda which may throw a checked exception that needs to be wrapped with
+   *                                        a {@link RuntimeException}
+   * @return a {@link DoublePredicate} that wraps the checked exception lambda, {@code doublePredicateCheckedException},
+   *     with a {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within
+   *     {@link Stream} operations
+   */
+  @NotNull
+  public static DoublePredicate wrapCheckedException(
+      @NotNull DoublePredicateCheckedException doublePredicateCheckedException
+  ) {
+    return wrapCheckedException(doublePredicateCheckedException, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link DoublePredicate} that wraps the checked exception lambda, {@code doublePredicateCheckedException},
+   * with a {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the
+   * lambda within {@link Stream} operations.
+   *
+   * @param doublePredicateCheckedException the lambda which may throw a checked exception that needs to be wrapped with
+   *                                        a {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper        the supplier of the RuntimeException descendant instance within which to
+   *                                        wrap the checked exception, if thrown
+   * @param <E>                             the type of the RuntimeException descendant instance within which to wrap
+   *                                        the checked exception, if thrown
+   * @return a {@link DoublePredicate} that wraps the checked exception lambda, {@code doublePredicateCheckedException},
+   *     with a {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of
+   *     the lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <E extends RuntimeException> DoublePredicate wrapCheckedException(
+      @NotNull DoublePredicateCheckedException doublePredicateCheckedException,
+      @NotNull Function<Exception, E> fRuntimeExceptionWrapper
+  ) {
+    return (t) ->
+        Either.tryCatchChecked(() ->
+                doublePredicateCheckedException.test(t))
+            .mapLeft(fRuntimeExceptionWrapper)
+            .getRightOrThrowLeft();
+  }
+
+
+  //TODO: x66 unimplemented wrapCheckedException methods
   //        The core Function class upon which the following interfaces depend are not currently defined for either (or
   //        both) the *Checked and *CheckedException
-  // - BiPredicate
-  // - BooleanSupplier
-  // - DoubleBinaryOperator
-  // - DoubleConsumer
-  // - DoubleFunction
-  // - DoublePredicate
   // - DoubleSupplier
   // - DoubleToIntFunction
   // - DoubleToLongFunction
