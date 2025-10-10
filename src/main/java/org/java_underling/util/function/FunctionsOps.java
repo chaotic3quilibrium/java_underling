@@ -768,11 +768,54 @@ public class FunctionsOps {
             .getRightOrThrowLeft();
   }
 
+  /**
+   * Returns a {@link DoubleSupplier} that wraps the checked exception lambda, {@code doubleSupplierCheckedException},
+   * with a {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within
+   * {@link Stream} operations.
+   *
+   * @param doubleSupplierCheckedException the lambda which may throw a checked exception that needs to be wrapped with
+   *                                       a {@link RuntimeException}
+   * @return a {@link DoubleSupplier} that wraps the checked exception lambda, {@code doubleSupplierCheckedException},
+   *     with a {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within
+   *     {@link Stream} operations
+   */
+  @NotNull
+  public static DoubleSupplier wrapCheckedExceptionDoubleSupplier(
+      @NotNull DoubleSupplierCheckedException doubleSupplierCheckedException
+  ) {
+    return wrapCheckedExceptionDoubleSupplier(doubleSupplierCheckedException, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link DoubleSupplier} that wraps the checked exception lambda, {@code doubleSupplierCheckedException},
+   * with a {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the
+   * lambda within {@link Stream} operations.
+   *
+   * @param doubleSupplierCheckedException the lambda which may throw a checked exception that needs to be wrapped with
+   *                                       a {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper       the supplier of the RuntimeException descendant instance within which to wrap
+   *                                       the checked exception, if thrown
+   * @param <E>                            the type of the RuntimeException descendant instance within which to wrap the
+   *                                       checked exception, if thrown
+   * @return a {@link DoubleSupplier} that wraps the checked exception lambda, {@code doubleSupplierCheckedException},
+   *     with a {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of
+   *     the lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <E extends RuntimeException> DoubleSupplier wrapCheckedExceptionDoubleSupplier(
+      @NotNull DoubleSupplierCheckedException doubleSupplierCheckedException,
+      @NotNull Function<Exception, E> fRuntimeExceptionWrapper
+  ) {
+    return () ->
+        Either.tryCatchChecked(doubleSupplierCheckedException::getAsDouble)
+            .mapLeft(fRuntimeExceptionWrapper)
+            .getRightOrThrowLeft();
+  }
+
 
   //TODO: x66 unimplemented wrapCheckedException methods
   //        The core Function class upon which the following interfaces depend are not currently defined for either (or
   //        both) the *Checked and *CheckedException
-  // - DoubleSupplier
   // - DoubleToIntFunction
   // - DoubleToLongFunction
   // - DoubleUnaryOperator
