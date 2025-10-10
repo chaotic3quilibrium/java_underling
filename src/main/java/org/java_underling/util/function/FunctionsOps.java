@@ -812,36 +812,43 @@ public class FunctionsOps {
             .getRightOrThrowLeft();
   }
 
-
-  //TODO: x66 unimplemented wrapCheckedException methods
-  //        The core Function class upon which the following interfaces depend are not currently defined for either (or
-  //        both) the *Checked and *CheckedException
-  // - DoubleToIntFunction
-  // - DoubleToLongFunction
-  // - DoubleUnaryOperator
-  // - IntBinaryOperator
-  // - IntConsumer
-  // - IntFunction
-  // - IntPredicate
-  // - IntSupplier
-  // - IntToDoubleFunction
-  // - IntToLongFunction
-  // - IntUnaryOperator
-  // - LongBinaryOperator
-  // - LongConsumer
-  // - LongFunction
-  // - LongPredicate
-  // - LongSupplier
-  // - LongToDoubleFunction
-  // - LongToIntFunction
-  // - LongUnaryOperator
-  // - ObjDoubleConsumer
-  // - ObjIntConsumer
-  // - ObjLongConsumer
-  // - ToDoubleBiFunction
-  // - ToDoubleFunction
-  // - ToIntBiFunction
-  // - ToIntFunction
-  // - ToLongBiFunction
-  // - ToLongFunction
+//TODO: x72 unimplemented wrapCheckedException* methods
+//        The core Function class upon which the following interfaces depend are not currently defined for either (or
+//        both) the *Checked and *CheckedException
+// - DoubleToIntFunction
+// - DoubleToLongFunction
+// - DoubleUnaryOperator
+// - IntBinaryOperator
+// - IntConsumer
+// - IntFunction
+// - IntPredicate
+// - IntSupplier
+// - IntToDoubleFunction
+// - IntToLongFunction
+// - IntUnaryOperator
+// - LongBinaryOperator
+// - LongConsumer
+// - LongFunction
+// - LongPredicate
+// - LongSupplier
+// - LongToDoubleFunction
+// - LongToIntFunction
+// - LongUnaryOperator
+// - ObjDoubleConsumer
+// - ObjIntConsumer
+// - ObjLongConsumer
+// - ToDoubleBiFunction
+// - ToDoubleFunction
+// - ToIntBiFunction
+// - ToIntFunction
+// - ToLongBiFunction
+// - ToLongFunction
+// - Function3
+// - Function4
+// - Function5
+// - Function6
+// - Function7
+// - Function8
+// - Function9
+// - Function10
 }

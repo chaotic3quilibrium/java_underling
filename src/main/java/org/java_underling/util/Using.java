@@ -10,15 +10,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-//TODO: x17 missing javadocs
-
 /**
- * A utility class focused on {@link RuntimeException}s n for transforming the Java try-with-resources statement
+ * A utility class focused on {@link RuntimeException}s for transforming the Java try-with-resources statement
  * {@code try(...) {}} into an expression, enabling the use of both the error-by-value ({@code apply()}) and
  * error-by-exception ({@code applyUnsafe()}) while ensuring the proper {@link AutoCloseable#close()} of successfully
  * obtained resources.
  * <p>
- * In contrast with {@link UsingCheckedException}'s ensuring all exceptions are wrapped with a
+ * In contrast with {@link UsingCheckedException}'s ensuring all checked exceptions are wrapped with a
  * {@link WrappedCheckedException}, this class ensures the non-{@link AutoCloseable#close()} pathways remain based on
  * {@link RuntimeException}s, and only returns a {@link WrappedCheckedException} if any call to
  * {@link AutoCloseable#close()} causes a checked exception.
@@ -68,6 +66,23 @@ public class Using {
     }
   }
 
+  /**
+   * Returns a value of type {@code T} obtained from a single {@link AutoCloseable} resource, ensuring the resource is
+   * properly closed via the proper {@link AutoCloseable#close()}, otherwise throws a {@link RuntimeException}, which in
+   * the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   * {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown checked
+   * exception instance.
+   *
+   * @param fSupplierA the function to "open" the resource
+   * @param fAToT      the function to "obtain" the value from resource
+   * @param <A>        the type of the {@link AutoCloseable} resource
+   * @param <T>        the type of the value obtained from the resource
+   * @return a value of type {@code T} obtained from a single {@link AutoCloseable} resource, ensuring the resource is
+   *     properly closed via the proper {@link AutoCloseable#close()}, otherwise throws a {@link RuntimeException},
+   *     which in the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   *     {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown
+   *     checked exception instance
+   */
   @NotNull
   public static <A extends AutoCloseable, T> T applyUnsafe(
       @NotNull Supplier<A> fSupplierA,
@@ -80,6 +95,25 @@ public class Using {
         .getRightOrThrowLeft();
   }
 
+  /**
+   * Returns an {@link Either#right(Object)} with a value of type {@code T} obtained from two {@link AutoCloseable}
+   * resources, ensuring the resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise
+   * {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an
+   * {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException} with
+   * its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance.
+   *
+   * @param fSupplierA the function to "open" the {@code A} resource
+   * @param fSupplierB the function to "open" the {@code B} resource
+   * @param fAAndBToT  the function to "obtain" the value from the resources
+   * @param <A>        the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>        the type of the {@code B} {@link AutoCloseable} resource
+   * @param <T>        the type of the value obtained from the resources
+   * @return an {@link Either#right(Object)} with a value of type {@code T} obtained from two {@link AutoCloseable}
+   *     resources, ensuring the resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise
+   *     {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an
+   *     {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException}
+   *     with its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -107,6 +141,25 @@ public class Using {
     }
   }
 
+  /**
+   * Returns a value of type {@code T} obtained from two {@link AutoCloseable} resources, ensuring the resources are
+   * properly closed via the proper {@link AutoCloseable#close()}, otherwise throws a {@link RuntimeException}, which in
+   * the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   * {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown checked
+   * exception instance.
+   *
+   * @param fSupplierA the function to "open" the {@code A} resource
+   * @param fSupplierB the function to "open" the {@code B} resource
+   * @param fAAndBToT  the function to "obtain" the value from the resources
+   * @param <A>        the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>        the type of the {@code B} {@link AutoCloseable} resource
+   * @param <T>        the type of the value obtained from the resources
+   * @return an {@link Either#right(Object)} with a value of type {@code T} obtained from two {@link AutoCloseable}
+   *     resources, ensuring the resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise
+   *     {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an
+   *     {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException}
+   *     with its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -123,6 +176,27 @@ public class Using {
         .getRightOrThrowLeft();
   }
 
+  /**
+   * Returns an {@link Either#right(Object)} with a value of type {@code T} obtained from two <i>nested</i>
+   * {@link AutoCloseable} resources, ensuring the resources are properly closed via the proper
+   * {@link AutoCloseable#close()}, otherwise {@link Either#left(Object)} containing the {@link RuntimeException}, which
+   * in the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   * {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown checked
+   * exception instance.
+   *
+   * @param fSupplierA the function to "open" the {@code A} resource
+   * @param fAToB      the function to "open" the {@code B} resource, possibly depending upon the {@code A} resource
+   * @param fTuple2ToT the function to "obtain" the value from the resources
+   * @param <A>        the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>        the type of the {@code B} {@link AutoCloseable} resource
+   * @param <T>        the type of the value obtained from the resources
+   * @return an {@link Either#right(Object)} with a value of type {@code T} obtained from two <i>nested</i>
+   *     {@link AutoCloseable} resources, ensuring the resources are properly closed via the proper
+   *     {@link AutoCloseable#close()}, otherwise {@link Either#left(Object)} containing the {@link RuntimeException},
+   *     which in the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   *     {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown
+   *     checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -150,6 +224,25 @@ public class Using {
     }
   }
 
+  /**
+   * Returns a value of type {@code T} obtained from two <i>nested</i> {@link AutoCloseable} resources, ensuring the
+   * resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise {@link Either#left(Object)}
+   * containing the {@link RuntimeException}, which in the case of an {@link AutoCloseable#close()} failure throwing a
+   * checked exception, will be a {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()}
+   * containing the thrown checked exception instance.
+   *
+   * @param fSupplierA the function to "open" the {@code A} resource
+   * @param fAToB      the function to "open" the {@code B} resource, possibly depending upon the {@code A} resource
+   * @param fTuple2ToT the function to "obtain" the value from the resources
+   * @param <A>        the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>        the type of the {@code B} {@link AutoCloseable} resource
+   * @param <T>        the type of the value obtained from the resources
+   * @return a value of type {@code T} obtained from two <i>nested</i> {@link AutoCloseable} resources, ensuring the
+   *     resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise
+   *     {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an
+   *     {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException}
+   *     with its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -166,6 +259,27 @@ public class Using {
         .getRightOrThrowLeft();
   }
 
+  /**
+   * Returns an {@link Either#right(Object)} with a value of type {@code T} obtained from three {@link AutoCloseable}
+   * resources, ensuring the resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise
+   * {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an
+   * {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException} with
+   * its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance.
+   *
+   * @param fSupplierA    the function to "open" the {@code A} resource
+   * @param fSupplierB    the function to "open" the {@code B} resource
+   * @param fSupplierC    the function to "open" the {@code C} resource
+   * @param fAAndBAndCToT the function to "obtain" the value from the resources
+   * @param <A>           the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>           the type of the {@code B} {@link AutoCloseable} resource
+   * @param <C>           the type of the {@code C} {@link AutoCloseable} resource
+   * @param <T>           the type of the value obtained from the resources
+   * @return an {@link Either#right(Object)} with a value of type {@code T} obtained from three {@link AutoCloseable}
+   *     resources, ensuring the resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise
+   *     {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an
+   *     {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException}
+   *     with its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -196,6 +310,27 @@ public class Using {
     }
   }
 
+  /**
+   * Returns a value of type {@code T} obtained from three {@link AutoCloseable} resources, ensuring the resources are
+   * properly closed via the proper {@link AutoCloseable#close()}, otherwise throws a {@link RuntimeException}, which in
+   * the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   * {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown checked
+   * exception instance.
+   *
+   * @param fSupplierA    the function to "open" the {@code A} resource
+   * @param fSupplierB    the function to "open" the {@code B} resource
+   * @param fSupplierC    the function to "open" the {@code C} resource
+   * @param fAAndBAndCToT the function to "obtain" the value from the resources
+   * @param <A>           the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>           the type of the {@code B} {@link AutoCloseable} resource
+   * @param <C>           the type of the {@code C} {@link AutoCloseable} resource
+   * @param <T>           the type of the value obtained from the resources
+   * @return a value of type {@code T} obtained from three {@link AutoCloseable} resources, ensuring the resources are
+   *     properly closed via the proper {@link AutoCloseable#close()}, otherwise throws a {@link RuntimeException},
+   *     which in the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   *     {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown
+   *     checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -215,6 +350,30 @@ public class Using {
         .getRightOrThrowLeft();
   }
 
+  /**
+   * Returns an {@link Either#right(Object)} with a value of type {@code T} obtained from three <i>nested</i>
+   * {@link AutoCloseable} resources, ensuring the resources are properly closed via the proper
+   * {@link AutoCloseable#close()}, otherwise {@link Either#left(Object)} containing the {@link RuntimeException}, which
+   * in the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   * {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown checked
+   * exception instance.
+   *
+   * @param fSupplierA    the function to "open" the {@code A} resource
+   * @param fAToB         the function to "open" the {@code B} resource, possibly depending upon the {@code A} resource
+   * @param fAndBToC      the function to "open" the {@code C} resource, possibly depending upon the {@code A} and
+   *                      {@code B} resources
+   * @param fAAndBAndCToT the function to "obtain" the value from the resources
+   * @param <A>           the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>           the type of the {@code B} {@link AutoCloseable} resource
+   * @param <C>           the type of the {@code C} {@link AutoCloseable} resource
+   * @param <T>           the type of the value obtained from the resources
+   * @return an {@link Either#right(Object)} with a value of type {@code T} obtained from three <i>nested</i>
+   *     {@link AutoCloseable} resources, ensuring the resources are properly closed via the proper
+   *     {@link AutoCloseable#close()}, otherwise {@link Either#left(Object)} containing the {@link RuntimeException},
+   *     which in the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   *     {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown
+   *     checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -245,6 +404,28 @@ public class Using {
     }
   }
 
+  /**
+   * Returns a value of type {@code T} obtained from three <i>nested</i> {@link AutoCloseable} resources, ensuring the
+   * resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise {@link Either#left(Object)}
+   * containing the {@link RuntimeException}, which in the case of an {@link AutoCloseable#close()} failure throwing a
+   * checked exception, will be a {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()}
+   * containing the thrown checked exception instance.
+   *
+   * @param fSupplierA    the function to "open" the {@code A} resource
+   * @param fAToB         the function to "open" the {@code B} resource, possibly depending upon the {@code A} resource
+   * @param fAndBToC      the function to "open" the {@code C} resource, possibly depending upon the {@code A} and
+   *                      {@code B} resources
+   * @param fAAndBAndCToT the function to "obtain" the value from the resources
+   * @param <A>           the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>           the type of the {@code B} {@link AutoCloseable} resource
+   * @param <C>           the type of the {@code C} {@link AutoCloseable} resource
+   * @param <T>           the type of the value obtained from the resources
+   * @return a value of type {@code T} obtained from three <i>nested</i> {@link AutoCloseable} resources, ensuring the
+   *     resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise
+   *     {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an
+   *     {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException}
+   *     with its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -263,6 +444,29 @@ public class Using {
         fAAndBAndCToT);
   }
 
+  /**
+   * Returns an {@link Either#right(Object)} with a value of type {@code T} obtained from four {@link AutoCloseable}
+   * resources, ensuring the resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise
+   * {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an
+   * {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException} with
+   * its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance.
+   *
+   * @param fSupplierA        the function to "open" the {@code A} resource
+   * @param fSupplierB        the function to "open" the {@code B} resource
+   * @param fSupplierC        the function to "open" the {@code C} resource
+   * @param fSupplierD        the function to "open" the {@code D} resource
+   * @param fAAndBAndCAndDToT the function to "obtain" the value from the resources
+   * @param <A>               the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>               the type of the {@code B} {@link AutoCloseable} resource
+   * @param <C>               the type of the {@code C} {@link AutoCloseable} resource
+   * @param <D>               the type of the {@code D} {@link AutoCloseable} resource
+   * @param <T>               the type of the value obtained from the resources
+   * @return an {@link Either#right(Object)} with a value of type {@code T} obtained from four {@link AutoCloseable}
+   *     resources, ensuring the resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise
+   *     {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an
+   *     {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException}
+   *     with its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -296,6 +500,29 @@ public class Using {
     }
   }
 
+  /**
+   * Returns a value of type {@code T} obtained from four {@link AutoCloseable} resources, ensuring the resources are
+   * properly closed via the proper {@link AutoCloseable#close()}, otherwise throws a {@link RuntimeException}, which in
+   * the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   * {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown checked
+   * exception instance.
+   *
+   * @param fSupplierA        the function to "open" the {@code A} resource
+   * @param fSupplierB        the function to "open" the {@code B} resource
+   * @param fSupplierC        the function to "open" the {@code C} resource
+   * @param fSupplierD        the function to "open" the {@code D} resource
+   * @param fAAndBAndCAndDToT the function to "obtain" the value from the resources
+   * @param <A>               the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>               the type of the {@code B} {@link AutoCloseable} resource
+   * @param <C>               the type of the {@code C} {@link AutoCloseable} resource
+   * @param <D>               the type of the {@code D} {@link AutoCloseable} resource
+   * @param <T>               the type of the value obtained from the resources
+   * @return a value of type {@code T} obtained from four {@link AutoCloseable} resources, ensuring the resources are
+   *     properly closed via the proper {@link AutoCloseable#close()}, otherwise throws a {@link RuntimeException},
+   *     which in the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   *     {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown
+   *     checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -318,6 +545,34 @@ public class Using {
         .getRightOrThrowLeft();
   }
 
+  /**
+   * Returns an {@link Either#right(Object)} with a value of type {@code T} obtained from four <i>nested</i>
+   * {@link AutoCloseable} resources, ensuring the resources are properly closed via the proper
+   * {@link AutoCloseable#close()}, otherwise {@link Either#left(Object)} containing the {@link RuntimeException}, which
+   * in the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   * {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown checked
+   * exception instance.
+   *
+   * @param fSupplierA        the function to "open" the {@code A} resource
+   * @param fAToB             the function to "open" the {@code B} resource, possibly depending upon the {@code A}
+   *                          resource
+   * @param fAndBToC          the function to "open" the {@code C} resource, possibly depending upon the {@code A} and
+   *                          {@code B} resources
+   * @param fAndBAndCToD      the function to "open" the {@code D} resource, possibly depending upon the {@code A},
+   *                          {@code B}, and {@code C} resources
+   * @param fAAndBAndCAndDToT the function to "obtain" the value from the resources
+   * @param <A>               the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>               the type of the {@code B} {@link AutoCloseable} resource
+   * @param <C>               the type of the {@code C} {@link AutoCloseable} resource
+   * @param <D>               the type of the {@code D} {@link AutoCloseable} resource
+   * @param <T>               the type of the value obtained from the resources
+   * @return an {@link Either#right(Object)} with a value of type {@code T} obtained from four <i>nested</i>
+   *     {@link AutoCloseable} resources, ensuring the resources are properly closed via the proper
+   *     {@link AutoCloseable#close()}, otherwise {@link Either#left(Object)} containing the {@link RuntimeException},
+   *     which in the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   *     {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown
+   *     checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -351,6 +606,32 @@ public class Using {
     }
   }
 
+  /**
+   * Returns a value of type {@code T} obtained from four <i>nested</i> {@link AutoCloseable} resources, ensuring the
+   * resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise {@link Either#left(Object)}
+   * containing the {@link RuntimeException}, which in the case of an {@link AutoCloseable#close()} failure throwing a
+   * checked exception, will be a {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()}
+   * containing the thrown checked exception instance.
+   *
+   * @param fSupplierA        the function to "open" the {@code A} resource
+   * @param fAToB             the function to "open" the {@code B} resource, possibly depending upon the {@code A}
+   *                          resource
+   * @param fAndBToC          the function to "open" the {@code C} resource, possibly depending upon the {@code A} and
+   *                          {@code B} resources
+   * @param fAndBAndCToD      the function to "open" the {@code C} resource, possibly depending upon the {@code A},
+   *                          {@code B}, and {@code C} resources
+   * @param fAAndBAndCAndDToT the function to "obtain" the value from the resources
+   * @param <A>               the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>               the type of the {@code B} {@link AutoCloseable} resource
+   * @param <C>               the type of the {@code C} {@link AutoCloseable} resource
+   * @param <D>               the type of the {@code D} {@link AutoCloseable} resource
+   * @param <T>               the type of the value obtained from the resources
+   * @return a value of type {@code T} obtained from four <i>nested</i> {@link AutoCloseable} * resources, ensuring the
+   *     resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise *
+   *     {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an *
+   *     {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException}
+   *     with * its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -372,6 +653,31 @@ public class Using {
         fAAndBAndCAndDToT);
   }
 
+  /**
+   * Returns an {@link Either#right(Object)} with a value of type {@code T} obtained from five {@link AutoCloseable}
+   * resources, ensuring the resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise
+   * {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an
+   * {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException} with
+   * its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance.
+   *
+   * @param fSupplierA            the function to "open" the {@code A} resource
+   * @param fSupplierB            the function to "open" the {@code B} resource
+   * @param fSupplierC            the function to "open" the {@code C} resource
+   * @param fSupplierD            the function to "open" the {@code D} resource
+   * @param fSupplierE            the function to "open" the {@code E} resource
+   * @param fAAndBAndCAndDAndEToT the function to "obtain" the value from the resources
+   * @param <A>                   the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>                   the type of the {@code B} {@link AutoCloseable} resource
+   * @param <C>                   the type of the {@code C} {@link AutoCloseable} resource
+   * @param <D>                   the type of the {@code D} {@link AutoCloseable} resource
+   * @param <E>                   the type of the {@code E} {@link AutoCloseable} resource
+   * @param <T>                   the type of the value obtained from the resources
+   * @return an {@link Either#right(Object)} with a value of type {@code T} obtained from five {@link AutoCloseable}
+   *     resources, ensuring the resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise
+   *     {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an
+   *     {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException}
+   *     with its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -408,6 +714,31 @@ public class Using {
     }
   }
 
+  /**
+   * Returns a value of type {@code T} obtained from five {@link AutoCloseable} resources, ensuring the resources are
+   * properly closed via the proper {@link AutoCloseable#close()}, otherwise throws a {@link RuntimeException}, which in
+   * the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   * {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown checked
+   * exception instance.
+   *
+   * @param fSupplierA            the function to "open" the {@code A} resource
+   * @param fSupplierB            the function to "open" the {@code B} resource
+   * @param fSupplierC            the function to "open" the {@code C} resource
+   * @param fSupplierD            the function to "open" the {@code D} resource
+   * @param fSupplierE            the function to "open" the {@code E} resource
+   * @param fAAndBAndCAndDAndEToT the function to "obtain" the value from the resources
+   * @param <A>                   the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>                   the type of the {@code B} {@link AutoCloseable} resource
+   * @param <C>                   the type of the {@code C} {@link AutoCloseable} resource
+   * @param <D>                   the type of the {@code D} {@link AutoCloseable} resource
+   * @param <E>                   the type of the {@code E} {@link AutoCloseable} resource
+   * @param <T>                   the type of the value obtained from the resources
+   * @return a value of type {@code T} obtained from five {@link AutoCloseable} resources, ensuring the resources are
+   *     properly closed via the proper {@link AutoCloseable#close()}, otherwise throws a {@link RuntimeException},
+   *     which in the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   *     {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown
+   *     checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -433,6 +764,37 @@ public class Using {
         .getRightOrThrowLeft();
   }
 
+  /**
+   * Returns an {@link Either#right(Object)} with a value of type {@code T} obtained from five <i>nested</i>
+   * {@link AutoCloseable} resources, ensuring the resources are properly closed via the proper
+   * {@link AutoCloseable#close()}, otherwise {@link Either#left(Object)} containing the {@link RuntimeException}, which
+   * in the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   * {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown checked
+   * exception instance.
+   *
+   * @param fSupplierA            the function to "open" the {@code A} resource
+   * @param fAToB                 the function to "open" the {@code B} resource, possibly depending upon the {@code A}
+   *                              resource
+   * @param fAndBToC              the function to "open" the {@code C} resource, possibly depending upon the {@code A}
+   *                              and {@code B} resources
+   * @param fAndBAndCToD          the function to "open" the {@code D} resource, possibly depending upon the {@code A},
+   *                              {@code B}, and {@code C} resources
+   * @param fAndBAndCAndDToE      the function to "open" the {@code E} resource, possibly depending upon the {@code A},
+   *                              {@code B}, {@code C}, and {@code D} resources
+   * @param fAAndBAndCAndDAndEToT the function to "obtain" the value from the resources
+   * @param <A>                   the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>                   the type of the {@code B} {@link AutoCloseable} resource
+   * @param <C>                   the type of the {@code C} {@link AutoCloseable} resource
+   * @param <D>                   the type of the {@code D} {@link AutoCloseable} resource
+   * @param <E>                   the type of the {@code E} {@link AutoCloseable} resource
+   * @param <T>                   the type of the value obtained from the resources
+   * @return an {@link Either#right(Object)} with a value of type {@code T} obtained from five <i>nested</i>
+   *     {@link AutoCloseable} resources, ensuring the resources are properly closed via the proper
+   *     {@link AutoCloseable#close()}, otherwise {@link Either#left(Object)} containing the {@link RuntimeException},
+   *     which in the case of an {@link AutoCloseable#close()} failure throwing a checked exception, will be a
+   *     {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()} containing the thrown
+   *     checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -469,6 +831,35 @@ public class Using {
     }
   }
 
+  /**
+   * Returns a value of type {@code T} obtained from five <i>nested</i> {@link AutoCloseable} resources, ensuring the
+   * resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise {@link Either#left(Object)}
+   * containing the {@link RuntimeException}, which in the case of an {@link AutoCloseable#close()} failure throwing a
+   * checked exception, will be a {@link WrappedCheckedException} with its {@link WrappedCheckedException#getCause()}
+   * containing the thrown checked exception instance.
+   *
+   * @param fSupplierA            the function to "open" the {@code A} resource
+   * @param fAToB                 the function to "open" the {@code B} resource, possibly depending upon the {@code A}
+   *                              resource
+   * @param fAndBToC              the function to "open" the {@code C} resource, possibly depending upon the {@code A}
+   *                              and {@code B} resources
+   * @param fAndBAndCToD          the function to "open" the {@code D} resource, possibly depending upon the {@code A},
+   *                              {@code B}, and {@code C} resources
+   * @param fAndBAndCAndDToE      the function to "open" the {@code E} resource, possibly depending upon the {@code A},
+   *                              {@code B}, {@code C}, and {@code D} resources
+   * @param fAAndBAndCAndDAndEToT the function to "obtain" the value from the resources
+   * @param <A>                   the type of the {@code A} {@link AutoCloseable} resource
+   * @param <B>                   the type of the {@code B} {@link AutoCloseable} resource
+   * @param <C>                   the type of the {@code C} {@link AutoCloseable} resource
+   * @param <D>                   the type of the {@code D} {@link AutoCloseable} resource
+   * @param <E>                   the type of the {@code E} {@link AutoCloseable} resource
+   * @param <T>                   the type of the value obtained from the resources
+   * @return a value of type {@code T} obtained from five <i>nested</i> {@link AutoCloseable} resources, ensuring the
+   *     resources are properly closed via the proper {@link AutoCloseable#close()}, otherwise
+   *     {@link Either#left(Object)} containing the {@link RuntimeException}, which in the case of an
+   *     {@link AutoCloseable#close()} failure throwing a checked exception, will be a {@link WrappedCheckedException}
+   *     with its {@link WrappedCheckedException#getCause()} containing the thrown checked exception instance
+   */
   @NotNull
   public static <
       A extends AutoCloseable,
@@ -476,7 +867,7 @@ public class Using {
       C extends AutoCloseable,
       D extends AutoCloseable,
       E extends AutoCloseable,
-      T> Either<RuntimeException, T> applyNestedUnsafe(
+      T> T applyNestedUnsafe(
       @NotNull Supplier<A> fSupplierA,
       @NotNull Function<A, B> fAToB,
       @NotNull Function<Tuple2<A, B>, C> fAndBToC,
@@ -490,6 +881,7 @@ public class Using {
         fAndBToC,
         fAndBAndCToD,
         fAndBAndCAndDToE,
-        fAAndBAndCAndDAndEToT);
+        fAAndBAndCAndDAndEToT)
+        .getRightOrThrowLeft();
   }
 }
