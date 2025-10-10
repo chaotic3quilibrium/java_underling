@@ -36,14 +36,28 @@ public class FunctionsOpsTests {
   public void testRemainingUnimplemented() {
     //TODO: x8 remaining wrapCheckedException() pathways
     //  - BiConsumer*
-    //  - BiFunction
+    //  - BiFunction*
     //  - BinaryOperator*
+    //  - BiPredicate*
+    //  - BooleanSupplier*
     //  - Consumer*
+    //  - DoubleBinaryOperator*
+    //  - DoubleConsumer*
+    //  - DoubleFunction*
+    //  - DoublePredicate*
+    //  - DoubleSupplier*
+    //  - Function3*
+    //  - Function4*
+    //  - Function5*
+    //  - Function6*
+    //  - Function7*
+    //  - Function8*
+    //  - Function9*
+    //  - Function10*
     //  - Function*
     //  - Predicate*
     //  - Supplier*
     //  - UnaryOperator*
-    //Completed:
     //  - VoidSupplier*
 
     throw new MissingImplementationException("missing x8 remaining tests");

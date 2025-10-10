@@ -843,12 +843,484 @@ public class FunctionsOps {
 // - ToIntFunction
 // - ToLongBiFunction
 // - ToLongFunction
-// - Function3
-// - Function4
-// - Function5
-// - Function6
-// - Function7
-// - Function8
-// - Function9
-// - Function10
+
+  /**
+   * Returns a {@link Function3} that wraps the checked exception lambda, {@code function3CheckedException}, with a
+   * {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   * operations.
+   *
+   * @param function3CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                  {@link RuntimeException}
+   * @param <A>                       the type of the first parameter passed into the function
+   * @param <B>                       the type of the second parameter passed into the function
+   * @param <C>                       the type of the third parameter passed into the function
+   * @param <R>                       the type of the result returned by the function
+   * @return a {@link Function3} that wraps the checked exception lambda, {@code function3CheckedException}, with a
+   *     {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   *     operations
+   */
+  @NotNull
+  public static <A, B, C, R> Function3<A, B, C, R> wrapCheckedException(
+      @NotNull Function3CheckedException<A, B, C, R> function3CheckedException
+  ) {
+    return wrapCheckedException(function3CheckedException, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link Function3} that wraps the checked exception lambda, {@code function3CheckedException}, with a
+   * {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the lambda
+   * within {@link Stream} operations.
+   *
+   * @param function3CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                  {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper  the supplier of the RuntimeException descendant instance within which to wrap the
+   *                                  checked exception, if thrown
+   * @param <EX>                      the type of the RuntimeException descendant instance within which to wrap the
+   *                                  checked exception, if thrown
+   * @param <A>                       the type of the first parameter passed into the function
+   * @param <B>                       the type of the second parameter passed into the function
+   * @param <C>                       the type of the third parameter passed into the function
+   * @param <R>                       the type of the result returned by the function
+   * @return a {@link Function3} that wraps the checked exception lambda, {@code function3CheckedException}, with a
+   *     {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the
+   *     lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <EX extends RuntimeException, A, B, C, R> Function3<A, B, C, R> wrapCheckedException(
+      @NotNull Function3CheckedException<A, B, C, R> function3CheckedException,
+      @NotNull Function<Exception, EX> fRuntimeExceptionWrapper
+  ) {
+    return (a, b, c) ->
+        Either.tryCatchChecked(() ->
+                function3CheckedException.apply(a, b, c))
+            .mapLeft(fRuntimeExceptionWrapper)
+            .getRightOrThrowLeft();
+  }
+
+  /**
+   * Returns a {@link Function4} that wraps the checked exception lambda, {@code function4CheckedException}, with a
+   * {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   * operations.
+   *
+   * @param function4CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                  {@link RuntimeException}
+   * @param <A>                       the type of the first parameter passed into the function
+   * @param <B>                       the type of the second parameter passed into the function
+   * @param <C>                       the type of the third parameter passed into the function
+   * @param <D>                       the type of the fourth parameter passed into the function
+   * @param <R>                       the type of the result returned by the function
+   * @return a {@link Function4} that wraps the checked exception lambda, {@code function4CheckedException}, with a
+   *     {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   *     operations
+   */
+  @NotNull
+  public static <A, B, C, D, R> Function4<A, B, C, D, R> wrapCheckedException(
+      @NotNull Function4CheckedException<A, B, C, D, R> function4CheckedException
+  ) {
+    return wrapCheckedException(function4CheckedException, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link Function4} that wraps the checked exception lambda, {@code function4CheckedException}, with a
+   * {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the lambda
+   * within {@link Stream} operations.
+   *
+   * @param function4CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                  {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper  the supplier of the RuntimeException descendant instance within which to wrap the
+   *                                  checked exception, if thrown
+   * @param <EX>                      the type of the RuntimeException descendant instance within which to wrap the
+   *                                  checked exception, if thrown
+   * @param <A>                       the type of the first parameter passed into the function
+   * @param <B>                       the type of the second parameter passed into the function
+   * @param <C>                       the type of the third parameter passed into the function
+   * @param <D>                       the type of the fourth parameter passed into the function
+   * @param <R>                       the type of the result returned by the function
+   * @return a {@link Function4} that wraps the checked exception lambda, {@code function4CheckedException}, with a
+   *     {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the
+   *     lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <EX extends RuntimeException, A, B, C, D, R> Function4<A, B, C, D, R> wrapCheckedException(
+      @NotNull Function4CheckedException<A, B, C, D, R> function4CheckedException,
+      @NotNull Function<Exception, EX> fRuntimeExceptionWrapper
+  ) {
+    return (a, b, c, d) ->
+        Either.tryCatchChecked(() ->
+                function4CheckedException.apply(a, b, c, d))
+            .mapLeft(fRuntimeExceptionWrapper)
+            .getRightOrThrowLeft();
+  }
+
+  /**
+   * Returns a {@link Function5} that wraps the checked exception lambda, {@code function5CheckedException}, with a
+   * {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   * operations.
+   *
+   * @param function5CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                  {@link RuntimeException}
+   * @param <A>                       the type of the first parameter passed into the function
+   * @param <B>                       the type of the second parameter passed into the function
+   * @param <C>                       the type of the third parameter passed into the function
+   * @param <D>                       the type of the fourth parameter passed into the function
+   * @param <E>                       the type of the fifth parameter passed into the function
+   * @param <R>                       the type of the result returned by the function
+   * @return a {@link Function5} that wraps the checked exception lambda, {@code function5CheckedException}, with a
+   *     {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   *     operations
+   */
+  @NotNull
+  public static <A, B, C, D, E, R> Function5<A, B, C, D, E, R> wrapCheckedException(
+      @NotNull Function5CheckedException<A, B, C, D, E, R> function5CheckedException
+  ) {
+    return wrapCheckedException(function5CheckedException, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link Function5} that wraps the checked exception lambda, {@code function5CheckedException}, with a
+   * {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the lambda
+   * within {@link Stream} operations.
+   *
+   * @param function5CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                  {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper  the supplier of the RuntimeException descendant instance within which to wrap the
+   *                                  checked exception, if thrown
+   * @param <EX>                      the type of the RuntimeException descendant instance within which to wrap the
+   *                                  checked exception, if thrown
+   * @param <A>                       the type of the first parameter passed into the function
+   * @param <B>                       the type of the second parameter passed into the function
+   * @param <C>                       the type of the third parameter passed into the function
+   * @param <D>                       the type of the fourth parameter passed into the function
+   * @param <E>                       the type of the fifth parameter passed into the function
+   * @param <R>                       the type of the result returned by the function
+   * @return a {@link Function5} that wraps the checked exception lambda, {@code function5CheckedException}, with a
+   *     {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the
+   *     lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <EX extends RuntimeException, A, B, C, D, E, R> Function5<A, B, C, D, E, R> wrapCheckedException(
+      @NotNull Function5CheckedException<A, B, C, D, E, R> function5CheckedException,
+      @NotNull Function<Exception, EX> fRuntimeExceptionWrapper
+  ) {
+    return (a, b, c, d, e) ->
+        Either.tryCatchChecked(() ->
+                function5CheckedException.apply(a, b, c, d, e))
+            .mapLeft(fRuntimeExceptionWrapper)
+            .getRightOrThrowLeft();
+  }
+
+  /**
+   * Returns a {@link Function6} that wraps the checked exception lambda, {@code function6CheckedException}, with a
+   * {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   * operations.
+   *
+   * @param function6CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                  {@link RuntimeException}
+   * @param <A>                       the type of the first parameter passed into the function
+   * @param <B>                       the type of the second parameter passed into the function
+   * @param <C>                       the type of the third parameter passed into the function
+   * @param <D>                       the type of the fourth parameter passed into the function
+   * @param <E>                       the type of the fifth parameter passed into the function
+   * @param <F>                       the type of the sixth parameter passed into the function
+   * @param <R>                       the type of the result returned by the function
+   * @return a {@link Function6} that wraps the checked exception lambda, {@code function6CheckedException}, with a
+   *     {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   *     operations
+   */
+  @NotNull
+  public static <A, B, C, D, E, F, R> Function6<A, B, C, D, E, F, R> wrapCheckedException(
+      @NotNull Function6CheckedException<A, B, C, D, E, F, R> function6CheckedException
+  ) {
+    return wrapCheckedException(function6CheckedException, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link Function6} that wraps the checked exception lambda, {@code function6CheckedException}, with a
+   * {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the lambda
+   * within {@link Stream} operations.
+   *
+   * @param function6CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                  {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper  the supplier of the RuntimeException descendant instance within which to wrap the
+   *                                  checked exception, if thrown
+   * @param <EX>                      the type of the RuntimeException descendant instance within which to wrap the
+   *                                  checked exception, if thrown
+   * @param <A>                       the type of the first parameter passed into the function
+   * @param <B>                       the type of the second parameter passed into the function
+   * @param <C>                       the type of the third parameter passed into the function
+   * @param <D>                       the type of the fourth parameter passed into the function
+   * @param <E>                       the type of the fifth parameter passed into the function
+   * @param <F>                       the type of the sixth parameter passed into the function
+   * @param <R>                       the type of the result returned by the function
+   * @return a {@link Function6} that wraps the checked exception lambda, {@code function6CheckedException}, with a
+   *     {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the
+   *     lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <EX extends RuntimeException, A, B, C, D, E, F, R> Function6<A, B, C, D, E, F, R> wrapCheckedException(
+      @NotNull Function6CheckedException<A, B, C, D, E, F, R> function6CheckedException,
+      @NotNull Function<Exception, EX> fRuntimeExceptionWrapper
+  ) {
+    return (a, b, c, d, e, f) ->
+        Either.tryCatchChecked(() ->
+                function6CheckedException.apply(a, b, c, d, e, f))
+            .mapLeft(fRuntimeExceptionWrapper)
+            .getRightOrThrowLeft();
+  }
+
+  /**
+   * Returns a {@link Function7} that wraps the checked exception lambda, {@code function7CheckedException}, with a
+   * {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   * operations.
+   *
+   * @param function7CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                  {@link RuntimeException}
+   * @param <A>                       the type of the first parameter passed into the function
+   * @param <B>                       the type of the second parameter passed into the function
+   * @param <C>                       the type of the third parameter passed into the function
+   * @param <D>                       the type of the fourth parameter passed into the function
+   * @param <E>                       the type of the fifth parameter passed into the function
+   * @param <F>                       the type of the sixth parameter passed into the function
+   * @param <G>                       the type of the seventh parameter passed into the function
+   * @param <R>                       the type of the result returned by the function
+   * @return a {@link Function7} that wraps the checked exception lambda, {@code function7CheckedException}, with a
+   *     {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   *     operations
+   */
+  @NotNull
+  public static <A, B, C, D, E, F, G, R> Function7<A, B, C, D, E, F, G, R> wrapCheckedException(
+      @NotNull Function7CheckedException<A, B, C, D, E, F, G, R> function7CheckedException
+  ) {
+    return wrapCheckedException(function7CheckedException, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link Function7} that wraps the checked exception lambda, {@code function7CheckedException}, with a
+   * {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the lambda
+   * within {@link Stream} operations.
+   *
+   * @param function7CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                  {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper  the supplier of the RuntimeException descendant instance within which to wrap the
+   *                                  checked exception, if thrown
+   * @param <EX>                      the type of the RuntimeException descendant instance within which to wrap the
+   *                                  checked exception, if thrown
+   * @param <A>                       the type of the first parameter passed into the function
+   * @param <B>                       the type of the second parameter passed into the function
+   * @param <C>                       the type of the third parameter passed into the function
+   * @param <D>                       the type of the fourth parameter passed into the function
+   * @param <E>                       the type of the fifth parameter passed into the function
+   * @param <F>                       the type of the sixth parameter passed into the function
+   * @param <G>                       the type of the seventh parameter passed into the function
+   * @param <R>                       the type of the result returned by the function
+   * @return a {@link Function7} that wraps the checked exception lambda, {@code function7CheckedException}, with a
+   *     {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the
+   *     lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <EX extends RuntimeException, A, B, C, D, E, F, G, R> Function7<A, B, C, D, E, F, G, R> wrapCheckedException(
+      @NotNull Function7CheckedException<A, B, C, D, E, F, G, R> function7CheckedException,
+      @NotNull Function<Exception, EX> fRuntimeExceptionWrapper
+  ) {
+    return (a, b, c, d, e, f, g) ->
+        Either.tryCatchChecked(() ->
+                function7CheckedException.apply(a, b, c, d, e, f, g))
+            .mapLeft(fRuntimeExceptionWrapper)
+            .getRightOrThrowLeft();
+  }
+
+  /**
+   * Returns a {@link Function8} that wraps the checked exception lambda, {@code function8CheckedException}, with a
+   * {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   * operations.
+   *
+   * @param function8CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                  {@link RuntimeException}
+   * @param <A>                       the type of the first parameter passed into the function
+   * @param <B>                       the type of the second parameter passed into the function
+   * @param <C>                       the type of the third parameter passed into the function
+   * @param <D>                       the type of the fourth parameter passed into the function
+   * @param <E>                       the type of the fifth parameter passed into the function
+   * @param <F>                       the type of the sixth parameter passed into the function
+   * @param <G>                       the type of the seventh parameter passed into the function
+   * @param <H>                       the type of the eighth parameter passed into the function
+   * @param <R>                       the type of the result returned by the function
+   * @return a {@link Function8} that wraps the checked exception lambda, {@code function8CheckedException}, with a
+   *     {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   *     operations
+   */
+  @NotNull
+  public static <A, B, C, D, E, F, G, H, R> Function8<A, B, C, D, E, F, G, H, R> wrapCheckedException(
+      @NotNull Function8CheckedException<A, B, C, D, E, F, G, H, R> function8CheckedException
+  ) {
+    return wrapCheckedException(function8CheckedException, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link Function8} that wraps the checked exception lambda, {@code function8CheckedException}, with a
+   * {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the lambda
+   * within {@link Stream} operations.
+   *
+   * @param function8CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                  {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper  the supplier of the RuntimeException descendant instance within which to wrap the
+   *                                  checked exception, if thrown
+   * @param <EX>                      the type of the RuntimeException descendant instance within which to wrap the
+   *                                  checked exception, if thrown
+   * @param <A>                       the type of the first parameter passed into the function
+   * @param <B>                       the type of the second parameter passed into the function
+   * @param <C>                       the type of the third parameter passed into the function
+   * @param <D>                       the type of the fourth parameter passed into the function
+   * @param <E>                       the type of the fifth parameter passed into the function
+   * @param <F>                       the type of the sixth parameter passed into the function
+   * @param <G>                       the type of the seventh parameter passed into the function
+   * @param <H>                       the type of the eighth parameter passed into the function
+   * @param <R>                       the type of the result returned by the function
+   * @return a {@link Function8} that wraps the checked exception lambda, {@code function8CheckedException}, with a
+   *     {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the
+   *     lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <EX extends RuntimeException, A, B, C, D, E, F, G, H, R> Function8<A, B, C, D, E, F, G, H, R> wrapCheckedException(
+      @NotNull Function8CheckedException<A, B, C, D, E, F, G, H, R> function8CheckedException,
+      @NotNull Function<Exception, EX> fRuntimeExceptionWrapper
+  ) {
+    return (a, b, c, d, e, f, g, h) ->
+        Either.tryCatchChecked(() ->
+                function8CheckedException.apply(a, b, c, d, e, f, g, h))
+            .mapLeft(fRuntimeExceptionWrapper)
+            .getRightOrThrowLeft();
+  }
+
+  /**
+   * Returns a {@link Function9} that wraps the checked exception lambda, {@code function9CheckedException}, with a
+   * {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   * operations.
+   *
+   * @param function9CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                  {@link RuntimeException}
+   * @param <A>                       the type of the first parameter passed into the function
+   * @param <B>                       the type of the second parameter passed into the function
+   * @param <C>                       the type of the third parameter passed into the function
+   * @param <D>                       the type of the fourth parameter passed into the function
+   * @param <E>                       the type of the fifth parameter passed into the function
+   * @param <F>                       the type of the sixth parameter passed into the function
+   * @param <G>                       the type of the seventh parameter passed into the function
+   * @param <H>                       the type of the eighth parameter passed into the function
+   * @param <I>                       the type of the ninth parameter passed into the function
+   * @param <R>                       the type of the result returned by the function
+   * @return a {@link Function9} that wraps the checked exception lambda, {@code function9CheckedException}, with a
+   *     {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   *     operations
+   */
+  @NotNull
+  public static <A, B, C, D, E, F, G, H, I, R> Function9<A, B, C, D, E, F, G, H, I, R> wrapCheckedException(
+      @NotNull Function9CheckedException<A, B, C, D, E, F, G, H, I, R> function9CheckedException
+  ) {
+    return wrapCheckedException(function9CheckedException, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link Function9} that wraps the checked exception lambda, {@code function9CheckedException}, with a
+   * {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the lambda
+   * within {@link Stream} operations.
+   *
+   * @param function9CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                  {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper  the supplier of the RuntimeException descendant instance within which to wrap the
+   *                                  checked exception, if thrown
+   * @param <EX>                      the type of the RuntimeException descendant instance within which to wrap the
+   *                                  checked exception, if thrown
+   * @param <A>                       the type of the first parameter passed into the function
+   * @param <B>                       the type of the second parameter passed into the function
+   * @param <C>                       the type of the third parameter passed into the function
+   * @param <D>                       the type of the fourth parameter passed into the function
+   * @param <E>                       the type of the fifth parameter passed into the function
+   * @param <F>                       the type of the sixth parameter passed into the function
+   * @param <G>                       the type of the seventh parameter passed into the function
+   * @param <H>                       the type of the eighth parameter passed into the function
+   * @param <I>                       the type of the ninth parameter passed into the function
+   * @param <R>                       the type of the result returned by the function
+   * @return a {@link Function9} that wraps the checked exception lambda, {@code function9CheckedException}, with a
+   *     {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the
+   *     lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <EX extends RuntimeException, A, B, C, D, E, F, G, H, I, R> Function9<A, B, C, D, E, F, G, H, I, R> wrapCheckedException(
+      @NotNull Function9CheckedException<A, B, C, D, E, F, G, H, I, R> function9CheckedException,
+      @NotNull Function<Exception, EX> fRuntimeExceptionWrapper
+  ) {
+    return (a, b, c, d, e, f, g, h, i) ->
+        Either.tryCatchChecked(() ->
+                function9CheckedException.apply(a, b, c, d, e, f, g, h, i))
+            .mapLeft(fRuntimeExceptionWrapper)
+            .getRightOrThrowLeft();
+  }
+
+  /**
+   * Returns a {@link Function10} that wraps the checked exception lambda, {@code function10CheckedException}, with a
+   * {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   * operations.
+   *
+   * @param function10CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                   {@link RuntimeException}
+   * @param <A>                        the type of the first parameter passed into the function
+   * @param <B>                        the type of the second parameter passed into the function
+   * @param <C>                        the type of the third parameter passed into the function
+   * @param <D>                        the type of the fourth parameter passed into the function
+   * @param <E>                        the type of the fifth parameter passed into the function
+   * @param <F>                        the type of the sixth parameter passed into the function
+   * @param <G>                        the type of the seventh parameter passed into the function
+   * @param <H>                        the type of the eighth parameter passed into the function
+   * @param <I>                        the type of the ninth parameter passed into the function
+   * @param <J>                        the type of the tenth parameter passed into the function
+   * @param <R>                        the type of the result returned by the function
+   * @return a {@link Function10} that wraps the checked exception lambda, {@code function10CheckedException}, with a
+   *     {@link RuntimeException} of {@link WrappedCheckedException} to enable use of the lambda within {@link Stream}
+   *     operations
+   */
+  @NotNull
+  public static <A, B, C, D, E, F, G, H, I, J, R> Function10<A, B, C, D, E, F, G, H, I, J, R> wrapCheckedException(
+      @NotNull Function10CheckedException<A, B, C, D, E, F, G, H, I, J, R> function10CheckedException
+  ) {
+    return wrapCheckedException(function10CheckedException, WrappedCheckedException::new);
+  }
+
+  /**
+   * Returns a {@link Function10} that wraps the checked exception lambda, {@code function10CheckedException}, with a
+   * {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the lambda
+   * within {@link Stream} operations.
+   *
+   * @param function10CheckedException the lambda which may throw a checked exception that needs to be wrapped with a
+   *                                   {@link RuntimeException}
+   * @param fRuntimeExceptionWrapper   the supplier of the RuntimeException descendant instance within which to wrap the
+   *                                   checked exception, if thrown
+   * @param <EX>                       the type of the RuntimeException descendant instance within which to wrap the
+   *                                   checked exception, if thrown
+   * @param <A>                        the type of the first parameter passed into the function
+   * @param <B>                        the type of the second parameter passed into the function
+   * @param <C>                        the type of the third parameter passed into the function
+   * @param <D>                        the type of the fourth parameter passed into the function
+   * @param <E>                        the type of the fifth parameter passed into the function
+   * @param <F>                        the type of the sixth parameter passed into the function
+   * @param <G>                        the type of the seventh parameter passed into the function
+   * @param <H>                        the type of the eighth parameter passed into the function
+   * @param <I>                        the type of the ninth parameter passed into the function
+   * @param <J>                        the type of the tenth parameter passed into the function
+   * @param <R>                        the type of the result returned by the function
+   * @return a {@link Function10} that wraps the checked exception lambda, {@code function10CheckedException}, with a
+   *     {@link RuntimeException} returned by the supplier, {@code fRuntimeExceptionWrapper}, to enable use of the
+   *     lambda within {@link Stream} operations
+   */
+  @NotNull
+  public static <EX extends RuntimeException, A, B, C, D, E, F, G, H, I, J, R> Function10<A, B, C, D, E, F, G, H, I, J, R> wrapCheckedException(
+      @NotNull Function10CheckedException<A, B, C, D, E, F, G, H, I, J, R> function10CheckedException,
+      @NotNull Function<Exception, EX> fRuntimeExceptionWrapper
+  ) {
+    return (a, b, c, d, e, f, g, h, i, j) ->
+        Either.tryCatchChecked(() ->
+                function10CheckedException.apply(a, b, c, d, e, f, g, h, i, j))
+            .mapLeft(fRuntimeExceptionWrapper)
+            .getRightOrThrowLeft();
+  }
 }
